@@ -1,0 +1,23 @@
+.body {
+	font-size:1.0em;
+	color:#000000;
+	margin-bottom:10px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+td {
+	height : 10px; 
+	vertical-align: bottom;
+}
+
+th, td {
+	padding: 10px; 
+	text-align: left;
+}
