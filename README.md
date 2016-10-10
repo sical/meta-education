@@ -1,1 +1,1 @@
-# meta-education
+# Meta Education

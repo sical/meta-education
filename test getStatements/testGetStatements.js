@@ -1,15 +1,17 @@
 function view() {
 
 	TinCan.enableDebug();
+
 	//lrs connexion
 	var lrs;
 
 	try {
 		lrs = new TinCan.LRS(
 			{
-				endpoint: "x",
-				username: "x",
-				password: "x",
+
+				endpoint: "https://xapi.neteduc-cloud.fr/public/data/xAPI/",
+				username :  config.xapi.username,
+				password : config.xapi.password,
 				allowFail: false
 			}
 		);
@@ -29,13 +31,13 @@ function view() {
 		since: "2016-09-08T13:00:00Z", //leonard de rubiela (avec des traces client)
 		until: "2016-09-08T13:50:00Z",
 		//since: "2016-07-28T00:00:00Z",
-		//until: "2016-07-29T00:00:00Z",		
+		//until: "2016-07-29T00:00:00Z",
 		//since: "2016-07-28T08:40:00Z", session rubiela
-		//until: "2016-07-28T09:30:00Z",		
+		//until: "2016-07-28T09:30:00Z",
 		//since: "2016-07-28T13:50:00Z",//session yannick
-		//until: "2016-07-28T14:13:12Z",		
+		//until: "2016-07-28T14:13:12Z",
 		//since: "2016-07-28T15:16:00Z", //session elise
-		//until: "2016-07-28T15:37:00Z",		
+		//until: "2016-07-28T15:37:00Z",
 		ascending: true,
 		limit: 25
 	} ;
@@ -65,12 +67,12 @@ function view() {
 		document.getElementById("numStatementsLength").innerHTML = " Number of statements : " + sr.statements.length;
 	}
 	var appels=0;
-	
+
 
 //************************
 
 	function getMoreStatements(srmore){
-			
+
 			console.log("Appel number: " + appels);
 
 			if (srmore.more!==null ) {
@@ -112,7 +114,7 @@ function view() {
 		}
 
 		getMoreStatements(sr);
-		
+
 	}
 	//document.getElementById("numStatementsLength").innerHTML = "Getting statements, please wait...";
 	lrs.queryStatements({params: mesFiltres,
