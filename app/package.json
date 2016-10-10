@@ -1,0 +1,28 @@
+{
+  "name": "meta-education",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "babel-node ./bin/www",
+    "lint": "eslint app.js",
+    "dev": "nodemon --exec \"npm run lint && npm start\" --ignore public/js"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "connect-livereload": "^0.6.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.13.4",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "semantic-ui": "^2.2.4",
+    "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-eslint": "^7.0.0",
+    "babel-preset-es2015": "^6.16.0",
+    "eslint": "^3.7.1",
+    "nodemon": "^1.11.0"
+  }
+}
