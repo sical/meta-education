@@ -1,4 +1,7 @@
-config/config.js
+data
+venv
+
+config/config.json
 app/semantic
 
 # Logs
