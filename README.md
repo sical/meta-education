@@ -1,11 +1,18 @@
 # Meta Education
 
+
 ## Config
 
 Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
 
 
-## Run the app
+## Run renkan crawler
+
+  cd renkan
+  pip install requests
+  python renkan_crawler.py
+
+## Run the VIZ app
 
 Require [Nodejs](https://nodejs.org/en/) > 6
 
