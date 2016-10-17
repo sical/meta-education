@@ -1,6 +1,9 @@
 data
 venv
 
+notebooks/.ipynb_checkpoints/
+
+
 config/config.json
 app/semantic
 
