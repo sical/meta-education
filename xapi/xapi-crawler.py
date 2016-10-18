@@ -2,6 +2,8 @@ import json
 import os
 from tincan import RemoteLRS
 from pymongo import MongoClient
+from datetime import datetime
+from django.utils.dateparse import parse_datetime
 
 # import config
 with open(os.path.join(os.getcwd(),"../config/config.json"),"rb") as f:
@@ -36,19 +38,25 @@ response = lrs.query_statements(q)
 if not response:
     raise ValueError("statements could not be queried")
 
+
 # parse JSON from API
 parsed = json.loads(response.data)
 
 # remove dots in key because mongo does not support them
 def convert_dots_to_dash_in_dict(d):
     new = {}
-    for k, v in d.iteritems():
-        if isinstance(v, dict):
-            v = convert_dots_to_dash_in_dict(v)
-        new[k.replace('.', '-')] = v
+    if not isinstance(d, datetime):
+        for k, v in d.iteritems():
+            if isinstance(v, dict):
+                v = convert_dots_to_dash_in_dict(v)
+            new[k.replace('.', '-')] = v
     return new
 
 clean_statements = [ convert_dots_to_dash_in_dict(s) for s in parsed["statements"]]
+
+for statement in clean_statements:
+    statement["stored"] = parse_datetime(statement["stored"])
+    statement["timestamp"] = parse_datetime(statement["timestamp"])
 
 # dump to mongo
 db.statements.insert_many(clean_statements)
