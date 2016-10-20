@@ -28,8 +28,8 @@ print "...done"
 
 # query
 q = {
-	"since": "2016-09-08T13:00:00Z",
-	"until": "2016-09-08T13:50:00Z",
+	"since": "2016-10-18T00:00:00Z",
+	"until": "2016-10-18T23:00:00Z",
 	"ascending": True,
 	"limit": 2500
 }
