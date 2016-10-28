@@ -1,3 +1,4 @@
 requests
-tincan
+git+https://github.com/clemsos/TinCanPython
 mongo
+networkx
