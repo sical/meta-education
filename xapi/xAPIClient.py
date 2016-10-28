@@ -16,7 +16,12 @@ class xAPIClient():
         headers = {"X-Experience-API-Version": "1.0.0"}
         r = requests.get(url, headers=headers, params=q, auth=(self.username, self.password))
         if r.status_code <= 200 or r.status_code >= 205:
-            return json.loads(r.text)
+            res = json.loads(r.text)
+            if res["success"] and (res["code"] <= 200 or res["code"] >= 205):
+                return res
+            else :
+                raise ValueError("API Error %s : %s"%(res["code"], res["message"]))
+            return
         else:
             raise ValueError("API Error %s : statements could not be queried"%sr.status_code)
 

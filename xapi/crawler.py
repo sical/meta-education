@@ -40,7 +40,7 @@ def get_records_from_xapi(start, end, offset=0):
     }
 
     data = lrs.get_statements(q)
-    print data["more"]
+    print data.keys()
     print "got %s statements from xAPI"%len(data["statements"])
     return data
 
