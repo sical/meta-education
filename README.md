@@ -5,6 +5,11 @@
 
 Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
 
+## Run XAPI crawler and parser
+
+  cd xapi
+  pip install -r requirements.txt
+  python main.py
 
 ## Run renkan crawler
 
