@@ -1,6 +1,8 @@
 data
 venv
 
+*.pyc
+
 notebooks/.ipynb_checkpoints/
 
 
