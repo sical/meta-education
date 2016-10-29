@@ -17,7 +17,7 @@ class xAPIClient():
         r = requests.get(url, headers=headers, params=q, auth=(self.username, self.password))
         if r.status_code <= 200 or r.status_code >= 205:
             res = json.loads(r.text)
-            if res["success"] and (res["code"] <= 200 or res["code"] >= 205):
+            if "error" not in res.keys() :
                 return res
             else :
                 raise ValueError("API Error %s : %s"%(res["code"], res["message"]))
