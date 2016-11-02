@@ -22,18 +22,22 @@ module.exports = {
   },
   module: {
     loaders: [ {
-      test: /\.js$/,
-      loaders: loaders,
-      plugins: plugins,
-      exclude: [node_modules_dir]
-    }, {
-      test: /\.jsx?$/,
-      include: path.join(__dirname, 'src'),
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015', 'react']
+        test: /\.js$/,
+        loaders: loaders,
+        plugins: plugins,
+        exclude: [node_modules_dir]
+      }, {
+        test: /\.jsx?$/,
+        include: path.join(__dirname, 'src'),
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react', 'stage-0']
+        },
+        exclude: [node_modules_dir]
       }
-    }
-  ]
+    ]
+  },
+  resolveLoader: {
+    root: path.join(__dirname, 'node_modules')
   }
 };
