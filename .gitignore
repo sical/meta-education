@@ -2,7 +2,10 @@ data
 venv
 
 notebooks/.ipynb_checkpoints/
+notebooks/stacked_bar.html
+oldApp
 
+*.pyc
 
 config/config.json
 app/semantic

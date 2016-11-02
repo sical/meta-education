@@ -2,5 +2,10 @@
   "xapi" :  {
     "username" :  "XX",
     "password" : "XX"
+  },
+  "db" : {
+    "dbName" : "metaEducation",
+    "password" : "",
+    "user" : ""
   }
 }
