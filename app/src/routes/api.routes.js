@@ -13,6 +13,7 @@ db.on('connect', function () {
     console.log('Mongo connected to db : '+dbName)
 })
 
+router.get("/", (req,res) => res.send({"message" : "hello API!"}))
 // DB functions
 router.get('/actions/:id', (req, res) => {
   db.actions.findOne({ _id :  mongojs.ObjectId(req.params.id)   }, (err, doc) => {
