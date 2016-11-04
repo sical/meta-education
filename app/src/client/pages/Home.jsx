@@ -2,7 +2,6 @@ import React from "react";
 import RaisedButton from 'material-ui/RaisedButton';
 import { connect, PromiseState } from 'react-refetch'
 
-import getProjects from "../api"
 import SideNav from '../components/SideNav.jsx'
 import TopBar from '../components/TopBar.jsx'
 import Dashboard from '../components/Dashboard.jsx'
