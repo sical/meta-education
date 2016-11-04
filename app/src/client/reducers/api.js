@@ -1,6 +1,6 @@
 import { ActionTypes } from '../actions'
 
-export const apiReducer = (state = {
+export const api = (state = {
       projects : [],
       students: [] ,
       actions : [],
@@ -21,10 +21,8 @@ export const apiReducer = (state = {
         case ActionTypes.GET_PROJECTS_LIST_ERROR:
             return { ...state, isWaiting: false, success : false  };
         case ActionTypes.GET_PROJECT_ACTIONS_SUCCESS:
-
           // convert dates to ms
           let timestamps = action.data.map(d=> new Date(d.ts).getTime())
-
           return { ...state,
             isWaiting: false,
             actions: action.data,

@@ -10,7 +10,7 @@ import Subheader from 'material-ui/Subheader';
 
 import store from '../store'
 import  {ActionTypes} from '../actions'
-import AsyncAPI from '../api'
+import AsyncAPI from '../AsyncAPI'
 
 
 class StudentsList extends React.Component {
@@ -58,7 +58,7 @@ class StudentsList extends React.Component {
 
     return (
       <div>
-        <Subheader>Selectable Contacts</Subheader>
+        <Subheader>Elèves</Subheader>
         <List>
           {students}
         </List>
@@ -71,9 +71,9 @@ const mapStateToProps = (state) => {
   // console.log(state);
     return {
         count: state.counter,
-        isWaiting : state.apiReducer.isWaiting,
-        students : state.apiReducer.students,
-        projects : state.apiReducer.projects
+        isWaiting : state.api.isWaiting,
+        students : state.api.students,
+        projects : state.api.projects
     }
 }
 

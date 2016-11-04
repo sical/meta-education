@@ -25,7 +25,7 @@ class TimeSlider extends React.Component {
         max = d3.max(nextProps.timestamps)
       this.setState({ min : min , max: max, defaultValue : min, value: min })
       // set default value to first time stamp
-      store.dispatch({ type: ActionTypes.SET_TIME_VALUE, time : d3.min(nextProps.timestamps) })
+      store.dispatch({ type: ActionTypes.SET_TIME_VALUE, time : d3.max(nextProps.timestamps) })
 
     }
   }
@@ -37,6 +37,10 @@ class TimeSlider extends React.Component {
 
   render() {
     return(
+      // <div>
+      //   <FlatButton label="Prev" />
+      //   <FlatButton label="Next" />
+      // </div>
       <Slider
         ref='slider'
         {...this.state}
@@ -50,7 +54,7 @@ class TimeSlider extends React.Component {
 const mapStateToProps = (state) => {
 
     return {
-      timestamps : state.apiReducer.timestamps
+      timestamps : state.api.timestamps
     }
 }
 

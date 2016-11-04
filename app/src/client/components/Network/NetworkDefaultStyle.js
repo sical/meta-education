@@ -21,7 +21,7 @@ const NetworkDefaultStyle = () =>
         },
         // 'text-opacity' : 0, // hide label by default
         'label'(e) {
-          return e.data('name') ? e.data('name').trunc(20) : ''
+          return e.data('title') ? e.data('title').trunc(20) : ''
         }
       })
     // node with degree zero
@@ -52,18 +52,6 @@ const NetworkDefaultStyle = () =>
         'label'(e) {
           return e.data('group') ? e.data('group') : ''
         }
-      })
-    .selector('.edgehandles-hover')
-      .style({
-        'background-color': 'red'
-      })
-    .selector('.edgehandles-source')
-    .selector('.edgehandles-target')
-    .selector('.edgehandles-preview, .edgehandles-ghost-edge')
-      .style({
-        'line-color': 'red',
-        'target-arrow-color': 'red',
-        'source-arrow-color': 'red'
       })
 
 // truncate String to make it shorter

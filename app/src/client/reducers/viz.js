@@ -1,12 +1,12 @@
 import { ActionTypes } from '../actions'
 
-export const vizReducer = (
-  state = { currentTime: Date.now().getTime() }
+export const viz = (
+  state = { currentTime: Date.now() }
 , action) => {
-    console.log(action);
+    // console.log(action);
     switch(action.type) {
       case ActionTypes.SET_TIME_VALUE:
-        return { ...state, currentTime : time };
+        return { ...state, currentTime : Math.floor(action.time) };
       default:
           return state;
     }

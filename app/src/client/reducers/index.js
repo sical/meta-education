@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux'
 import counter from './counter'
-import { apiReducer } from './apiCalls'
+import { api } from './api'
 import { viz } from './viz'
 
 const dashboardApp = combineReducers({
   counter,
-  apiReducer
+  api,
+  viz
 })
 
 export default dashboardApp
