@@ -7,7 +7,7 @@ import SideNav from '../components/SideNav.jsx'
 import TopBar from '../components/TopBar.jsx'
 import Dashboard from '../components/Dashboard.jsx'
 
-class Home extends React.Component {
+export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
@@ -26,11 +26,13 @@ class Home extends React.Component {
 
   render() {
 
-    const { userProjects, studentsList } = this.props
-
-    // check if projects are fetched
-    let projects = userProjects.fulfilled ? userProjects.value.projects : []
-    let students = studentsList.fulfilled ? studentsList.value.students : []
+    // const { userProjects, studentsList } = this.props
+    //
+    // // check if projects are fetched
+    // let projects = userProjects.fulfilled ? userProjects.value.projects : []
+    // let students = studentsList.fulfilled ? studentsList.value.students : []
+    let projects = [],
+      students = ["1"]
 
     return (
       <div>
@@ -47,10 +49,3 @@ class Home extends React.Component {
     )
   }
 }
-
-// get the data
-export default connect(props => ({
-  apiHome: `/api`,
-  userProjects : `/api/projects/${props.userId}`,
-  studentsList : `/api/students`,
-}))(Home)

@@ -1,10 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
+
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
-export default class StudentsList extends React.Component {
+import store from '../store'
+
+class StudentsList extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -13,9 +17,14 @@ export default class StudentsList extends React.Component {
     students : []
   }
 
+  handleClick (id) {
+    store.dispatch({ type: 'INCREMENT' })
+  }
+
   render() {
-    let students = this.props.students.map( (d, i) => <ListItem
-        primaryText="Brendan Lim"
+    console.log();
+    let students = this.props.students.map( (id, i) => <ListItem
+        primaryText={"Brendan Lim  " +this.props.count }
         key="i"
         leftAvatar={
           <Avatar
@@ -23,6 +32,7 @@ export default class StudentsList extends React.Component {
            />
         }
         rightIcon={<ContentSend />}
+        onClick={this.handleClick.bind(this, id)}
       />)
     return (
       <List>
@@ -31,3 +41,11 @@ export default class StudentsList extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        count: state.counter
+    }
+}
+
+export default connect(mapStateToProps)(StudentsList)
