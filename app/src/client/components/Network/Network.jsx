@@ -1,6 +1,7 @@
 import React from 'react'
 import cytoscape from 'cytoscape'
 
+import {connect} from 'react-redux'
 import NetworkDefaultStyle from './NetworkDefaultStyle'
 
 
@@ -96,4 +97,14 @@ Network.defaultProps = {
   style : NetworkDefaultStyle(),
   layoutName : 'preset'
 }
-export default Network
+
+
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+      actions : state.actions
+    }
+}
+
+export default connect(mapStateToProps)(Network)

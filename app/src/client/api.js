@@ -16,14 +16,25 @@ export default class AsyncAPI {
         );
     }
 
-    static getProjectsList = (id) => {
-      console.log("api call students : "+id);
-      var url = `/api/projects/${id}`
+    static getProjectsList = (userId) => {
+      console.log("api call students : "+userId);
+      var url = `/api/projects/${userId}`
       return dispatch => fetch(url) // Redux Thunk handles these
         .then(res => res.json())
         .then(
           data => store.dispatch({ type: 'GET_PROJECTS_LIST_SUCCESS', data }),
           err => store.dispatch({ type: 'GET_PROJECTS_LIST_ERROR', err })
+        );
+    }
+
+    static getProject = (_id) => {
+      console.log("api call students : "+_id);
+      var url = `/api/project/${_id}`
+      return dispatch => fetch(url) // Redux Thunk handles these
+        .then(res => res.json())
+        .then(
+          data => store.dispatch({ type: ActionTypes.GET_PROJECT_ACTIONS_SUCCESS, data }),
+          err => store.dispatch({ type: ActionTypes.GET_PROJECT_ACTIONS_ERROR, err })
         );
     }
 }

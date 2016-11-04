@@ -3,6 +3,7 @@ import { ActionTypes } from '../actions'
 export const apiReducer = (state = {
       projects : [],
       students: [] ,
+      actions : [],
       isWaiting: false
     },
     action) => {
@@ -16,6 +17,10 @@ export const apiReducer = (state = {
         case ActionTypes.GET_PROJECTS_LIST_SUCCESS:
           return { ...state, isWaiting: false, projects: action.data.projects, success : true  };
         case ActionTypes.GET_PROJECTS_LIST_ERROR:
+            return { ...state, isWaiting: false, success : false  };
+        case ActionTypes.GET_PROJECT_ACTIONS_SUCCESS:
+          return { ...state, isWaiting: false, actions: action.data, success : true  };
+        case ActionTypes.GET_PROJECT_ACTIONS_ERROR:
             return { ...state, isWaiting: false, success : false  };
         default:
             return state;

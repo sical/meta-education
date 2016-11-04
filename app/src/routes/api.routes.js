@@ -23,15 +23,6 @@ router.get('/actions/:id', (req, res) => {
   })
 });
 
-// GET all actions in a project
-router.get('/project/:project_id/', (req, res) => {
-  db.actions.find({ project_id :  req.params.project_id  }, (err, docs) => {
-    if(err) throw error
-    if (docs == null) res.send({})
-    else res.send(docs);
-  })
-});
-
 // GET a list of all users (students)
 router.get('/students', (req, res) => {
   db.actions.distinct("statement.actor.name", {}, (err, docs) => {
@@ -41,6 +32,15 @@ router.get('/students', (req, res) => {
         students : docs
       })
     })
+});
+
+// GET all actions in a project
+router.get('/project/:project_id/', (req, res) => {
+  db.actions.find({ project_id :  req.params.project_id  }, (err, docs) => {
+    if(err) throw error
+    if (docs == null) res.send({})
+    else res.send(docs);
+  })
 });
 
 // GET a　list of projects for a specific user

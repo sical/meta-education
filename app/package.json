@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev-client": "NODE_ENV=development webpack --watch",
-    "dev-server": "node_modules/nodemon/bin/nodemon.js -- node_modules/babel/bin/babel-node.js src/app.js",
+    "dev-server": "node_modules/nodemon/bin/nodemon.js -- node_modules/babel/bin/babel-node.js src/app.js --ignore src/client",
     "prod": "NODE_ENV=production webpack -p && NODE_ENV=production node src/app.js",
     "start": "npm run prod"
   },
@@ -17,6 +17,8 @@
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",
     "classnames": "^2.2.5",
+    "cytoscape": "^2.7.10",
+    "d3": "^4.3.0",
     "express": "4.13.3",
     "fetch": "^1.1.0",
     "flexboxgrid": "^6.3.1",

@@ -6,9 +6,12 @@ import Avatar from 'material-ui/Avatar';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
+import Subheader from 'material-ui/Subheader';
+
 import store from '../store'
 import  {ActionTypes} from '../actions'
 import AsyncAPI from '../api'
+
 
 class StudentsList extends React.Component {
   constructor(props) {
@@ -19,35 +22,47 @@ class StudentsList extends React.Component {
     this.props.dispatch(AsyncAPI.getStudentsList())
   }
 
-  handleClick (id) {
-    // store.dispatch({ type: 'INCREMENT' })
-    store.dispatch(AsyncAPI.getProjectsList(id))
+  handleClickStudent (userId) {
+    this.props.dispatch(AsyncAPI.getProjectsList(userId))
+  }
+
+  handleClickProject (_id) {
+    this.props.dispatch(AsyncAPI.getProject(_id))
   }
 
   render() {
-    console.log(this.props);
+
+    let projects = this.props.projects.map( (p, i) =>
+      <ListItem
+        primaryText={`project ${i} (${p.value} actions)`}
+        onClick={this.handleClickProject.bind(this, p._id)}
+        key={i}
+      />
+    )
+
     let students = this.props.students.map( (id, i) =>
       <ListItem
-          primaryText={"Brendan Lim  " }
-          key="i"
+          primaryText={"Brendan Lim"}
+          key={i}
           leftAvatar={
             <Avatar
             icon={<ActionFace />}
              />
           }
           rightIcon={<ContentSend />}
-          onClick={this.handleClick.bind(this, id)}
+          primaryTogglesNestedList={true}
+          onClick={this.handleClickStudent.bind(this, id)}
+          nestedItems={projects}
         />
     )
-    // 
-    // let projects = this.props.projects.map( (p, i) =>
-    //
-    // )
 
     return (
-      <List>
-        {students}
-      </List>
+      <div>
+        <Subheader>Selectable Contacts</Subheader>
+        <List>
+          {students}
+        </List>
+      </div>
     )
   }
 }
