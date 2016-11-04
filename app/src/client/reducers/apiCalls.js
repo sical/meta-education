@@ -4,9 +4,11 @@ export const apiReducer = (state = {
       projects : [],
       students: [] ,
       actions : [],
+      timestamps : [],
       isWaiting: false
     },
     action) => {
+      // console.log(action);
       switch (action.type) {
         case ActionTypes.GET_STUDENTS_LIST:
             return { ...state, isWaiting: true };
@@ -19,7 +21,16 @@ export const apiReducer = (state = {
         case ActionTypes.GET_PROJECTS_LIST_ERROR:
             return { ...state, isWaiting: false, success : false  };
         case ActionTypes.GET_PROJECT_ACTIONS_SUCCESS:
-          return { ...state, isWaiting: false, actions: action.data, success : true  };
+
+          // convert dates to ms
+          let timestamps = action.data.map(d=> new Date(d.ts).getTime())
+
+          return { ...state,
+            isWaiting: false,
+            actions: action.data,
+            timestamps : timestamps,
+            success : true  };
+
         case ActionTypes.GET_PROJECT_ACTIONS_ERROR:
             return { ...state, isWaiting: false, success : false  };
         default:
