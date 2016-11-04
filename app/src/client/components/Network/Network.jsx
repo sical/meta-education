@@ -114,10 +114,16 @@ class Network extends React.Component {
 
     this.updateNetwork()
     return (
-      <div
+      <div>
+        <p className="count">
+          <span>{this.state.nodes.length} noeuds </span> /
+          <span>{this.state.edges.length} liens</span>
+        </p>
+        <div
         id={CYTOSCAPE_DIV_ID}
         style={style.divNetwork}
-      >
+        >
+        </div>
       </div>
     )
   }
