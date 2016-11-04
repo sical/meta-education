@@ -32,8 +32,19 @@ router.get('/project/:project_id/', (req, res) => {
   })
 });
 
+// GET a list of all users (students)
+router.get('/students', (req, res) => {
+  db.actions.distinct("statement.actor.name", {}, (err, docs) => {
+      if(err) throw err
+      if (docs == null) res.send({})
+      res.send({
+        students : docs
+      })
+    })
+});
+
 // GET a　list of projects for a specific user
-router.get('/user_actions/:user_id/', (req, res) => {
+router.get('/projects/:user_id/', (req, res) => {
   db.actions.mapReduce(
     function() {
        emit(this.project_id, 1)

@@ -10,13 +10,13 @@ const history = createHistory()
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
-import Dashboard from "./client/pages/Dashboard.jsx"
+import Home from "./client/pages/Home.jsx"
 
 let userId = "31af3b8e-4ac6-4ae1-b651-a64df7b012cd"
 
 const App = () => (
   <MuiThemeProvider>
-    <Dashboard userId={userId} />
+    <Home userId={userId} />
   </MuiThemeProvider>
 );
 

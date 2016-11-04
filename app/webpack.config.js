@@ -26,7 +26,7 @@ module.exports = {
         loaders: loaders,
         plugins: plugins,
         exclude: [node_modules_dir]
-      }, {
+      },{
         test: /\.jsx?$/,
         include: path.join(__dirname, 'src'),
         loader: 'babel-loader',
@@ -34,6 +34,10 @@ module.exports = {
           presets: ['es2015', 'react', 'stage-0']
         },
         exclude: [node_modules_dir]
+      },{
+        test: /\.css$/,
+        loader: 'style!css?modules',
+        include: /flexboxgrid/,
       }
     ]
   },
