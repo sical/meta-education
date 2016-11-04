@@ -13,23 +13,19 @@ const NetworkDefaultStyle = () =>
         'text-wrap': 'wrap',
         'min-zoomed-font-size': 0.4,
         'border-color': '#D84315',
-        'background-color'(e) {
-          let color = '#CCC'  // default
-          if (e.data('group')) color = colors(e.data('group'))
-          else if (e.data('color')) color = e.data('color')
-          return e.data('starred') ? 'yellow' : color
-        },
+        'background-color' : 'steelblue',
         // 'text-opacity' : 0, // hide label by default
         'label'(e) {
+          // console.log(e.data('title'));
           return e.data('title') ? e.data('title').trunc(20) : ''
         }
       })
     // node with degree zero
-    // .selector('node[[degree = 0]]')
-    //   .style({
-    //       'background-color': '#656565'
-    //       // 'display' :"none"
-    //   })
+    .selector('node[[degree = 0]]')
+      .style({
+          'background-color': '#656565'
+          // 'display' :"none"
+      })
     .selector('node[group="ghosts"]')
     .style({
       'background-opacity': .5,

@@ -11,7 +11,7 @@ const style = {
     height: '400px',
     width: '400px',
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,.5)',
+    // backgroundColor: 'rgba(0,0,0,.5)',
     // top: '0px',
     // left: '0',
     zIndex : 3000
@@ -27,7 +27,7 @@ class Network extends React.Component {
       nodes : this.props.elements.nodes,
       edges : this.props.elements.edges,
       layoutName : 'preset',
-      style: NetworkDefaultStyle,
+      style: NetworkDefaultStyle(),
       cy : null // cytoscape instance
     }
     // this.createNetwork = this.createNetwork.bind(this)
@@ -72,7 +72,7 @@ class Network extends React.Component {
       {
         container: document.getElementById(CYTOSCAPE_DIV_ID),
         elements: { nodes : this.state.nodes, edges : this.state.edges },
-        style: this.props.style,
+        style: this.state.style,
         layout: {
           name: this.state.layoutName
         }
