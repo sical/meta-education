@@ -24,8 +24,8 @@ def crawl_and_save_records(start, end):
     offset = 0
 
     # reset local data
-    reset_statements_db()
-    reset_actions_db()
+    # reset_statements_db()
+    # reset_actions_db()
 
     # get all statements from xAPI into mongo
     while has_more_records:
@@ -53,17 +53,17 @@ def main():
     parser = parse_args()
     args = parser.parse_args()
 
-    if not args.start :
-        start = datetime.datetime.now()
-    else :
-        start = datetime.datetime.now().strptime(args.start, '%Y-%m-%d %H:%M:%S.%f')
-
     if not args.duration :
         duration = datetime.timedelta(days=1)
     else :
         duration = datetime.timedelta(days=int(args.duration))
 
-    end = start + duration
+    if args.start :
+        start = datetime.datetime.strptime(args.start, '%Y-%m-%d %H:%M:%S.%f')
+        end = start + duration
+    else :
+        end = datetime.datetime.now()
+        start = end - duration
 
     print "Crawling data from '%s' to '%s' (%s days)"%(start, end, duration.days)
 
