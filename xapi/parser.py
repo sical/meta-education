@@ -109,6 +109,20 @@ def extract_networks_from_statements(start, end):
     # container for all network states
     actions = {}
 
+    def get_network(project_id):
+        try :
+            return networks[project_id]
+        except KeyError:
+            networks[project_id] = nx.DiGraph()
+            return networks[project_id]
+
+    def get_actions(project_id):
+        try :
+            return actions[project_id]
+        except KeyError:
+            actions[project_id] = []
+            return actions[project_id]
+
     # extract infos
     for statement in db.statements.find(q):
 
@@ -141,8 +155,12 @@ def extract_networks_from_statements(start, end):
                 data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
                 project_id = data["project"]["id"]
 
+                # get
+                network = get_network(project_id)
+                actions_list = get_actions(project_id)
+
                 if action["type"] == "create":
-                    create_elements(networks[project_id], element_type, data )
+                    create_elements(network, element_type, data )
 
                 elif action["type"] == "update" or action["type"] == "move" :
                     try:
@@ -159,7 +177,7 @@ def extract_networks_from_statements(start, end):
                 action["statement"] = statement
                 action["project_id"] = project_id
 
-                actions[project_id].append(action)
+                actions_list.append(action)
 
     print "%s projects found"%len(actions.keys())
     return actions
@@ -170,21 +188,25 @@ def save_actions_to_mongos(actions):
         print "## project %s"%network_id
 
         # save data points to db
-        db.actions.insert_many(actions[ network_id ])
+        if len(actions[ network_id ]):
+            db.actions.insert_many(actions[ network_id ])
 
-        # sort by time
-        actions[ network_id ].sort(key=lambda c: c["ts"]) # sort by time
-        ts = [ a["ts"] for a in actions[ network_id ]]
-        diff = max(ts)-min(ts)
-        minutes_seconds = divmod(diff.total_seconds(), 60)
-        print "%d:%d min  - from %s to %s"%( minutes_seconds[0], minutes_seconds[1], min(ts), max(ts) )
+            # sort by time
+            actions[ network_id ].sort(key=lambda c: c["ts"]) # sort by time
+            ts = [ a["ts"] for a in actions[ network_id ]]
+            diff = max(ts)-min(ts)
+            minutes_seconds = divmod(diff.total_seconds(), 60)
+            print "%d:%d min  - from %s to %s"%( minutes_seconds[0], minutes_seconds[1], min(ts), max(ts) )
 
-        # show actions type count
-        for c in Counter([a["type"] for a in actions[network_id]]).most_common() : print c[0], c[1]
-        print "-"*10
+            # show actions type count
+            for c in Counter([a["type"] for a in actions[network_id]]).most_common() : print c[0], c[1]
+            print "-"*10
 
-        # log final state
-        print "Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id]))
+            # log final state
+            print "Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id]))
+        else :
+            print 'No actions saved.'
+
 
     print "%s actions stored"%db.actions.count()
 
