@@ -36,9 +36,10 @@ class Network extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.actions.length) {
-      let currentAction = nextProps.actions[nextProps.actions.length-1]
-      // console.log("next", currentAction);
+    console.log(nextProps.currentTimeIndex);
+    if (nextProps.actions.length && nextProps.currentTimeIndex) {
+      let currentAction = nextProps.actions[nextProps.currentTimeIndex]
+
       this.setState({ nodes : [], edges : []})
       let nodes = currentAction.nodes.map(n => {
         return {
@@ -145,7 +146,7 @@ Network.defaultProps = {
 const mapStateToProps = (state) => {
     // console.log(state)
     return {
-      currentTime : state.viz.currentTime,
+      currentTimeIndex : state.viz.currentTimeIndex,
       actions : state.api.actions
     }
 }

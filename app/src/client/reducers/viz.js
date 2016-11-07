@@ -6,7 +6,10 @@ export const viz = (
     // console.log(action);
     switch(action.type) {
       case ActionTypes.SET_TIME_VALUE:
-        return { ...state, currentTime : Math.floor(action.time) };
+        return { ...state,
+          currentTimeIndex : action.timeIndex
+          // currentTime : Math.floor(action.time)
+        };
       default:
           return state;
     }
