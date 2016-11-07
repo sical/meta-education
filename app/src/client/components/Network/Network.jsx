@@ -10,7 +10,7 @@ const style = {
   divNetwork : {
     height: '400px',
     width: '400px',
-    position: 'absolute',
+    // position: 'absolute',
     // backgroundColor: 'rgba(0,0,0,.5)',
     // top: '0px',
     // left: '0',
@@ -35,39 +35,49 @@ class Network extends React.Component {
 
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps.currentTimeIndex);
-    if (nextProps.actions.length && nextProps.currentTimeIndex) {
-      let currentAction = nextProps.actions[nextProps.currentTimeIndex]
+
+  setStateNetworkData(props) {
+    console.log("update network data...")
+    if (props.actions.length) {
+      let index = props.currentTimeIndex ||  props.actions.length-1
+      let currentAction = props.actions[index]
 
       this.setState({ nodes : [], edges : []})
-      let nodes = currentAction.nodes.map(n => {
-        return {
-          group : 'nodes',
-          position : n[1].position,
-          data : Object.assign( n[1], { id : n[0] })
-        }
-      }),
-          edges = currentAction.edges.map(n => {
-            return {
-              group : 'edges',
-              data : Object.assign( n[2], {
-                id : n[2]._id,
-                source : n[2].from,
-                target : n[2].to
-              })
-            }
-          })
 
-      this.setState({
-        nodes : nodes,
-        edges : edges
-      })
-    }
+      let nodes = currentAction.nodes.map(n => {
+          return {
+            group : 'nodes',
+            position : n[1].position,
+            data : Object.assign( n[1], { id : n[0] })
+          }
+        }),
+        edges = currentAction.edges.map(n => {
+          return {
+            group : 'edges',
+            data : Object.assign( n[2], {
+              id : n[2]._id,
+              source : n[2].from,
+              target : n[2].to
+            })
+          }
+        })
+
+        this.setState({
+          nodes : nodes,
+          edges : edges
+        })
+      }
+  }
+
+  componentWillReceiveProps(nextProps) {
+      this.setStateNetworkData(nextProps)
+      this.updateNetwork()
   }
 
   createNetwork() {
     console.log('* Cytoscape init...')
+
+    this.setStateNetworkData(this.props) // update data
 
     const network = cytoscape(
       {
@@ -83,9 +93,9 @@ class Network extends React.Component {
   }
 
   updateNetwork() {
-    console.log('* rendering network...')
     if(this.state.cy) {
-      console.log({ nodes : this.state.nodes, edges : this.state.edges });
+      console.log('* rendering network...')
+      // console.log({ nodes : this.state.nodes, edges : this.state.edges });
       this.state.cy.json({ elements : { nodes : this.state.nodes, edges : this.state.edges } });
       // console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
       this.state.cy.layout( { name : 'preset' } )
@@ -102,6 +112,7 @@ class Network extends React.Component {
    this.state.cy.destroy();
   }
 
+  // TODO : compare nodes and edges to check if update is required
   // shouldComponentUpdate(nextProps, nextState) {
     // if (nextProps.networkData.equals(this.props.networkData)) {
     //   console.log('Network unchanged, not updating cytoscapejs')
@@ -112,8 +123,7 @@ class Network extends React.Component {
   // }
 
   render() {
-
-    this.updateNetwork()
+    this.updateNetwork() // show network
     return (
       <div>
         <p className="count">
@@ -146,8 +156,7 @@ Network.defaultProps = {
 const mapStateToProps = (state) => {
     // console.log(state)
     return {
-      currentTimeIndex : state.viz.currentTimeIndex,
-      actions : state.api.actions
+      currentTimeIndex : state.viz.currentTimeIndex
     }
 }
 

@@ -8,22 +8,22 @@ import Slider from 'material-ui/Slider';
 import store from '../../store'
 import {ActionTypes} from '../../actions'
 
-class TimeSlider extends React.Component {
+export default class TimeSlider extends React.Component {
   constructor(props) {
     super(props)
-    // let now =  new Date().getTime()
+
+    let max = props.timestamps.length -1
     this.state = {
-      value: 0,
+      value: max,
       min : 0,
-      max : 100,
-      defaultValue: 100,
+      max : max,
+      defaultValue: max,
       playerId : null // store the intervalId
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.timestamps.length) {
-
       let min = 0,
         max = nextProps.timestamps.length-1
 
@@ -101,8 +101,12 @@ class TimeSlider extends React.Component {
         onClick={this.play.bind(this)}
         />
 
+    let currentTime = this.props.timestamps[this.state.value] || Date.now(), //,
+      timeFormatted = d3.timeFormat("%a %d %B, %H:%M")(currentTime)
+
     return(
       <div>
+          <p>{timeFormatted}</p>
         <div>
           <FlatButton
             label="Prev"
@@ -127,14 +131,4 @@ class TimeSlider extends React.Component {
       </div>
     )
   }
-
 }
-
-const mapStateToProps = (state) => {
-
-    return {
-      timestamps : state.api.timestamps
-    }
-}
-
-export default connect(mapStateToProps)(TimeSlider)
