@@ -1,7 +1,9 @@
 import React from 'react'
-import Slider from 'material-ui/Slider';
 import {connect} from 'react-redux'
 import * as d3 from 'd3';
+
+import FlatButton from 'material-ui/FlatButton';
+import Slider from 'material-ui/Slider';
 
 import store from '../../store'
 import {ActionTypes} from '../../actions'
@@ -14,14 +16,14 @@ class TimeSlider extends React.Component {
       value: 0,
       min : 0,
       max : 100,
-      defaultValue: 100
+      defaultValue: 100,
+      playerId : null // store the intervalId
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.timestamps.length) {
-      // let min =  d3.min(nextProps.timestamps),
-      //   max = d3.max(nextProps.timestamps)
+
       let min = 0,
         max = nextProps.timestamps.length-1
 
@@ -42,7 +44,7 @@ class TimeSlider extends React.Component {
     }
   }
 
-  handleSliderChange(e, value) {
+  dispatchIndex(value) {
     this.setState({ value: value })
     store.dispatch({
       type: ActionTypes.SET_TIME_VALUE,
@@ -50,20 +52,79 @@ class TimeSlider extends React.Component {
     })
   }
 
+  // actions
+  handleSliderChange(e, value) {
+    this.dispatchIndex(value);
+  }
+
+  prev() {
+    let prevTimeIndex  = this.state.value >  0 ? this.state.value -1 : this.state.value
+    console.log("prev", prevTimeIndex);
+    this.dispatchIndex(prevTimeIndex)
+  }
+
+  next() {
+    let nextTimeIndex  = this.state.value < this.props.timestamps.length -1 ? this.state.value + 1 : this.state.value
+    console.log("next", nextTimeIndex);
+    this.dispatchIndex(nextTimeIndex)
+  }
+
+  play() {
+    console.log("play");
+    var self = this;
+    if (!this.state.playerId) {
+      let playerId = setInterval(function() {
+          if(self.state.value < self.props.timestamps.length -1) self.next()
+          else　self.stop
+        }, 200)
+      self.setState({ playerId : playerId })
+    }
+  }
+
+  stop() {
+    console.log("stop");
+    clearInterval(this.state.playerId)
+    this.setState({ playerId : null })
+  }
+
   render() {
     console.log(this.state);
 
+    let playStop = this.state.playerId ?
+      <FlatButton
+        label="Stop"
+        onClick={this.stop.bind(this)}
+        />
+      :
+      <FlatButton
+        label="Play"
+        onClick={this.play.bind(this)}
+        />
+
     return(
-      // <div>
-      //   <FlatButton label="Prev" />
-      //   <FlatButton label="Next" />
-      // </div>
-      <Slider
-        ref='slider'
-        {...this.state}
-        step={1}
-        onChange={ this.handleSliderChange.bind(this) }
-      />
+      <div>
+        <div>
+          <FlatButton
+            label="Prev"
+            onClick={this.prev.bind(this)}
+            />
+          { playStop }
+          <FlatButton
+            label="Next"
+            onClick={this.next.bind(this)}
+            />
+        </div>
+        <Slider
+          ref='slider'
+          // {...this.state}
+          min={this.state.min}
+          max={this.state.max}
+          value={this.state.value}
+          defaultValue={this.state.defaultValue}
+          step={1}
+          onChange={ this.handleSliderChange.bind(this) }
+        />
+      </div>
     )
   }
 
