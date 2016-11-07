@@ -7,15 +7,14 @@ Copy `config/config.sample.js` to `config/config.js` and edit passord/username c
 
 ## Run XAPI crawler and parser
 
-  cd xapi
-  pip install -r requirements.txt
-  python main.py
+```bash
 
-## Run renkan crawler
+  python setup.py # install the crawler with dependencies
 
-  cd renkan
-  pip install requests
-  python renkan_crawler.py
+  xapi-client # crawl last day
+  xapi-client -d 30 -s '2016-12-10 16:45:00.12'  # crawl last 30 days starting from Oct 12, 4:45pm
+
+```
 
 ## Run the VIZ app
 
