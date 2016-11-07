@@ -19,11 +19,11 @@ class StudentsList extends React.Component {
   }
 
   componentWillMount() {
-    this.props.dispatch(AsyncAPI.getStudentsList())
+    this.props.dispatch(AsyncAPI.getProjectsList())
   }
 
   handleClickStudent (userId) {
-    this.props.dispatch(AsyncAPI.getProjectsList(userId))
+    // this.props.dispatch(AsyncAPI.getProjectsList(userId))
   }
 
   handleClickProject (_id) {
@@ -31,31 +31,36 @@ class StudentsList extends React.Component {
   }
 
   render() {
+    console.log(this.props.projects);
+    let students = this.props.projects.map( (student,i) => {
 
-    let projects = this.props.projects.map( (p, i) =>
-      <ListItem
-        primaryText={`project ${i} (${p.value} actions)`}
-        onClick={this.handleClickProject.bind(this, p._id)}
-        key={i}
-      />
-    )
-
-    let students = this.props.students.map( (id, i) =>
-      <ListItem
-          primaryText={"Brendan Lim"}
-          key={i}
-          leftAvatar={
-            <Avatar
-            icon={<ActionFace />}
-             />
-          }
-          rightIcon={<ContentSend />}
-          primaryTogglesNestedList={true}
-          onClick={this.handleClickStudent.bind(this, id)}
-          nestedItems={projects}
+      let projects = student.projects.map( (project, j) =>
+        <ListItem
+          primaryText={`project ${j} (${project.count} actions)`}
+          onClick={this.handleClickProject.bind(this, project.projectId)}
+          key={j}
         />
+      )
+
+      return (
+        <ListItem
+            primaryText={"student " + i}
+            key={i}
+            leftAvatar={
+              <Avatar
+              icon={<ActionFace />}
+               />
+            }
+            rightIcon={<ContentSend />}
+            primaryTogglesNestedList={true}
+            onClick={this.handleClickStudent.bind(this, student)}
+            nestedItems={projects}
+          />
+        )
+      }
     )
 
+    // console.log(students);
     return (
       <div>
         <Subheader>Elèves</Subheader>
@@ -68,13 +73,13 @@ class StudentsList extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  // console.log(state);
-    return {
-        count: state.counter,
-        isWaiting : state.api.isWaiting,
-        students : state.api.students,
-        projects : state.api.projects
-    }
+
+  return {
+      count: state.counter,
+      isWaiting : state.api.isWaiting,
+      students : state.api.students,
+      projects : state.api.projects
+  }
 }
 
 export default connect(mapStateToProps)(StudentsList)

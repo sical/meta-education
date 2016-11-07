@@ -43,8 +43,43 @@ router.get('/project/:project_id/', (req, res) => {
   })
 });
 
+// GET a　list of all projects
+router.get(['/projects'], (req, res) => {
+
+  db.actions.mapReduce(
+    function() {
+       emit({ name : this.statement.actor.name, id : this.project_id }, 1)
+    },
+    function(key, values) {
+      let sum = 0 ;
+      for(var i in values) sum += values[i];
+      return sum;
+    },
+    {
+      out : { inline : 1}
+    },
+    (err, docs) => {
+      if(err) throw err
+      if (docs == null) res.send({})
+
+
+      let projects = {}
+      docs.forEach(d =>
+        projects[d._id.name] ?
+          projects[d._id.name].push({ projectId : d._id.id , count : d.value})
+          :
+          projects[d._id.name] = [{ projectId : d._id.id , count : d.value}]
+        )
+      res.send({
+        projects : Object.keys(projects).map(p => ({ user : p, projects: projects[p] }))
+      })
+    })
+});
+
 // GET a　list of projects for a specific user
-router.get('/projects/:user_id/', (req, res) => {
+router.get(['/projects/:user_id/'], (req, res) => {
+  let userId = req.params.user_id || ""
+
   db.actions.mapReduce(
     function() {
        emit(this.project_id, 1)
@@ -56,13 +91,13 @@ router.get('/projects/:user_id/', (req, res) => {
     },
     {
       out : { inline : 1},
-      query: { "statement.actor.name" : req.params.user_id},
+      query: { "statement.actor.name" : userId},
     },
     (err, docs) => {
       if(err) throw err
       if (docs == null) res.send({})
       res.send({
-        user : req.params.user_id,
+        user : userId,
         projects : docs
       })
     })

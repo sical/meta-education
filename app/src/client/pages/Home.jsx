@@ -37,7 +37,7 @@ export default class Home extends React.Component {
         <Grid>
           <Row>
             <Col>
-              <StudentsList students={this.props.students}/>
+              <StudentsList />
             </Col>
             <Col xs>
               <Dashboard />
