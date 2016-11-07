@@ -2,6 +2,10 @@ data
 venv
 
 *.pyc
+bin
+build
+dist
+*egg-info
 
 notebooks/.ipynb_checkpoints/
 notebooks/stacked_bar.html

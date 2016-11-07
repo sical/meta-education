@@ -6,7 +6,7 @@ from datetime import datetime
 from django.utils.dateparse import parse_datetime
 
 # import config
-with open(os.path.join(os.getcwd(),"../config/config.json"),"rb") as f:
+with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
     config = json.load(f)
 
 # connect to mongo
@@ -65,8 +65,11 @@ def save_statements_to_mongos(statements):
         statement["timestamp"] = parse_datetime(statement["timestamp"])
 
     # dump data to mongo
-    db.statements.insert_many(clean_statements)
-    print "%s statements saved in Mongo. total : %s"%(db.statements.count(), len(statements))
+    if len(statements):
+        db.statements.insert_many(clean_statements)
+        print "%s statements saved in Mongo. total : %s"%(db.statements.count(), len(statements))
+    else:
+        print "No records found."
 
 
 def reset_statements_db():

@@ -19,7 +19,7 @@ from pymongo import MongoClient
 import networkx as nx
 
 # import config
-with open(os.path.join(os.getcwd(),"../config/config.json"),"rb") as f:
+with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
     config = json.load(f)
 
 # connect to mongo
@@ -90,14 +90,19 @@ def update_elements(G, element_type, data):
 
 def extract_networks_from_statements(start, end):
     # ### Parse networks data
-    print "Extracting statements from Mongo..."
 
     # query for mongo
     q = { 'stored': {'$lt': end, '$gte': start} }
+    c = db.statements.find(q).count()
 
-    print "%s results"%db.statements.find(q).count()
+    if not c:
+        print "No records in DB"
+        return
+
+    print "%s results"%c
     print "-"*10
 
+    print "Extracting statements from Mongo..."
     # store different informations about the network
     networks = {}
 
