@@ -1,7 +1,7 @@
 import json
 import os
 from xAPIClient import xAPIClient
-from pymongo import MongoClient
+import pymongo
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
 
@@ -10,8 +10,11 @@ with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
     config = json.load(f)
 
 # connect to mongo
-client = MongoClient('localhost', 27017)
+client = pymongo.MongoClient('localhost', 27017)
 db = client["metaEducation"]
+
+# index to ensure unicity of documents
+db.statements.ensure_index( [ ("id", pymongo.ASCENDING) ], unique=True )
 
 # construct an LRS
 print "Connecting to the LRS..."
@@ -66,8 +69,11 @@ def save_statements_to_mongos(statements):
 
     # dump data to mongo
     if len(statements):
-        db.statements.insert_many(clean_statements)
-        print "%s statements saved in Mongo. total : %s"%(db.statements.count(), len(statements))
+        try :
+            res = db.statements.insert_many(clean_statements)
+            print "%s statements in Mongo. New records : %s"%(db.statements.count(), len(res.inserted_ids))
+        except pymongo.errors.BulkWriteError as e:
+            print "%s statements in Mongo. New records : %s"%(db.statements.count(), e.details['nInserted'])
     else:
         print "No records found."
 

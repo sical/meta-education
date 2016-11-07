@@ -15,7 +15,7 @@ import json
 import os
 import datetime
 from collections import Counter
-from pymongo import MongoClient
+import pymongo
 import networkx as nx
 
 # import config
@@ -23,8 +23,11 @@ with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
     config = json.load(f)
 
 # connect to mongo
-client = MongoClient('localhost', 27017)
+client = pymongo.MongoClient('localhost', 27017)
 db = client["metaEducation"]
+
+# ensure uniqueness
+db.actions.ensure_index( [ ("id", pymongo.ASCENDING) ], unique=True )
 
 # ### Parser functions
 # Functions used to convert Tincan API answers into networks
@@ -87,7 +90,6 @@ def update_elements(G, element_type, data):
         raise ValueError("Wrong element type %s"%element_type)
     return G
 
-
 def extract_networks_from_statements(start, end):
     # ### Parse networks data
 
@@ -133,6 +135,7 @@ def extract_networks_from_statements(start, end):
         action = {}
         action["type"] = get_action(statement["verb"]["id"])
         action["ts"] = statement["stored"]
+        action["id"] = statement["id"]
 
         if action["type"] in ["access","loggedin","viewed","close"] :
             pass # ignore those actions
@@ -189,7 +192,11 @@ def save_actions_to_mongos(actions):
 
         # save data points to db
         if len(actions[ network_id ]):
-            db.actions.insert_many(actions[ network_id ])
+            try :
+                res = db.actions.insert_many(actions[ network_id ])
+                print "%s new records."%len(res.inserted_ids)
+            except pymongo.errors.BulkWriteError as e:
+                print "%s new records."%e.details['nInserted']
 
             # sort by time
             actions[ network_id ].sort(key=lambda c: c["ts"]) # sort by time
@@ -200,15 +207,15 @@ def save_actions_to_mongos(actions):
 
             # show actions type count
             for c in Counter([a["type"] for a in actions[network_id]]).most_common() : print c[0], c[1]
-            print "-"*10
 
             # log final state
             print "Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id]))
         else :
-            print 'No actions saved.'
+            print 'No actions detected.'
 
+        print "-"*10
 
-    print "%s actions stored"%db.actions.count()
+    print "%s actions in the database"%db.actions.count()
 
 def reset_actions_db():
     db.actions.drop()
