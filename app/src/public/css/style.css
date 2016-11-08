@@ -28,3 +28,7 @@ body {
   border: 2px solid #FF9800 !important;
   background-color: #ffd699 !important;
 }
+
+.selected {
+  background-color: rgba(255, 0, 0, 0.5) !important;
+}
