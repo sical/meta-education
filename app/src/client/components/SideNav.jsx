@@ -6,7 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
-
+import AsyncAPI from '../AsyncAPI'
 import { ActionTypes } from '../actions'
 import store from '../store'
 
@@ -23,6 +23,7 @@ export default class SideNav extends React.Component {
 
   selectClasse(classeId) {
     store.dispatch({ type : ActionTypes.SELECT_CLASSE, currentClasse : classeId })
+    store.dispatch(AsyncAPI.getProjectsList(classeId))
     this.handleClose()
   }
 

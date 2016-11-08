@@ -14,6 +14,7 @@ import AsyncAPI from '../AsyncAPI'
 
 import moment from 'moment'
 
+
 // set to French
 moment.locale('fr')
 
@@ -23,18 +24,19 @@ class StudentsList extends React.Component {
   }
 
   componentWillMount() {
-    this.props.dispatch(AsyncAPI.getProjectsList(this.props.currentClasse))
+    
   }
 
-  handleClickStudent (userId) {
-    // this.props.dispatch(AsyncAPI.getProjectsList(userId))
-  }
+  // handleClickStudent (projectId) {
+  //   this.props.dispatch(AsyncAPI.getProjectsList(projectId))
+  // }
 
-  handleClickProject (_id) {
-    // this.props.dispatch(AsyncAPI.getProject(_id))
+  handleClickProject (projectId) {
+    store.dispatch(AsyncAPI.getProject(projectId))
   }
 
   render() {
+    console.log(this.props );
 
     let students = this.props.projects.map( (student,i) => {
 
@@ -42,7 +44,7 @@ class StudentsList extends React.Component {
         <ListItem
           primaryText={`${project.name}`}
           secondaryText={`${project.actionsCount} actions. Edité ${ moment(project.end).fromNow()}`}
-          onClick={this.handleClickProject.bind(this, project.projectId)}
+          onClick={this.handleClickProject.bind(this, project.id)}
           key={j}
         />
       )
@@ -58,7 +60,7 @@ class StudentsList extends React.Component {
             }
             rightIcon={<ContentSend />}
             primaryTogglesNestedList={true}
-            onClick={this.handleClickStudent.bind(this, student)}
+            // onClick={this.handleClickStudent.bind(this, student)}
             nestedItems={projects}
           />
         )
@@ -80,7 +82,8 @@ class StudentsList extends React.Component {
 const mapStateToProps = (state) => {
 
   return {
-      projects : state.api.projects
+      projects : state.api.projects,
+      currentClasse : state.viz.currentClasse
   }
 }
 

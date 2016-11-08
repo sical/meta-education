@@ -45,10 +45,7 @@ class Home extends React.Component {
           <Grid>
             <Row>
               <Col>
-                <StudentsList
-                  students={this.props.students}
-                  currentClasse={this.props.currentClasse}
-                  />
+                <StudentsList />
               </Col>
               <Col xs>
                 <Dashboard />
