@@ -4,6 +4,9 @@ from xAPIClient import xAPIClient
 import pymongo
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
+import logging
+
+logger = logging.getLogger()
 
 # import config
 with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
@@ -45,7 +48,7 @@ def get_records_from_xapi(start, end, offset=0):
     assert type(end) is datetime
     assert type(start) is datetime
 
-    print "Crawling data from '%s' to '%s' / offset : %s"%(start, end, offset)
+    logger.debug("Crawling data from '%s' to '%s' / offset : %s"%(start, end, offset))
 
     # query
     q = {
@@ -57,8 +60,7 @@ def get_records_from_xapi(start, end, offset=0):
     }
 
     data = lrs.get_statements(q)
-    print data.keys()
-    print "got %s statements from xAPI"%len(data["statements"])
+    logger.debug("got %s statements from xAPI"%len(data["statements"]))
     return data
 
 # remove dots in key because mongo does not support them

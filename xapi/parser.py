@@ -20,8 +20,6 @@ import pymongo
 import networkx as nx
 import logging
 
-# logs
-# création de l'objet logger qui va nous servir à écrire dans les logs
 logger = logging.getLogger()
 
 
@@ -112,8 +110,8 @@ def extract_networks_from_statements():
     # q = { 'stored': {'$lt': end, '$gte': start} }
     users = json.load(open('./data/users.json', 'r'))
     authorized_user_ids = [ u["id"].decode('utf-8') for u in users["users"]]
-    # logging.info("Fetching data for %s authorized users...", len(authorized_user_ids))
 
+    print "Fetching data for %s authorized users..."%len(authorized_user_ids)
     q = { "actor.account.name" : { "$in" : authorized_user_ids } }
     c = db.statements.find(q).count()
 
@@ -121,7 +119,7 @@ def extract_networks_from_statements():
         print "No records in DB"
         return
 
-    print "%s results"%c
+    print "%s statements in the DB"%c
     print "-"*10
 
     print "Extracting statements from Mongo..."
@@ -130,6 +128,9 @@ def extract_networks_from_statements():
 
     # container for all network states
     actions = {}
+
+    # store info about other actions
+    ignored = []
 
     # extract infos
     for i,statement in enumerate(db.statements.find(q).sort([ ( 'stored', 1 ) ])):
@@ -147,6 +148,7 @@ def extract_networks_from_statements():
 
         if action["type"] in ["access","loggedin","viewed","close", "attempted", "experienced"] :
             logger.debug(action_log)
+            ignored.append(action["type"])
             pass # ignore those actions
         else :
             element_type = statement["object"]["definition"]["type"].split("#")[1]
@@ -162,10 +164,11 @@ def extract_networks_from_statements():
                     actions[new_id] = []
                     # "Create new Renkan !"
                 elif action["type"] == "update":
+                    ignored.append("Renkan " + action["type"])
                     pass
 
             elif element_type == "View":
-                pass
+                ignored.append("View " + action["type"])
 
             elif element_type == "Node" or element_type == "Edge":
 
@@ -204,9 +207,10 @@ def extract_networks_from_statements():
                     # actions are stored only for networks
                     actions[project_id].append(action)
                 else :
-                    print "Action ignored"
+                    logger.debug("Action ignored : not in known networks")
 
     print "%s projects found"%len(actions.keys())
+    print "ignored actions : %s"%Counter(ignored).most_common()
     return actions
 
 def save_actions_to_mongos(actions):
@@ -242,7 +246,7 @@ def save_actions_to_mongos(actions):
 
         logger.debug("-"*10)
 
-    print "%s actions in the database"%db.actions.count()
+    print "%s relevant actions on networks in the database"%db.actions.count()
 
 def reset_actions_db():
     db.actions.drop()

@@ -34,6 +34,7 @@ def crawl_and_save_records(start, end):
     oldest = db_timerange[0]
     newest = db_timerange[1]
     print "Last record in the DB from '%s' to  '%s'"%(oldest, newest)
+    print "Getting more results from the API..."
 
     if oldest and newest and oldest < start and end > newest :
         print "Statements in the DB are already newer."
@@ -42,7 +43,7 @@ def crawl_and_save_records(start, end):
         while has_more_records:
             resp = get_records_from_xapi(start, end, offset=offset)
             saved_results = save_statements_to_mongos(resp["statements"])
-            print "New records saved : %s"%saved_results
+            logger.debug("New records saved : %s"%saved_results)
             offset = offset + 100
             if resp["more"] == "" :
                 has_more_records = False
