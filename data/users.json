@@ -4,18 +4,21 @@
       "name" :"Test Prod User",
       "id" : "31af3b8e-4ac6-4ae1-b651-a64df7b012cd",
       "classe" : "CM1",
+      "classeId" : "A1",
       "professeur" : "Mme Michu"
     },
     {
       "name" :"Jean-Michel",
       "id" : "95bb0fee-99a8-4967-bca9-a5ffc2abc01b",
       "classe" : "CM1",
+      "classeId" : "A1",
       "professeur" : "Mme Michu"
     },
     {
       "name" :"Janine",
       "id" : "07b3651f-a467-4723-baa3-d445a8110215",
       "classe" : "CM2",
+      "classeId" : "A2",
       "professeur" : "Mr Roger"
     }
   ]

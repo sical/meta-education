@@ -1,9 +1,14 @@
 import React from 'react';
+
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
+
+
+import { ActionTypes } from '../actions'
+import store from '../store'
 
 export default class SideNav extends React.Component {
 
@@ -16,13 +21,19 @@ export default class SideNav extends React.Component {
 
   handleClose = () => this.setState({open: false});
 
+  selectClasse(classeId) {
+    store.dispatch({ type : ActionTypes.SELECT_CLASSE, currentClasse : classeId })
+    this.handleClose()
+  }
+
   render() {
-    let menuItems = this.props.projects.map( (d, i) =>
+
+    let menuItems = this.props.students.map( (classe, i) =>
       <MenuItem
         key={i}
-        // onTouchTap={this.handleClose}
+        onTouchTap={this.selectClasse.bind(this, classe.classeId)}
         >
-        Project {i} ({d.value})
+        {classe.professeur　+ " " + classe.name}
       </MenuItem>
     )
     return (
@@ -33,7 +44,7 @@ export default class SideNav extends React.Component {
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}
         >
-          <Subheader>Projects</Subheader>
+          <Subheader>Classes</Subheader>
           {menuItems}
           <Divider />
         </Drawer>

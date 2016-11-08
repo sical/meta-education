@@ -5,7 +5,7 @@ export default class AsyncAPI {
 
     static getStudentsList = () => {
       console.log("api call students");
-      var url = "/api/students/"
+      var url = "/api/classes"
       //`http://data.com/${userId}`
       store.dispatch({ type : ActionTypes.GET_STUDENTS_LIST })
       return dispatch => fetch(url) // Redux Thunk handles these
@@ -16,10 +16,9 @@ export default class AsyncAPI {
         );
     }
 
-    static getProjectsList = (userId) => {
+    static getProjectsList = (classeId) => {
       // console.log("api call students : "+userId);
-      // var url = `/api/projects/${userId}`
-      let url = `/api/projects`
+      var url = `/api/projects/${classeId}`
       return dispatch => fetch(url) // Redux Thunk handles these
         .then(res => res.json())
         .then(

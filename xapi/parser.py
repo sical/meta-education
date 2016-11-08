@@ -162,6 +162,7 @@ def extract_networks_from_statements():
                     new_id = data["id"]
                     networks[new_id] = nx.DiGraph()
                     actions[new_id] = []
+
                     # "Create new Renkan !"
                 elif action["type"] == "update":
                     ignored.append("Renkan " + action["type"])
@@ -174,6 +175,7 @@ def extract_networks_from_statements():
 
                 data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
                 project_id = data["project"]["id"]
+                action["project_name"] = data["project"]["title"]
 
                 if project_id in networks.keys(): # ignore graphs that were not created properly with Renkan/Create
                     if action["type"] == "create":
@@ -186,8 +188,6 @@ def extract_networks_from_statements():
                         if element_type == "Node":
                             _id = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
                             update_node(networks[project_id], _id, data_changed)
-
-
 
                         if element_type == "Edge":
                             _from = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["from"]

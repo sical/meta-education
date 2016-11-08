@@ -2,7 +2,7 @@ import { ActionTypes } from '../actions'
 
 export const api = (state = {
       projects : [],
-      students: [] ,
+      students: [],
       actions : [],
       timestamps : [],
       isWaiting: false
@@ -11,24 +11,33 @@ export const api = (state = {
       // console.log(action);
       switch (action.type) {
         case ActionTypes.GET_STUDENTS_LIST:
-            return { ...state, isWaiting: true };
+            return { ...state,
+              isWaiting: true
+            };
         case ActionTypes.GET_STUDENTS_LIST_SUCCESS:
             return { ...state,
               isWaiting: false,
-              students: action.data.students,
+              students: action.data,
               success : true
             };
         case ActionTypes.GET_STUDENTS_LIST_ERROR:
-            return { ...state, isWaiting: false, success : false  };
+            return {
+              ...state,
+              isWaiting: false,
+              success : false
+            };
         case ActionTypes.GET_PROJECTS_LIST_SUCCESS:
           return { ...state,
             isWaiting: false,
-            user: action.data.user,
-            projects: action.data.projects,
+            projects: action.data,
             success : true
           };
         case ActionTypes.GET_PROJECTS_LIST_ERROR:
-            return { ...state, isWaiting: false, success : false  };
+            return {
+              ...state,
+              isWaiting: false,
+              success : false
+            };
         case ActionTypes.GET_PROJECT_ACTIONS_SUCCESS:
           // convert dates to ms
           let timestamps = action.data.map(d=> new Date(d.ts).getTime())

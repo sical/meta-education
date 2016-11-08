@@ -12,6 +12,10 @@ import store from '../store'
 import  {ActionTypes} from '../actions'
 import AsyncAPI from '../AsyncAPI'
 
+import moment from 'moment'
+
+// set to French
+moment.locale('fr')
 
 class StudentsList extends React.Component {
   constructor(props) {
@@ -19,7 +23,7 @@ class StudentsList extends React.Component {
   }
 
   componentWillMount() {
-    this.props.dispatch(AsyncAPI.getProjectsList())
+    this.props.dispatch(AsyncAPI.getProjectsList(this.props.currentClasse))
   }
 
   handleClickStudent (userId) {
@@ -27,16 +31,17 @@ class StudentsList extends React.Component {
   }
 
   handleClickProject (_id) {
-    this.props.dispatch(AsyncAPI.getProject(_id))
+    // this.props.dispatch(AsyncAPI.getProject(_id))
   }
 
   render() {
-    console.log(this.props.projects);
+
     let students = this.props.projects.map( (student,i) => {
 
       let projects = student.projects.map( (project, j) =>
         <ListItem
-          primaryText={`project ${j} (${project.count} actions)`}
+          primaryText={`${project.name}`}
+          secondaryText={`${project.actionsCount} actions. Edité ${ moment(project.end).fromNow()}`}
           onClick={this.handleClickProject.bind(this, project.projectId)}
           key={j}
         />
@@ -44,7 +49,7 @@ class StudentsList extends React.Component {
 
       return (
         <ListItem
-            primaryText={"student " + i}
+            primaryText={student.name}
             key={i}
             leftAvatar={
               <Avatar
@@ -75,9 +80,6 @@ class StudentsList extends React.Component {
 const mapStateToProps = (state) => {
 
   return {
-      count: state.counter,
-      isWaiting : state.api.isWaiting,
-      students : state.api.students,
       projects : state.api.projects
   }
 }
