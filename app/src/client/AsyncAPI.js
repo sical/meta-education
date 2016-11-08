@@ -1,5 +1,6 @@
 import store from './store'
 import { ActionTypes } from './actions'
+import querystring  from 'querystring'
 
 export default class AsyncAPI {
 
@@ -35,6 +36,24 @@ export default class AsyncAPI {
         .then(
           data => store.dispatch({ type: ActionTypes.GET_PROJECT_ACTIONS_SUCCESS, data }),
           err => store.dispatch({ type: ActionTypes.GET_PROJECT_ACTIONS_ERROR, err })
+        );
+    }
+
+    static getStats = (projects) => {
+      console.log("api call stats : "+projects.length + " projects");
+
+      if(!projects.length) {
+        store.dispatch({ type: ActionTypes.GET_STATS_ERROR })
+      }
+
+      let q = querystring.stringify({ projects : projects})
+      var url = `/api/stats?${q}`
+
+      return dispatch => fetch(url) // Redux Thunk handles these
+        .then(res => res.json())
+        .then(
+          data => store.dispatch({ type: ActionTypes.GET_STATS_SUCCESS, data }),
+          err => store.dispatch({ type: ActionTypes.GET_STATS_ERROR, err })
         );
     }
 }

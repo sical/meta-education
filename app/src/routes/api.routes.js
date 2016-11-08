@@ -47,14 +47,6 @@ router.get('/classes', (req, res) => {
 
 });
 
-// db.actions.distinct("statement.actor.name", {}, (err, docs) => {
-//     if(err) throw err
-//     if (docs == null) res.send({})
-//     res.send({
-//       students : docs
-//     })
-//   })
-
 // GET all actions in a project
 router.get('/project/:project_id/', (req, res) => {
   db.actions.find({ project_id :  req.params.project_id  }, (err, docs) => {
@@ -148,7 +140,7 @@ router.get('/projects/:classe_id', (req, res) => {
           actionsCount : d.actionsCount,
           start : d.start,
           end : d.end,
-          name : d.names[d.names.length-1] // get last name 
+          name : d.names[d.names.length-1] // get last name
         })
       })
 
@@ -196,7 +188,31 @@ router.get('/projects/:classe_id', (req, res) => {
 });
 
 // GET a　list of all projects
-// router.get('/projects', (req, res) => {
+
+/*
+"2e6b93f5-70c9-4db3-b759-f27e0132720b"
+"568d40b0-b09b-48d5-aff0-330a23a4fc34"
+"5ca6a147-1b4c-4b43-850f-642736286fd6"
+"7e29d925-a9e4-411e-b797-82011aad52a8"
+"f6d5a965-0257-49b4-95cc-840e1c11c43f"
+"599c93c6-c14a-4560-a85a-d980756193c6"
+*/
+
+router.get('/stats', (req, res) => {
+
+  let projects = req.query.projects
+  if(!projects) res.send({
+    status : "error",
+    message : "No projects defined."
+  })
+
+  res.send(projects)
+
+  // ,
+  //     (err, docs) => {
+  //       if(err) throw err
+  //       if (docs == null) res.send({})
+})
 //
 //   db.statements.mapReduce(
 //     function() {

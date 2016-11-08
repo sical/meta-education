@@ -8,6 +8,7 @@ import StudentsList from '../components/StudentsList.jsx'
 import SideNav from '../components/SideNav.jsx'
 import TopBar from '../components/TopBar.jsx'
 import Dashboard from '../components/Dashboard.jsx'
+import StatsButton from '../components/StatsButton.jsx'
 
 import store from '../store'
 import AsyncAPI from '../AsyncAPI'
@@ -48,6 +49,7 @@ class Home extends React.Component {
                 <StudentsList />
               </Col>
               <Col xs>
+                <StatsButton />
                 <Dashboard />
               </Col>
               <Col xs />

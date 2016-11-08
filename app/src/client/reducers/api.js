@@ -1,4 +1,5 @@
 import { ActionTypes } from '../actions'
+import AsyncAPI from '../AsyncAPI'
 
 export const api = (state = {
       projects : [],
@@ -53,7 +54,27 @@ export const api = (state = {
             currentTimeIndex : action.timeIndex
           };
         case ActionTypes.GET_PROJECT_ACTIONS_ERROR:
-            return { ...state, isWaiting: false, success : false  };
+          return { ...state, isWaiting: false, success : false  };
+        case ActionTypes.GET_STATS:
+          AsyncAPI.getStats(action.projects)
+          return {
+            ...state,
+            isWaiting: true
+          };
+        case ActionTypes.GET_STATS_SUCCESS:
+          return {
+            ...state,
+            stats : action.data,
+            isWaiting: false,
+            success : true
+          };
+        case ActionTypes.GET_STATS_ERROR:
+            return {
+              ...state,
+              isWaiting: false,
+              success : false
+            };
+
         default:
             return state;
     }

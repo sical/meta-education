@@ -1,17 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-
 import {List, ListItem, makeSelectable} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Badge from 'material-ui/Badge';
-
 import Subheader from 'material-ui/Subheader';
 
 import store from '../store'
-import  {ActionTypes} from '../actions'
+import  { ActionTypes } from '../actions'
 import AsyncAPI from '../AsyncAPI'
 
 import moment from 'moment'
