@@ -1,4 +1,5 @@
-# coding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # # Reconstruct from traces
 #
@@ -17,6 +18,19 @@ import datetime
 from collections import Counter
 import pymongo
 import networkx as nx
+import logging
+
+# logs
+# création de l'objet logger qui va nous servir à écrire dans les logs
+logger = logging.getLogger()
+
+
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+        '%(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 # import config
 with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
@@ -78,23 +92,29 @@ def delete_elements(G, element_type, data):
         raise ValueError("Wrong element type %s"%element_type)
     return G
 
-def update_elements(G, element_type, data):
-    """Update graph element attributes"""
-    if element_type == "Node" :
-        for change in data:
-            G.node[data["_id"]][change] = data[change]
-    elif element_type == "Edge" :
-        for change in data:
-            G.edge[data["_id"]][change] = data[change]
-    else :
-        raise ValueError("Wrong element type %s"%element_type)
+def update_node(G, _id, data):
+    """Update node attributes"""
+    for change in data:
+        G.node[_id][change] = data[change]
     return G
 
-def extract_networks_from_statements(start, end):
-    # ### Parse networks data
+def update_edge(G, _from, _to, data):
+    """Update graph element attributes"""
+    for change in data:
+        G.edge[_from][_to][change] = data[change]
+    return G
 
+def extract_networks_from_statements():
+    # ### Parse networks data
+    print
+    print "#"*10
     # query for mongo
-    q = { 'stored': {'$lt': end, '$gte': start} }
+    # q = { 'stored': {'$lt': end, '$gte': start} }
+    users = json.load(open('./data/users.json', 'r'))
+    authorized_user_ids = [ u["id"].decode('utf-8') for u in users["users"]]
+    # logging.info("Fetching data for %s authorized users...", len(authorized_user_ids))
+
+    q = { "actor.account.name" : { "$in" : authorized_user_ids } }
     c = db.statements.find(q).count()
 
     if not c:
@@ -111,22 +131,8 @@ def extract_networks_from_statements(start, end):
     # container for all network states
     actions = {}
 
-    def get_network(project_id):
-        try :
-            return networks[project_id]
-        except KeyError:
-            networks[project_id] = nx.DiGraph()
-            return networks[project_id]
-
-    def get_actions(project_id):
-        try :
-            return actions[project_id]
-        except KeyError:
-            actions[project_id] = []
-            return actions[project_id]
-
     # extract infos
-    for statement in db.statements.find(q):
+    for i,statement in enumerate(db.statements.find(q).sort([ ( 'stored', 1 ) ])):
 
         # default state
         project_id=None
@@ -137,10 +143,15 @@ def extract_networks_from_statements(start, end):
         action["ts"] = statement["stored"]
         action["id"] = statement["id"]
 
-        if action["type"] in ["access","loggedin","viewed","close"] :
+        action_log = "%i/%s :%s  - %s"%(i,c,action["type"], action["ts"])
+
+        if action["type"] in ["access","loggedin","viewed","close", "attempted", "experienced"] :
+            logger.debug(action_log)
             pass # ignore those actions
         else :
             element_type = statement["object"]["definition"]["type"].split("#")[1]
+
+            logger.debug("%s -- %s"%(action_log, element_type))
 
             if element_type == "Renkan":
 
@@ -149,6 +160,9 @@ def extract_networks_from_statements(start, end):
                     new_id = data["id"]
                     networks[new_id] = nx.DiGraph()
                     actions[new_id] = []
+                    # "Create new Renkan !"
+                elif action["type"] == "update":
+                    pass
 
             elif element_type == "View":
                 pass
@@ -158,29 +172,39 @@ def extract_networks_from_statements(start, end):
                 data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
                 project_id = data["project"]["id"]
 
-                # get
-                network = get_network(project_id)
-                actions_list = get_actions(project_id)
+                if project_id in networks.keys(): # ignore graphs that were not created properly with Renkan/Create
+                    if action["type"] == "create":
+                        create_elements(networks[project_id], element_type, data )
+                        # print statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
+                    elif action["type"] == "update" or action["type"] == "move" :
 
-                if action["type"] == "create":
-                    create_elements(network, element_type, data )
-
-                elif action["type"] == "update" or action["type"] == "move" :
-                    try:
                         data_changed = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#DataChanged"]
-                        update_elements(networks[project_id], element_type, data_changed )
-                    except KeyError:
-                        pass # ignore if nothing in DataChanges
-                elif action["type"] == "delete":
-                    delete_elements(networks[project_id], element_type, data )
 
-                action["element_type"] = element_type
-                action["nodes"] = networks[project_id].nodes(data=True)
-                action["edges"] = networks[project_id].edges(data=True)
-                action["statement"] = statement
-                action["project_id"] = project_id
+                        if element_type == "Node":
+                            _id = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
+                            update_node(networks[project_id], _id, data_changed)
 
-                actions_list.append(action)
+
+
+                        if element_type == "Edge":
+                            _from = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["from"]
+                            _to = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["to"]
+
+                            update_edge(networks[project_id], _from, _to, data_changed)
+
+                    elif action["type"] == "delete":
+                        delete_elements(networks[project_id], element_type, data )
+
+                    action["element_type"] = element_type
+                    action["nodes"] = networks[project_id].nodes(data=True)
+                    action["edges"] = networks[project_id].edges(data=True)
+                    action["statement"] = statement
+                    action["project_id"] = project_id
+
+                    # actions are stored only for networks
+                    actions[project_id].append(action)
+                else :
+                    print "Action ignored"
 
     print "%s projects found"%len(actions.keys())
     return actions
@@ -188,32 +212,35 @@ def extract_networks_from_statements(start, end):
 def save_actions_to_mongos(actions):
     # print some info about the graphs
     for i,network_id in enumerate(actions):
-        print "## project %s"%network_id
+        logger.debug("## project %s"%network_id)
 
         # save data points to db
         if len(actions[ network_id ]):
             try :
                 res = db.actions.insert_many(actions[ network_id ])
-                print "%s new records."%len(res.inserted_ids)
+                logger.debug("%s new records."%len(res.inserted_ids))
             except pymongo.errors.BulkWriteError as e:
-                print "%s new records."%e.details['nInserted']
+                logger.debug("%s new records."%e.details['nInserted'])
 
             # sort by time
             actions[ network_id ].sort(key=lambda c: c["ts"]) # sort by time
             ts = [ a["ts"] for a in actions[ network_id ]]
             diff = max(ts)-min(ts)
             minutes_seconds = divmod(diff.total_seconds(), 60)
-            print "%d:%d min  - from %s to %s"%( minutes_seconds[0], minutes_seconds[1], min(ts), max(ts) )
+            logger.debug("%d:%d min  - from %s to %s"%( minutes_seconds[0], minutes_seconds[1], min(ts), max(ts) ))
 
             # show actions type count
-            for c in Counter([a["type"] for a in actions[network_id]]).most_common() : print c[0], c[1]
+            counter = ""
+            for c in Counter([a["type"] for a in actions[network_id]]).most_common() :
+                counter = counter + "%s : %s / "%(c[0], c[1])
+            logger.debug(counter)
 
             # log final state
-            print "Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id]))
+            logger.debug("Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id])))
         else :
-            print 'No actions detected.'
+            logger.debug('No actions detected.')
 
-        print "-"*10
+        logger.debug("-"*10)
 
     print "%s actions in the database"%db.actions.count()
 

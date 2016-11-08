@@ -36,8 +36,13 @@ export const api = (state = {
             isWaiting: false,
             actions: action.data,
             timestamps : timestamps,
-            success : true  };
-
+            success : true,
+            currentTimeIndex : timestamps.length-1
+          };
+        case ActionTypes.SET_TIME_VALUE:
+          return { ...state,
+            currentTimeIndex : action.timeIndex
+          };
         case ActionTypes.GET_PROJECT_ACTIONS_ERROR:
             return { ...state, isWaiting: false, success : false  };
         default:

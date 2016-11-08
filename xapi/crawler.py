@@ -15,6 +15,9 @@ db = client["metaEducation"]
 
 # index to ensure unicity of documents
 db.statements.ensure_index( [ ("id", pymongo.ASCENDING) ], unique=True )
+# db.statements.ensure_index( [ ("timestamp", pymongo.ASCENDING)] )
+db.statements.ensure_index( [ ("stored", pymongo.ASCENDING) ] )
+db.statements.ensure_index( [ ("stored", pymongo.DESCENDING) ] )
 
 # construct an LRS
 print "Connecting to the LRS..."
@@ -28,17 +31,28 @@ print "...done"
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
+def get_db_time_range():
+    first = db.statements.find().sort([("timestamp",1)]).limit(1)
+    last = db.statements.find().sort([("timestamp",-1)]).limit(1)
+
+    if first.count(True) == 1 and last.count(True) == 1 :
+        return first[0]["timestamp"], last[0]["timestamp"]
+    else :
+        return [None, None]
+
 def get_records_from_xapi(start, end, offset=0):
     """Query xApi and return statements"""
     assert type(end) is datetime
     assert type(start) is datetime
+
+    print "Crawling data from '%s' to '%s' / offset : %s"%(start, end, offset)
 
     # query
     q = {
     	"since": datetime.strftime(start, DATE_FORMAT),
     	"until": datetime.strftime(end, DATE_FORMAT),
     	"ascending": True,
-        "limit" : 500,
+        "limit" : 100,
         "offset" : offset
     }
 
@@ -71,12 +85,12 @@ def save_statements_to_mongos(statements):
     if len(statements):
         try :
             res = db.statements.insert_many(clean_statements)
-            print "%s statements in Mongo. New records : %s"%(db.statements.count(), len(res.inserted_ids))
+            return len(res.inserted_ids)
         except pymongo.errors.BulkWriteError as e:
-            print "%s statements in Mongo. New records : %s"%(db.statements.count(), e.details['nInserted'])
+            return e.details['nInserted']
     else:
         print "No records found."
-
+        return 0
 
 def reset_statements_db():
     # reset to zero

@@ -10,9 +10,11 @@ import sys
 import argparse
 import datetime
 
-from crawler import get_records_from_xapi, save_statements_to_mongos,reset_statements_db
+from crawler import get_records_from_xapi, save_statements_to_mongos,reset_statements_db, get_db_time_range
 from parser import reset_actions_db, extract_networks_from_statements, save_actions_to_mongos
 
+import logging
+logger = logging.getLogger()
 
 # timeframe to fetch and process data
 # start = datetime(2016, 10, 18, 11, 50, 0)
@@ -27,15 +29,26 @@ def crawl_and_save_records(start, end):
     # reset_statements_db()
     # reset_actions_db()
 
-    # get all statements from xAPI into mongo
-    while has_more_records:
-        resp = get_records_from_xapi(start, end, offset=offset)
-        save_statements_to_mongos(resp["statements"])
-        offset = offset + 500
-        if resp["more"] == "" :
-            has_more_records = False
+    # get latest record
+    db_timerange = get_db_time_range()
+    oldest = db_timerange[0]
+    newest = db_timerange[1]
+    print "Last record in the DB from '%s' to  '%s'"%(oldest, newest)
 
-    actions = extract_networks_from_statements(start, end)
+    if oldest and newest and oldest < start and end > newest :
+        print "Statements in the DB are already newer."
+    else :
+        # get all statements from xAPI into mongo
+        while has_more_records:
+            resp = get_records_from_xapi(start, end, offset=offset)
+            saved_results = save_statements_to_mongos(resp["statements"])
+            print "New records saved : %s"%saved_results
+            offset = offset + 100
+            if resp["more"] == "" :
+                has_more_records = False
+
+    #find latest action
+    actions = extract_networks_from_statements()
     if actions : save_actions_to_mongos(actions)
 
 
@@ -44,6 +57,7 @@ def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--start', '-s', default=None, help='Crawling start time - format ')
     p.add_argument('--duration', '-d', default=None, help='Duration until crawl final timestamp (number of days)')
+    p.add_argument('--verbose', '-v', default=None, help='Set logger to show everything')
 
     return p
 
@@ -65,8 +79,11 @@ def main():
         end = datetime.datetime.now()
         start = end - duration
 
-    print "Crawling data from '%s' to '%s' (%s days)"%(start, end, duration.days)
+    if args.verbose:
+        # on met le niveau du logger à DEBUG, comme ça il écrit tout
+        logger.setLevel(logging.DEBUG)
 
+    print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
     # start crawling
     crawl_and_save_records(start, end)
 

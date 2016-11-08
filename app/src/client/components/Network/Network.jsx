@@ -39,7 +39,7 @@ class Network extends React.Component {
   setStateNetworkData(props) {
     console.log("update network data...")
     if (props.actions.length) {
-      let index = props.currentTimeIndex ||  props.actions.length-1
+      let index = props.currentTimeIndex
       let currentAction = props.actions[index]
 
       this.setState({ nodes : [], edges : []})
@@ -66,12 +66,12 @@ class Network extends React.Component {
           nodes : nodes,
           edges : edges
         })
+
       }
   }
 
   componentWillReceiveProps(nextProps) {
       this.setStateNetworkData(nextProps)
-      this.updateNetwork()
   }
 
   createNetwork() {
@@ -95,9 +95,10 @@ class Network extends React.Component {
   updateNetwork() {
     if(this.state.cy) {
       console.log('* rendering network...')
+      this.state.cy.json({ elements : { nodes : [], edges : [] } })
       // console.log({ nodes : this.state.nodes, edges : this.state.edges });
       this.state.cy.json({ elements : { nodes : this.state.nodes, edges : this.state.edges } });
-      // console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
+      console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
       this.state.cy.layout( { name : 'preset' } )
       this.state.cy.fit()
       // this.state.cy.zoom({ level : this.state.cy.zoom()-5 })
@@ -156,7 +157,8 @@ Network.defaultProps = {
 const mapStateToProps = (state) => {
     // console.log(state)
     return {
-      currentTimeIndex : state.viz.currentTimeIndex
+      currentTimeIndex : state.api.currentTimeIndex,
+      actions : state.api.actions
     }
 }
 
