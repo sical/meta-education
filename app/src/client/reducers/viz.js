@@ -16,11 +16,18 @@ export const viz = (
           };
       case ActionTypes.SELECT_PROJECT:
 
-        let existingIndex  = state.selectedProjects.indexOf(action.projectId)
+        // if the project is already selected
+        let existingIndex  = state.selectedProjects
+          .map(d => d.id)
+          .indexOf(action.project.id)
 
-        let selected = existingIndex > -1
-          ? state.selectedProjects.filter( (d,i) => i != existingIndex)
-          : [ ...state.selectedProjects, action.projectId]
+        // filter out unwanted
+        let selected = state.selectedProjects
+          .filter( (d,i) => i != existingIndex )　// already existing project
+          .filter( (d,i) => d.userId != action.project.userId )　// by the same user
+
+        // add new project
+        if (existingIndex == -1) selected.push(action.project)
 
         return {
           ...state,

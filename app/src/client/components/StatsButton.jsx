@@ -15,7 +15,7 @@ class StatsButton extends React.Component {
 
   getStats() {
     // store.dispatch({ type : ActionTypes.GET_STATS, projects : this.props.selectedProjects })
-    store.dispatch(AsyncAPI.getStats(this.props.selectedProjects))
+    store.dispatch(AsyncAPI.getStats(this.props.selectedProjects.map(d => d.id)))
   }
 
   render() {

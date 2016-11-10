@@ -56,7 +56,8 @@ export const api = (state = {
         case ActionTypes.GET_PROJECT_ACTIONS_ERROR:
           return { ...state, isWaiting: false, success : false  };
         case ActionTypes.GET_STATS:
-          AsyncAPI.getStats(action.projects)
+          console.log(action.projects);
+          AsyncAPI.getStats(action.projects.map(d => d.id))
           return {
             ...state,
             isWaiting: true

@@ -269,9 +269,9 @@ router.get('/stats', (req, res) => {
 
         console.log(volumen);
 
-        let clarity = (volumen.delete*100)/volumen.create
+        let clarity = (volumen.delete*100)/volumen.create || 0
 
-        let density = project.finalNetwork.nodes.length || 0
+        let density = project.finalNetwork.nodes.length
 
         let resources = project.finalNetwork.nodes
           .map(d => d[1]["uri"])
@@ -294,10 +294,13 @@ router.get('/stats', (req, res) => {
 
         let mediumDegree = sumDegrees / density
 
+        let network = project.finalNetwork
+
         let projectStats = {
           volumen,
           clarity,
           density,
+          network,
           mediumDegree,
           resources,
           resourcesUsedPercent
@@ -305,7 +308,7 @@ router.get('/stats', (req, res) => {
         stats[project._id] = projectStats
       })
 
-      res.send(stats)
+      res.send({ stats : stats})
     })
 
 })

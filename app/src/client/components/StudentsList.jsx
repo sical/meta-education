@@ -22,32 +22,33 @@ moment.locale('fr')
 class StudentsList extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      selected : []
-    }
+    // this.state = {
+    //   selected : []
+    // }
   }
 
   componentWillReceiveProps(nextProps) {
-      this.setState({ selected : this.props.selectedProjects })
+      // this.setState({ selected : this.props.selectedProjects })
   }
 
   // handleClickStudent (projectId) {
   //   this.props.dispatch(AsyncAPI.getProjectsList(projectId))
   // }
 
-  handleClickProject (projectId) {
-    store.dispatch({type : ActionTypes.SELECT_PROJECT, projectId : projectId})
-    // store.dispatch(AsyncAPI.getProject(projectId))
+  handleClickProject (projectId, userId) {
+    store.dispatch({type : ActionTypes.SELECT_PROJECT, project : { id : projectId, userId : userId }})
   }
 
   render() {
 
     let students = this.props.projects.map( (student,i) => {
-
       let selection = 0
 
       let projects = student.projects.map( (project, j) => {
-        let isSelected = this.props.selectedProjects.indexOf(project.id)
+
+        let isSelected = this.props.selectedProjects
+          .map(d => d ? d.id : null)
+          .indexOf(project.id)
 
         // apply style
         if  (isSelected > -1) selection++
@@ -56,7 +57,7 @@ class StudentsList extends React.Component {
           <ListItem
             primaryText={`${project.name}`}
             secondaryText={`${project.actionsCount} actions. Edité ${ moment(project.end).fromNow()}`}
-            onClick={this.handleClickProject.bind(this, project.id)}
+            onClick={this.handleClickProject.bind(this, project.id, student.id)}
             key={j}
             className={ isSelected > -1 ? "selected" : null}
             rightIcon={<ContentSend />}
@@ -97,7 +98,7 @@ class StudentsList extends React.Component {
       <div>
         <Subheader>Elèves</Subheader>
         <List
-          value={this.state.selected}
+          // value={this.state.selected}
           >
           {students}
         </List>
