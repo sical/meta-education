@@ -18,28 +18,23 @@ class StatsList extends React.Component {
     super(props)
   }
 
-  handleClickProject(projectId) {
-    console.log("select :", projectId);
-    if (! this.props.currentProject || this.props.currentProject != projectId ) {
-      store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
-      store.dispatch(AsyncAPI.getProject(projectId))
-    }
-    else store.dispatch({ type : ActionTypes.HIDE_PROJECT})
+  componentWillMount() {
+    store.dispatch(AsyncAPI.getStats(this.props.selectedProjects.map(d => d.id)))
   }
+
 
   render() {
     let self = this
-
+    console.log(this.props.stats);
     let stats = Object.keys(this.props.stats).map( (id,i) => {
       let stat = self.props.stats[id]
       let isSelected = -1
 
-      // {stat.clarity} / {stat.density} / {stat.mediumDegree} / {stat.resourcesUsedPercent}%
       return (
         <ListItem
-          primaryText={`${stat.id}`}
-          secondaryText={`${stat.clarity} actions. Edité ${ moment(stat.end).fromNow()}`}
-          onClick={this.handleClickProject.bind(this, id)}
+          primaryText={`Ressources : ${Math.floor(stat.resourcesUsedPercent)}% / Densité : ${stat.density} / degré : ${Math.round(stat.mediumDegree*100)} `}
+          secondaryText={`${Math.floor(stat.clarity)} actions. Edité ${ moment(stat.end).fromNow()}`}
+          // onClick={this.handleClickProject.bind(this, id)}
           key={i}
           className={ isSelected > -1 ? "selected" : null}
           rightIcon={<ContentSend />}
@@ -49,12 +44,6 @@ class StatsList extends React.Component {
 
     return (
       <List>
-        {
-          this.props.selectedProjects.length ?
-            <RefreshButton />
-            :
-            null
-        }
         {stats}
       </List>
     )

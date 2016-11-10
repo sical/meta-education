@@ -20,6 +20,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
+import RefreshButton from './RefreshButton/RefreshButton.jsx'
 
 // set to French
 moment.locale('fr')
@@ -47,6 +48,7 @@ class StudentsList extends React.Component {
   componentWillReceiveProps(nextProps) {
 
   }
+
 
   handleClickProject (projectId, userId) {
     store.dispatch({type : ActionTypes.SELECT_PROJECTS, project : { id : projectId, userId : userId }})
@@ -137,11 +139,7 @@ class StudentsList extends React.Component {
 
     return (
       <div>
-        <ListItem
-            primaryText="Elèves"
-            secondaryText="Sélectionnez une carte par élève."
-            disabled={true}
-          />
+        <RefreshButton />
         <List>
           {students}
         </List>

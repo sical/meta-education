@@ -22,7 +22,7 @@ class StatsButton extends React.Component {
     let disabled  = this.props.selectedProjects.length ? false : true
 
     return <ListItem
-        primaryText="Cartes Mentales"
+        primaryText="Elèves"
         secondaryText="Click to reload data"
         disabled={disabled}
         onClick={this.getStats.bind(this)}

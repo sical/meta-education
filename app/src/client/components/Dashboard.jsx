@@ -29,45 +29,48 @@ class Dashboard extends React.Component {
           <Col>
             <StudentsList />
           </Col>
-          {/* <Col xs>
-            <StatsList />
-          </Col> */}
+          {
+            this.props.selectedProjects.length ?
+            <Col>
+              <StatsList />
+            </Col>
+            : null
+          }
             {
               this.props.currentProject && this.props.actions.length ?
-                <div>
-                <Card>
-                  <CardHeader
-                    title="Ressources"
-                    subtitle="Liens, vidéos et éléments multimédia de la carte"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                  />
-                  <CardText expandable={true}>
-                    <ResourcesGrid
-                      actions={this.props.actions}
+                <Col>
+                  <Card>
+                    <CardHeader
+                      title="Ressources"
+                      subtitle="Liens, vidéos et éléments multimédia de la carte"
+                      actAsExpander={true}
+                      showExpandableButton={true}
                     />
-                  </CardText>
-                </Card>
-                <Card>
-                  <CardHeader
-                    title="Carte conceptuelle"
-                    subtitle="Consulter et rejouer la création de la carte"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                  />
-                  <CardText expandable={true}>
-                    <Network
-                      actions={this.props.actions}
+                    <CardText expandable={true}>
+                      <ResourcesGrid
+                        actions={this.props.actions}
                       />
-                    <TimeSlider
-                      timestamps={this.props.timestamps}
+                    </CardText>
+                  </Card>
+                  <Card>
+                    <CardHeader
+                      title="Carte conceptuelle"
+                      subtitle="Consulter et rejouer la création de la carte"
+                      actAsExpander={true}
+                      showExpandableButton={true}
                     />
-                  </CardText>
-                </Card>
-                </div>
+                    <CardText expandable={true}>
+                      <Network
+                        actions={this.props.actions}
+                        />
+                      <TimeSlider
+                        timestamps={this.props.timestamps}
+                      />
+                    </CardText>
+                  </Card>
+                </Col>
               : null
             }
-          <Col />
         </Row>
       </Grid>
     )
@@ -80,7 +83,8 @@ const mapStateToProps = (state) => {
       projectIsLoaded : loaded,
       timestamps : state.api.timestamps,
       actions : state.api.actions,
-      currentProject : state.viz.currentProject
+      currentProject : state.viz.currentProject,
+      selectedProjects : state.api.selectedProjects
     }
 }
 
