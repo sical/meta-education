@@ -206,12 +206,108 @@ router.get('/stats', (req, res) => {
     message : "No projects defined."
   })
 
-  res.send(projects)
+  db.actions.aggregate(
+    {
+      $match :
+      {
+        "project_id" : { $in : projects}
+       }
+    },
+    {
+      $sort : {
+        "ts" : 1
+      }
+    },
+    {
+      $group :
+      {
+        "_id" : "$project_id",
+        "actionsCount" : { $sum : 1 },
+        series : {
+          $push : {
+            type : "$type",
+            element : "$element_type",
+            ts : "$ts",
+            edgesCount : { "$size" : "$edges"},
+            nodesCount : { "$size" : "$nodes"}
+          }
+        },
+        finalNodes : { $last : "$nodes"},
+        finalEdges : { $last : "$edges"},
+        end : { $max : "$ts"},
+        start : { $min : "$ts"},
+        }
+    }
+    ,
+    {
+      $project : {
+        id : "$id",
+        actionsCount : "$actionsCount",
+        series : "$series",
+        finalNetwork : {
+          edges : "$finalEdges",
+          nodes : "$finalNodes"
+        },
+        end : "$end",
+        start : "$start"
+      }
+    }
+    ,(err, docs) => {
+      if(err) throw err
+      if (docs == null) res.send({})
 
-  // ,
-  //     (err, docs) => {
-  //       if(err) throw err
-  //       if (docs == null) res.send({})
+      // calculate some stats
+
+      let stats = {}
+      docs.forEach( project => {
+
+        let volumen = {}
+        project.series.forEach( action =>{
+          let sum = volumen[action.type] || 0
+          volumen[action.type] = sum + 1;
+        })
+
+        console.log(volumen);
+
+        let clarity = (volumen.delete*100)/volumen.create
+
+        let density = project.finalNetwork.nodes.length || 0
+
+        let resources = project.finalNetwork.nodes
+          .map(d => d[1]["uri"])
+          .filter( uri => uri != "" )
+
+        let resourcesUsedPercent = (resources.length*100)/density
+
+        let degrees = {}
+        project.finalNetwork.edges
+          .forEach(d => {
+            let source = d[0],
+              target = d[1]
+            degrees[source] = degrees[source] == undefined ? 0 : degrees[source]+1
+            degrees[target] = degrees[target] == undefined ? 0 : degrees[target]+1
+          })
+
+        let sumDegrees = Object.keys(degrees)
+          .map(d => degrees[d])
+          .reduce((a, b)=> a + b,0)
+
+        let mediumDegree = sumDegrees / density
+
+        let projectStats = {
+          volumen,
+          clarity,
+          density,
+          mediumDegree,
+          resources,
+          resourcesUsedPercent
+        }
+        stats[project._id] = projectStats
+      })
+
+      res.send(stats)
+    })
+
 })
 //
 //   db.statements.mapReduce(
