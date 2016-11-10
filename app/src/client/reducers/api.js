@@ -7,6 +7,7 @@ export const api = (state = {
       actions : [],
       timestamps : [],
       stats : {},
+      selectedProjects : [],
       isWaiting: false
     },
     action) => {
@@ -29,11 +30,41 @@ export const api = (state = {
               success : false
             };
         case ActionTypes.GET_PROJECTS_LIST_SUCCESS:
+
+          // get default to project with max actions
+          let selectedProjects = action.data
+            .map( d => {
+              let counts = d.projects.map( e => e.actionsCount)
+              let max = Math.max.apply(Math, counts)
+              var i = counts.indexOf(max)
+              return d.projects[i]
+            })
+
           return { ...state,
             isWaiting: false,
             projects: action.data,
-            success : true
+            success : true,
+            selectedProjects
           };
+        case ActionTypes.SELECT_PROJECTS:
+
+          // if the project is already selected
+          let existingIndex  = state.selectedProjects
+            .map(d => d.id)
+            .indexOf(action.project.id)
+
+          // filter out unwanted
+          let selected = state.selectedProjects
+            .filter( (d,i) => i != existingIndex )　// already existing project
+            .filter( (d,i) => d.userId != action.project.userId )　// by the same user
+
+          // add new project
+          if (existingIndex == -1) selected.push(action.project)
+
+          return {
+            ...state,
+            selectedProjects : selected
+          }
         case ActionTypes.GET_PROJECTS_LIST_ERROR:
             return {
               ...state,

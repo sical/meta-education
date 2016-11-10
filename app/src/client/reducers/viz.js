@@ -4,8 +4,7 @@ export const viz = (
   state = {
     currentClasse : null,
     currentTime: Date.now(),
-    currentProject : null,
-    selectedProjects : []
+    currentProject : null
   }
 , action) => {
     // console.log(action);
@@ -25,25 +24,6 @@ export const viz = (
             ...state,
             currentProject: null
           };
-      case ActionTypes.SELECT_PROJECTS:
-
-        // if the project is already selected
-        let existingIndex  = state.selectedProjects
-          .map(d => d.id)
-          .indexOf(action.project.id)
-
-        // filter out unwanted
-        let selected = state.selectedProjects
-          .filter( (d,i) => i != existingIndex )　// already existing project
-          .filter( (d,i) => d.userId != action.project.userId )　// by the same user
-
-        // add new project
-        if (existingIndex == -1) selected.push(action.project)
-
-        return {
-          ...state,
-          selectedProjects : selected
-        }
       default:
           return state;
     }

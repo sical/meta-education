@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
-import ActionFace from 'material-ui/svg-icons/action/face';
-import ContentSend from 'material-ui/svg-icons/content/send';
 import Badge from 'material-ui/Badge';
 import Subheader from 'material-ui/Subheader';
+import ActionFace from 'material-ui/svg-icons/action/face';
+import ContentSend from 'material-ui/svg-icons/content/send';
 
 import store from '../store'
 import  { ActionTypes } from '../actions'
@@ -45,12 +45,23 @@ class StudentsList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      // this.setState({ selected : this.props.selectedProjects })
-  }
 
+  }
 
   handleClickProject (projectId, userId) {
     store.dispatch({type : ActionTypes.SELECT_PROJECTS, project : { id : projectId, userId : userId }})
+  }
+
+  handleClickStudent(userId) {
+
+    let projectIndex = this.props.selectedProjects.map(d => d.userId).indexOf(userId)
+    let projectId = this.props.selectedProjects[projectIndex].id
+
+    if (! this.props.currentProject || this.props.currentProject != projectId ) {
+      store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
+      store.dispatch(AsyncAPI.getProject(projectId))
+    }
+    else store.dispatch({ type : ActionTypes.HIDE_PROJECT})
   }
 
   toggleProjects(userId) {
@@ -64,13 +75,11 @@ class StudentsList extends React.Component {
       })
   }
 
-
   render() {
 
     let self = this
 
     let students = this.props.projects.map( (student,i) => {
-      let selection = 0
 
       let rightIconMenu = (
         <IconMenu iconButtonElement={iconButtonElement}>
@@ -88,14 +97,13 @@ class StudentsList extends React.Component {
           .map(d => d ? d.id : null)
           .indexOf(project.id)
 
-        // apply style
-        if  (isSelected > -1) selection++
-
         return (
           <ListItem
             primaryText={`${project.name}`}
             secondaryText={`${project.actionsCount} actions. Edité ${ moment(project.end).fromNow()}`}
-            onClick={this.handleClickProject.bind(this, project.id, student.id)}
+            onClick={
+              self.handleClickProject.bind(this, project.id, student.id)
+            }
             key={j}
             className={ isSelected > -1 ? "selected" : null}
             rightIcon={<ContentSend />}
@@ -116,16 +124,12 @@ class StudentsList extends React.Component {
             }
             nestedItems={projects}
             rightIconButton={rightIconMenu}
-            rightAvatar= {
-              selection ?
-                <Badge
-                  badgeContent={selection}
-                  primary={true}
-                />
+            onClick={
+              self.state.toggled.indexOf(student.id) > -1 ?
+                self.toggleProjects.bind(this, student.id)
                 :
-                null
+                self.handleClickStudent.bind(this, student.id)
             }
-
           />
         )
       }
@@ -150,8 +154,10 @@ const mapStateToProps = (state) => {
 
   return {
       projects : state.api.projects,
+      selectedProjects : state.api.selectedProjects,
       currentClasse : state.viz.currentClasse,
-      selectedProjects : state.viz.selectedProjects
+      stats : state.api.stats,
+      currentProject : state.viz.currentProject
   }
 }
 

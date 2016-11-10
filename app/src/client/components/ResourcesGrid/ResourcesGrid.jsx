@@ -71,7 +71,7 @@ class ResourcesGrid extends React.Component {
       <div style={styles.root}>
         <GridList
           cellHeight={120}
-          cellWidth={80}
+          // cellWidth={80}
           cols={3}
           // style={styles.gridList}
           >

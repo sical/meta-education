@@ -140,6 +140,7 @@ router.get('/projects/:classe_id', (req, res) => {
           actionsCount : d.actionsCount,
           start : d.start,
           end : d.end,
+          userId : user,
           name : d.names[d.names.length-1] // get last name
         })
       })

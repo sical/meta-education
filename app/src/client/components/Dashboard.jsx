@@ -29,9 +29,9 @@ class Dashboard extends React.Component {
           <Col>
             <StudentsList />
           </Col>
-          <Col xs>
+          {/* <Col xs>
             <StatsList />
-          </Col>
+          </Col> */}
             {
               this.props.currentProject && this.props.actions.length ?
                 <div>
@@ -67,7 +67,7 @@ class Dashboard extends React.Component {
                 </div>
               : null
             }
-          <Col xs />
+          <Col />
         </Row>
       </Grid>
     )

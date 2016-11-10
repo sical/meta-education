@@ -32,7 +32,7 @@ class StatsButton extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-      selectedProjects : state.viz.selectedProjects
+      selectedProjects : state.api.selectedProjects
   }
 }
 

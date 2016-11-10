@@ -65,7 +65,7 @@ class StatsList extends React.Component {
 const mapStateToProps = (state) => {
   return {
       stats : state.api.stats,
-      selectedProjects : state.viz.selectedProjects,
+      selectedProjects : state.api.selectedProjects,
       currentProject : state.viz.currentProject
   }
 }
