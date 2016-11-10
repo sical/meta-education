@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {List, ListItem, makeSelectable} from 'material-ui/List';
+import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import ContentSend from 'material-ui/svg-icons/content/send';
@@ -14,7 +14,12 @@ import AsyncAPI from '../AsyncAPI'
 
 import moment from 'moment'
 
-let SelectableList = makeSelectable(List);
+import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+
 
 // set to French
 moment.locale('fr')
@@ -22,6 +27,9 @@ moment.locale('fr')
 class StudentsList extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      toggled : []
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,10 +41,36 @@ class StudentsList extends React.Component {
     store.dispatch({type : ActionTypes.SELECT_PROJECTS, project : { id : projectId, userId : userId }})
   }
 
+  toggleProjects(userId) {
+    if (this.state.toggled.indexOf(userId) > -1) this.state.toggled.pop(toggled)
+    else this.state.toggled.push(userId)
+  }
+
   render() {
+
+    const iconButtonElement = (
+      <IconButton
+        touch={true}
+        tooltip="more"
+        tooltipPosition="bottom-left"
+      >
+        <MoreVertIcon color={grey400} />
+      </IconButton>
+    );
 
     let students = this.props.projects.map( (student,i) => {
       let selection = 0
+
+      let rightIconMenu = (
+        <IconMenu iconButtonElement={iconButtonElement}>
+          <MenuItem
+            onClick={this.toggleProjects(student.id)}>
+            Changer de carte
+          </MenuItem>
+        </IconMenu>
+      );
+
+      let toggle = this.state.toggled.indexOf(student.id)
 
       let projects = student.projects.map( (project, j) => {
 
@@ -69,9 +103,8 @@ class StudentsList extends React.Component {
               icon={<ActionFace />}
                />
             }
-            primaryTogglesNestedList={true}
-            // onClick={this.handleClickStudent.bind(this, student)}
             nestedItems={projects}
+            rightIconButton={rightIconMenu}
             rightAvatar= {
               selection ?
                 <Badge

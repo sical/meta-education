@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import {Grid, Row, Col} from 'react-flexbox-grid';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 import StudentsList from '../components/StudentsList.jsx'
 
@@ -34,15 +35,35 @@ class Dashboard extends React.Component {
             {
               this.props.currentProject && this.props.actions.length ?
                 <div>
-                  <ResourcesGrid
-                    actions={this.props.actions}
+                <Card>
+                  <CardHeader
+                    title="Ressources"
+                    subtitle="Liens, vidéos et éléments multimédia de la carte"
+                    actAsExpander={true}
+                    showExpandableButton={true}
                   />
-                  <Network
-                    actions={this.props.actions}
+                  <CardText expandable={true}>
+                    <ResourcesGrid
+                      actions={this.props.actions}
                     />
-                  <TimeSlider
-                    timestamps={this.props.timestamps}
+                  </CardText>
+                </Card>
+                <Card>
+                  <CardHeader
+                    title="Carte conceptuelle"
+                    subtitle="Consulter et rejouer la création de la carte"
+                    actAsExpander={true}
+                    showExpandableButton={true}
                   />
+                  <CardText expandable={true}>
+                    <Network
+                      actions={this.props.actions}
+                      />
+                    <TimeSlider
+                      timestamps={this.props.timestamps}
+                    />
+                  </CardText>
+                </Card>
                 </div>
               : null
             }
