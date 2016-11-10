@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
-import StudentsList from '../components/StudentsList.jsx'
+import StudentsList from '../components/Students/StudentsList.jsx'
 
 import Network from './Network/Network.jsx'
 import TimeSlider from './TimeSlider/TimeSlider.jsx'

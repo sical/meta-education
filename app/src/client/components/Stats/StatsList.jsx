@@ -37,7 +37,6 @@ class StatsList extends React.Component {
           // onClick={this.handleClickProject.bind(this, id)}
           key={i}
           className={ isSelected > -1 ? "selected" : null}
-          rightIcon={<ContentSend />}
           />
       )
     })
