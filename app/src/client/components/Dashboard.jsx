@@ -7,6 +7,9 @@ import StudentsList from '../components/StudentsList.jsx'
 
 import Network from './Network/Network.jsx'
 import TimeSlider from './TimeSlider/TimeSlider.jsx'
+
+import ResourcesGrid from './ResourcesGrid/ResourcesGrid.jsx'
+
 import StatsList from './Stats/StatsList.jsx'
 
 import {List, ListItem} from 'material-ui/List';
@@ -31,11 +34,14 @@ class Dashboard extends React.Component {
             {
               this.props.currentProject && this.props.actions.length ?
                 <div>
+                  <ResourcesGrid
+                    actions={this.props.actions}
+                  />
                   <Network
                     actions={this.props.actions}
                     />
                   <TimeSlider
-                  timestamps={this.props.timestamps}
+                    timestamps={this.props.timestamps}
                   />
                 </div>
               : null
