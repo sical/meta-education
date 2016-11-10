@@ -24,6 +24,18 @@ import MenuItem from 'material-ui/MenuItem';
 // set to French
 moment.locale('fr')
 
+// tooltip
+const iconButtonElement = (
+  <IconButton
+    touch={true}
+    tooltip="more"
+    tooltipPosition="bottom-left"
+  >
+    <MoreVertIcon color={grey400} />
+  </IconButton>
+);
+
+
 class StudentsList extends React.Component {
   constructor(props) {
     super(props)
@@ -42,21 +54,20 @@ class StudentsList extends React.Component {
   }
 
   toggleProjects(userId) {
-    if (this.state.toggled.indexOf(userId) > -1) this.state.toggled.pop(toggled)
-    else this.state.toggled.push(userId)
+    if (this.state.toggled.indexOf(userId) > -1)
+      this.setState({
+        toggled: this.state.toggled.filter(id => id !== userId)
+      })
+    else
+      this.setState({
+        toggled: [...this.state.toggled, userId]
+      })
   }
+
 
   render() {
 
-    const iconButtonElement = (
-      <IconButton
-        touch={true}
-        tooltip="more"
-        tooltipPosition="bottom-left"
-      >
-        <MoreVertIcon color={grey400} />
-      </IconButton>
-    );
+    let self = this
 
     let students = this.props.projects.map( (student,i) => {
       let selection = 0
@@ -64,14 +75,13 @@ class StudentsList extends React.Component {
       let rightIconMenu = (
         <IconMenu iconButtonElement={iconButtonElement}>
           <MenuItem
-            onClick={this.toggleProjects(student.id)}>
+            onTouchTap={self.toggleProjects.bind(this, student.id)}>
             Changer de carte
           </MenuItem>
         </IconMenu>
       );
 
-      let toggle = this.state.toggled.indexOf(student.id)
-
+      let toggled = this.state.toggled.indexOf(student.id) > -1 ? true : false
       let projects = student.projects.map( (project, j) => {
 
         let isSelected = this.props.selectedProjects
@@ -98,6 +108,7 @@ class StudentsList extends React.Component {
         <ListItem
             primaryText={student.name}
             key={i}
+            open={toggled}
             leftAvatar={
               <Avatar
               icon={<ActionFace />}
