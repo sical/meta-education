@@ -4,6 +4,7 @@ export const viz = (
   state = {
     currentClasse : null,
     currentTime: Date.now(),
+    currentProject : null,
     selectedProjects : []
   }
 , action) => {
@@ -14,7 +15,17 @@ export const viz = (
             ...state,
             currentClasse: action.currentClasse
           };
-      case ActionTypes.SELECT_PROJECT:
+      case ActionTypes.SHOW_PROJECT:
+          return {
+            ...state,
+            currentProject: action.projectId
+          };
+      case ActionTypes.HIDE_PROJECT:
+          return {
+            ...state,
+            currentProject: null
+          };
+      case ActionTypes.SELECT_PROJECTS:
 
         // if the project is already selected
         let existingIndex  = state.selectedProjects

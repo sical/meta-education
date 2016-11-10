@@ -1,12 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import FlatButton from 'material-ui/FlatButton';
+import {ListItem} from 'material-ui/List';
 
-import { ActionTypes } from '../actions'
-
-import store from '../store'
-import AsyncAPI from '../AsyncAPI'
+import store from '../../store'
+import { ActionTypes } from '../../actions'
+import AsyncAPI from '../../AsyncAPI'
 
 class StatsButton extends React.Component {
   constructor(props) {
@@ -19,15 +18,15 @@ class StatsButton extends React.Component {
   }
 
   render() {
-    let button  = this.props.selectedProjects.length ?
-      <FlatButton
-        label="Get Stats"
-        onClick={this.getStats.bind(this)}
-        />
-      :
-        null
 
-    return button
+    let disabled  = this.props.selectedProjects.length ? false : true
+
+    return <ListItem
+        primaryText="Cartes Mentales"
+        secondaryText="Click to reload data"
+        disabled={disabled}
+        onClick={this.getStats.bind(this)}
+      />
   }
 }
 

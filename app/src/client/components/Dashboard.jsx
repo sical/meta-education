@@ -1,8 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import {Grid, Row, Col} from 'react-flexbox-grid';
+
+import StudentsList from '../components/StudentsList.jsx'
+
 import Network from './Network/Network.jsx'
 import TimeSlider from './TimeSlider/TimeSlider.jsx'
+import StatsList from './Stats/StatsList.jsx'
+
+import {List, ListItem} from 'material-ui/List';
+import ContentSend from 'material-ui/svg-icons/content/send';
+import Subheader from 'material-ui/Subheader';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -10,23 +19,30 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    if (this.props.projectIsLoaded)
-      console.log("project loaded", this.props.projectIsLoaded)
     return (
-      <div>
-      {
-        this.props.projectIsLoaded ?
-          <div>
-            <Network
-              actions={this.props.actions}
-              />
-            <TimeSlider
-            timestamps={this.props.timestamps}
-            />
-          </div>
-        : null
-      }
-      </div>
+      <Grid>
+        <Row>
+          <Col>
+            <StudentsList />
+          </Col>
+          <Col xs>
+            <StatsList />
+          </Col>
+            {
+              this.props.currentProject && this.props.actions.length ?
+                <div>
+                  <Network
+                    actions={this.props.actions}
+                    />
+                  <TimeSlider
+                  timestamps={this.props.timestamps}
+                  />
+                </div>
+              : null
+            }
+          <Col xs />
+        </Row>
+      </Grid>
     )
   }
 }
@@ -36,7 +52,8 @@ const mapStateToProps = (state) => {
     return {
       projectIsLoaded : loaded,
       timestamps : state.api.timestamps,
-      actions : state.api.actions
+      actions : state.api.actions,
+      currentProject : state.viz.currentProject
     }
 }
 

@@ -22,21 +22,15 @@ moment.locale('fr')
 class StudentsList extends React.Component {
   constructor(props) {
     super(props)
-    // this.state = {
-    //   selected : []
-    // }
   }
 
   componentWillReceiveProps(nextProps) {
       // this.setState({ selected : this.props.selectedProjects })
   }
 
-  // handleClickStudent (projectId) {
-  //   this.props.dispatch(AsyncAPI.getProjectsList(projectId))
-  // }
 
   handleClickProject (projectId, userId) {
-    store.dispatch({type : ActionTypes.SELECT_PROJECT, project : { id : projectId, userId : userId }})
+    store.dispatch({type : ActionTypes.SELECT_PROJECTS, project : { id : projectId, userId : userId }})
   }
 
   render() {
@@ -93,13 +87,14 @@ class StudentsList extends React.Component {
       }
     )
 
-    // console.log(students);
     return (
       <div>
-        <Subheader>Elèves</Subheader>
-        <List
-          // value={this.state.selected}
-          >
+        <ListItem
+            primaryText="Elèves"
+            secondaryText="Sélectionnez une carte par élève."
+            disabled={true}
+          />
+        <List>
           {students}
         </List>
       </div>

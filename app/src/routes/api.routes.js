@@ -200,7 +200,7 @@ router.get('/projects/:classe_id', (req, res) => {
 
 router.get('/stats', (req, res) => {
 
-  let projects = req.query.projects
+  let projects = req.query.projects instanceof Array ? req.query.projects : [req.query.projects]
   if(!projects) res.send({
     status : "error",
     message : "No projects defined."
@@ -308,7 +308,7 @@ router.get('/stats', (req, res) => {
         stats[project._id] = projectStats
       })
 
-      res.send({ stats : stats})
+      res.send(stats)
     })
 
 })
