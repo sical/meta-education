@@ -18,14 +18,10 @@ class StatsList extends React.Component {
     super(props)
   }
 
-  componentWillMount() {
-    // store.dispatch(AsyncAPI.getStats(this.props.selectedProjects.map(d => d.id)))
-  }
-
 
   render() {
     let self = this
-    console.log(this.props.stats);
+
     let stats = Object.keys(this.props.stats).map( (id,i) => {
       let stat = self.props.stats[id]
       let isSelected = -1
@@ -34,7 +30,7 @@ class StatsList extends React.Component {
         <ListItem
           primaryText={`Ressources : ${Math.floor(stat.resourcesUsedPercent)}% / Densité : ${stat.density} / degré : ${Math.round(stat.mediumDegree*100)} `}
           secondaryText={`${Math.floor(stat.clarity)} actions. Edité ${ moment(stat.end).fromNow()}`}
-          // onClick={this.handleClickProject.bind(this, id)}
+          onClick={this.props.handleClickStudentYo.bind(this,id)}
           key={i}
           className={ isSelected > -1 ? "selected" : null}
           />

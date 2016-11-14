@@ -17,9 +17,22 @@ import {List, ListItem} from 'material-ui/List';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
 
+import store from '../store'
+import  { ActionTypes } from '../actions'
+import AsyncAPI from '../AsyncAPI'
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
+  }
+
+  handleClickStudentYo(projectId) {
+
+    if (! this.props.currentProject || this.props.currentProject != projectId ) {
+      store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
+      store.dispatch(AsyncAPI.getProject(projectId))
+    }
+    // else store.dispatch({ type : ActionTypes.HIDE_PROJECT})
   }
 
   render() {
@@ -27,12 +40,16 @@ class Dashboard extends React.Component {
       <Grid>
         <Row>
           <Col>
-            <StudentsList />
+            <StudentsList
+              handleClickStudentYo={this.handleClickStudentYo.bind(this)}
+            />
           </Col>
           {
             this.props.selectedProjects.length ?
             <Col>
-              <StatsList />
+              <StatsList
+                handleClickStudentYo={this.handleClickStudentYo.bind(this)}
+              />
             </Col>
             : null
           }

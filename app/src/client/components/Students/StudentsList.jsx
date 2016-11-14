@@ -35,6 +35,7 @@ class StudentsList extends React.Component {
           key={i}
           student={student}
           nested={projects}
+          handleClickStudentYo={this.props.handleClickStudentYo}
           selectedProjects={this.props.selectedProjects}
           />
       )
