@@ -29,10 +29,12 @@ export default class SideNav extends React.Component {
 
   render() {
 
+
     let menuItems = this.props.students.map( (classe, i) =>
       <MenuItem
         key={i}
         onTouchTap={this.selectClasse.bind(this, classe.classeId)}
+        style={ classe.classeId === this.props.currentClasse ? { backgroundColor : "rgba(0,0,0,.3)"} : {} }
         >
         {classe.professeur　+ " " + classe.name}
       </MenuItem>

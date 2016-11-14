@@ -34,12 +34,14 @@ class Home extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <TopBar onHomeButtonClick={this.toggleSideNav} />
         <SideNav
           ref="sideNav"
           students={this.props.classes}
+          currentClasse={this.props.currentClasse}
         />
         { this.props.currentClasse ?
           <Dashboard />
