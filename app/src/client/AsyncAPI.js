@@ -4,16 +4,16 @@ import querystring  from 'querystring'
 
 export default class AsyncAPI {
 
-    static getStudentsList = () => {
-      console.log("api call students");
+    static getClassesList = () => {
+      console.log("api call classes");
       var url = "/api/classes"
       //`http://data.com/${userId}`
-      store.dispatch({ type : ActionTypes.GET_STUDENTS_LIST })
+      store.dispatch({ type : ActionTypes.GET_CLASSES_LIST })
       return dispatch => fetch(url) // Redux Thunk handles these
         .then(res => res.json())
         .then(
-          data => store.dispatch({ type: 'GET_STUDENTS_LIST_SUCCESS', data }),
-          err => store.dispatch({ type: 'GET_STUDENTS_LIST_ERROR', err })
+          data => store.dispatch({ type: 'GET_CLASSES_LIST_SUCCESS', data }),
+          err => store.dispatch({ type: 'GET_CLASSES_LIST_ERROR', err })
         );
     }
 

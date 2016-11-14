@@ -3,7 +3,7 @@ import AsyncAPI from '../AsyncAPI'
 
 export const api = (state = {
       projects : [],
-      students: [],
+      classes: [],
       actions : [],
       timestamps : [],
       stats : {},
@@ -13,17 +13,17 @@ export const api = (state = {
     action) => {
       // console.log(action);
       switch (action.type) {
-        case ActionTypes.GET_STUDENTS_LIST:
+        case ActionTypes.GET_CLASSES_LIST:
             return { ...state,
               isWaiting: true
             };
-        case ActionTypes.GET_STUDENTS_LIST_SUCCESS:
+        case ActionTypes.GET_CLASSES_LIST_SUCCESS:
             return { ...state,
               isWaiting: false,
-              students: action.data,
+              classes: action.data,
               success : true
             };
-        case ActionTypes.GET_STUDENTS_LIST_ERROR:
+        case ActionTypes.GET_CLASSES_LIST_ERROR:
             return {
               ...state,
               isWaiting: false,

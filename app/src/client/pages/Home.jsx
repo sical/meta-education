@@ -21,10 +21,11 @@ class Home extends React.Component {
   }
 
   componentWillMount() {
-    store.dispatch(AsyncAPI.getStudentsList())
+    store.dispatch(AsyncAPI.getClassesList())
   }
 
   componentDidMount () {
+
   }
 
   toggleSideNav = () => {
@@ -38,7 +39,7 @@ class Home extends React.Component {
         <TopBar onHomeButtonClick={this.toggleSideNav} />
         <SideNav
           ref="sideNav"
-          students={this.props.students}
+          students={this.props.classes}
         />
         { this.props.currentClasse ?
           <Dashboard />
@@ -52,7 +53,7 @@ class Home extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-      students : state.api.students,
+      classes : state.api.classes,
       currentClasse : state.viz.currentClasse
   }
 }
