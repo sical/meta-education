@@ -55,7 +55,7 @@ const mapStateToProps = (state) => {
   return {
       projects : state.api.projects,
       selectedProjects : state.api.selectedProjects,
-      currentClasse : state.viz.currentClasse,
+      currentClasse : state.api.currentClasse,
       stats : state.api.stats,
       currentProject : state.viz.currentProject
   }

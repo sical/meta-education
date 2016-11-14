@@ -4,6 +4,7 @@ import AsyncAPI from '../AsyncAPI'
 export const api = (state = {
       projects : [],
       classes: [],
+      currentClasse : null,
       actions : [],
       timestamps : [],
       stats : {},
@@ -28,6 +29,11 @@ export const api = (state = {
               ...state,
               isWaiting: false,
               success : false
+            };
+        case ActionTypes.SELECT_CLASSE:
+            return {
+              ...state,
+              currentClasse: action.currentClasse
             };
         case ActionTypes.GET_PROJECTS_LIST_SUCCESS:
 

@@ -19,7 +19,7 @@ class StatsList extends React.Component {
   }
 
   componentWillMount() {
-    store.dispatch(AsyncAPI.getStats(this.props.selectedProjects.map(d => d.id)))
+    // store.dispatch(AsyncAPI.getStats(this.props.selectedProjects.map(d => d.id)))
   }
 
 
