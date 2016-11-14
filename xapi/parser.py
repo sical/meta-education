@@ -23,13 +23,6 @@ import logging
 logger = logging.getLogger()
 
 
-handler = logging.StreamHandler()
-formatter = logging.Formatter(
-        '%(levelname)-8s %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-
 # import config
 with open(os.path.join(os.getcwd(),"./config/config.json"),"rb") as f:
     config = json.load(f)

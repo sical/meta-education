@@ -14,6 +14,15 @@ from crawler import get_records_from_xapi, save_statements_to_mongos,reset_state
 from parser import reset_actions_db, extract_networks_from_statements, save_actions_to_mongos
 
 import logging
+
+# logs
+logname="meta-education.log"
+logging.basicConfig(filename=logname,
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
+
 logger = logging.getLogger()
 
 # timeframe to fetch and process data
@@ -36,17 +45,18 @@ def crawl_and_save_records(start, end):
     print "Last record in the DB from '%s' to  '%s'"%(oldest, newest)
     print "Getting more results from the API..."
 
-    if oldest and newest and oldest < start and end > newest :
-        print "Statements in the DB are already newer."
-    else :
+    # if oldest and newest and oldest < start and end > newest :
+    #     print "Statements in the DB are already newer."
+    # else :
         # get all statements from xAPI into mongo
-        while has_more_records:
-            resp = get_records_from_xapi(start, end, offset=offset)
-            saved_results = save_statements_to_mongos(resp["statements"])
-            logger.debug("New records saved : %s"%saved_results)
-            offset = offset + 100
-            if resp["more"] == "" :
-                has_more_records = False
+    while has_more_records:
+        resp = get_records_from_xapi(start, end, offset=offset)
+        saved_results = save_statements_to_mongos(resp["statements"])
+        logger.debug("New records saved : %s"%saved_results)
+        offset = offset + 100
+        if resp["more"] == "" :
+            print "no more records."
+            has_more_records = False
 
     #find latest action
     actions = extract_networks_from_statements()
@@ -81,8 +91,10 @@ def main():
         start = end - duration
 
     if args.verbose:
-        # on met le niveau du logger à DEBUG, comme ça il écrit tout
+        # logging.basicConfig(filename='example.log',level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
+
+
 
     print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
     # start crawling
