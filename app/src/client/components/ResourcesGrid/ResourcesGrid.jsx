@@ -31,41 +31,41 @@ class ResourcesGrid extends React.Component {
   render() {
 
     let tiles = this.props.actions[this.props.actions.length-1].nodes
-      .map(e => e[1].uri)
-      .filter(uri => uri != "")
-      .map( (uri, i) => {
+        .map(e => e[1].uri)
+        .filter(uri => uri != "" && uri)
+        .map( (uri, i) => {
 
-        let type = "other"
-        let icon = <Bookmark />
-        let content = ""
-        console.log(uri);
-        if( [ "png", "jpg", "JPG", "gif"].indexOf(uri.slice(-3)) > -1){
-          type = "img"
-          icon = <Image />
-          content = (
-            <img
-            src={uri}
-            style={ { maxWidth : "100%", maxHeight : "100%" } }
-            />
+          let type = "other"
+          let icon = <Bookmark />
+          let content = ""
+
+          if([ "png", "jpg", "JPG", "gif"].indexOf(uri.slice(-3)) > -1){
+            type = "img"
+            icon = <Image />
+            content = (
+              <img
+              src={uri}
+              style={ { maxWidth : "100%", maxHeight : "100%" } }
+              />
+            )
+          } else if ( uri.includes("youtube") || uri.includes("dailymotion") ||  uri.includes("youtu.be")){
+            type = "video"
+            icon = <Bookmark />
+          } else if (uri.slice(4) == "http") {
+            type = "web"
+            icon = <Share />
+          }
+
+          return (
+            <GridTile
+             key={i}
+             title={`${uri}`}
+             actionIcon={icon}
+             >
+              {content }
+            </GridTile>
           )
-        } else if ( uri.includes("youtube") || uri.includes("dailymotion") ||  uri.includes("youtu.be")){
-          type = "video"
-          icon = <Bookmark />
-        } else if (uri.slice(4) == "http") {
-          type = "web"
-          icon = <Share />
-        }
-
-        return (
-          <GridTile
-           key={i}
-           title={`${uri}`}
-           actionIcon={icon}
-           >
-            {content }
-          </GridTile>
-        )
-      })
+        })
 
     return (
       <div style={styles.root}>
