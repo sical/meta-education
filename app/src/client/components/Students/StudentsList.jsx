@@ -21,11 +21,12 @@ class StudentsList extends React.Component {
     let self = this
     let students = this.props.projects.map( (student,i) => {
 
-      let projects = student.projects.map( project => (
+      let projects = student.projects.map( (project,j) => (
         <StudentsListSubItem
-          key={i}
+          key={i+'_'+j}
           project={project}
           userId={student.id}
+          isSelected={self.props.selectedProjects.map(d => d.id).indexOf(project.id) > -1 ? true : false}
           />
       ))
 

@@ -61,7 +61,6 @@ export default class StudentsList extends React.Component {
   }
 
   render() {
-
     let self = this
 
     let rightIconMenu = (
@@ -82,7 +81,7 @@ export default class StudentsList extends React.Component {
             icon={<ActionFace />}
              />
           }
-          nestedItems={this.props.projects}
+          nestedItems={this.props.nested}
           rightIconButton={rightIconMenu}
           onClick={
             self.state.toggled ?

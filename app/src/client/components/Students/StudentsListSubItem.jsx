@@ -4,6 +4,9 @@ import { connect } from 'react-redux'
 import { ListItem} from 'material-ui/List';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
+import store from '../../store'
+import  { ActionTypes } from '../../actions'
+
 import moment from 'moment'
 
 // set to French
@@ -22,22 +25,14 @@ export default class StudentsListSubItem extends React.Component {
   }
 
   render() {
-
-    let self = this
-
-    let isSelected = this.props.selectedProjects
-      .map(d => d ? d.id : null)
-      .indexOf(project.id)
-
     return (
       <ListItem
         primaryText={`${this.props.project.name}`}
         secondaryText={`${this.props.project.actionsCount} actions. Edité ${ moment(this.props.project.end).fromNow()}`}
         onClick={
-          self.handleClickProject.bind(this, this.props.project.id, this.props.userId)
+          this.handleClickProject.bind(this, this.props.project.id, this.props.userId)
         }
-        key={j}
-        className={ isSelected > -1 ? "selected" : null}
+        className={ this.props.isSelected ? "selected" : null}
         rightIcon={<ContentSend />}
         />
     )
