@@ -1,4 +1,5 @@
 import React from 'react';
+import { push } from 'react-router-redux'
 
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -17,11 +18,17 @@ export default class SideNav extends React.Component {
     this.state = { open: false }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.currentClasse) this.selectClasse(nextProps.currentClasse)
+  }
+
+
   handleToggle = () => this.setState({open: !this.state.open});
 
   handleClose = () => this.setState({open: false});
 
   selectClasse(classeId) {
+    store.dispatch(push('#'+classeId))
     store.dispatch({ type : ActionTypes.SELECT_CLASSE, currentClasse : classeId })
     store.dispatch(AsyncAPI.getProjectsList(classeId))
     this.handleClose()

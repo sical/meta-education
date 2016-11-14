@@ -54,9 +54,12 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+
+  let  currentClasse = state.routing.locationBeforeTransitions.hash.replace('#','')
+  
   return {
       classes : state.api.classes,
-      currentClasse : state.viz.currentClasse
+      currentClasse : state.api.currentClasse || currentClasse
   }
 }
 

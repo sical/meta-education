@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Provider } from 'react-redux'
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import store  from './client/store'
 
@@ -11,18 +13,24 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 import Home from "./client/pages/Home.jsx"
-let userId = "31af3b8e-4ac6-4ae1-b651-a64df7b012cd"
+
+// Create an enhanced history that syncs navigation events with the store
+const history = syncHistoryWithStore(browserHistory, store)
 
 const App = () => (
   <MuiThemeProvider>
-    <Home userId={userId} />
+    <Home />
   </MuiThemeProvider>
 );
 
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <IndexRoute component={Home}/>
+      </Route>
+    </Router>
   </Provider>,
   document.getElementById('app')
 );
