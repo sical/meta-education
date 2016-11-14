@@ -4,7 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { connect } from 'react-redux'
 
 import SideNav from '../components/SideNav.jsx'
-import TopBar from '../components/TopBar.jsx'
+import TopBar from '../components/TopBar/TopBar.jsx'
 
 import Dashboard from '../components/Dashboard.jsx'
 
