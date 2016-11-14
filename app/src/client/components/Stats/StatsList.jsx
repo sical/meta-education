@@ -3,36 +3,25 @@ import { connect } from 'react-redux'
 
 import moment from 'moment'
 
-import FlatButton from 'material-ui/FlatButton';
-import {List, ListItem} from 'material-ui/List';
-import ContentSend from 'material-ui/svg-icons/content/send';
+import {List} from 'material-ui/List';
 
-import { ActionTypes } from '../../actions'
-import AsyncAPI from '../../AsyncAPI'
-import store from '../../store'
+import StatsListItem from './StatsListItem.jsx'
 
-import RefreshButton from '../RefreshButton/RefreshButton.jsx'
+import * as d3 from 'd3';
 
 class StatsList extends React.Component {
   constructor(props) {
     super(props)
   }
 
-
   render() {
-    let self = this
-
     let stats = Object.keys(this.props.stats).map( (id,i) => {
-      let stat = self.props.stats[id]
-      let isSelected = -1
-
       return (
-        <ListItem
-          primaryText={`Ressources : ${Math.floor(stat.resourcesUsedPercent)}% / Densité : ${stat.density} / degré : ${Math.round(stat.mediumDegree*100)} `}
-          secondaryText={`${Math.floor(stat.clarity)} actions. Edité ${ moment(stat.end).fromNow()}`}
-          onClick={this.props.handleClickStudentYo.bind(this,id)}
+        <StatsListItem
+          stat={this.props.stats[id]}
+          projectId={id}
+          handleClickStudentYo={this.props.handleClickStudentYo.bind(this)}
           key={i}
-          className={ isSelected > -1 ? "selected" : null}
           />
       )
     })
@@ -48,9 +37,7 @@ class StatsList extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-      stats : state.api.stats,
-      selectedProjects : state.api.selectedProjects,
-      currentProject : state.viz.currentProject
+      stats : state.api.stats
   }
 }
 
