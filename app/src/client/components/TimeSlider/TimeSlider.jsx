@@ -106,7 +106,6 @@ export default class TimeSlider extends React.Component {
 
     return(
       <div>
-          <p>{timeFormatted}</p>
         <div>
           <FlatButton
             label="Prev"
@@ -117,6 +116,7 @@ export default class TimeSlider extends React.Component {
             label="Next"
             onClick={this.next.bind(this)}
             />
+          <span>{timeFormatted}</span>
         </div>
         <Slider
           ref='slider'

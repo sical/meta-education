@@ -62,7 +62,9 @@ class BigList extends React.Component {
              <TableHeaderColumn>Degré</TableHeaderColumn>
            </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody
+          deselectOnClickaway={false}
+          >
           {stats}
         </TableBody>
       </Table>
