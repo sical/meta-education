@@ -82,10 +82,10 @@ class Dashboard extends React.Component {
             <CardHeader
               title="Ressources"
               subtitle="Subtitle"
-              actAsExpander={true}
-              showExpandableButton={true}
+              // actAsExpander={true}
+              // showExpandableButton={true}
             />
-            <CardText expandable={true}>
+            <CardText> 
                {
                  this.props.actions.length ?
                   <ResourcesGrid

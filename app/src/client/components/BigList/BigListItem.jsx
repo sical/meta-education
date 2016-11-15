@@ -6,9 +6,10 @@ import FlatButton from 'material-ui/FlatButton';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
-import Clarity from '../Stats/Clarity.jsx'
-import Density from '../Stats/Density.jsx'
-import Degree from '../Stats/Degree.jsx'
+import Pie from '../Stats/Pie.jsx'
+// import Clarity from '../Stats/Clarity.jsx'
+// import Density from '../Stats/Density.jsx'
+// import Degree from '../Stats/Degree.jsx'
 
 import moment from 'moment'
 moment.locale('fr')
@@ -38,36 +39,32 @@ export default class BigListItem extends React.Component {
       density,
       clarity,
       degree,
+      resourcesUsedPercent,
+      volumen,
       ...other
     } = this.props
 
+    let graphs = [
+      density,
+      clarity,
+      degree,
+      resourcesUsedPercent
+    ].map( (d,i)=> d ?
+        <TableRowColumn key={i}>
+          <Pie value={d} />
+        </TableRowColumn>
+      : null
+    )
+
     return (
-       <TableRow {...other} >
+       <TableRow {...other}>
         {other.children[0] /* checkbox passed down from Table-Body*/}
          <TableRowColumn>
            {userName}
          </TableRowColumn>
-         <TableRowColumn>
-           {
-             density ? <Density value={density} /> : null
-          }
-        </TableRowColumn>
-        <TableRowColumn>
-          {
-            clarity ?
-            <Clarity value={clarity} />
-            :
-            null
-          }
-        </TableRowColumn>
-        <TableRowColumn>
-          {
-            degree ?
-            <Degree value={degree} />
-            :
-            null
-          }
-        </TableRowColumn>
+
+         { graphs }
+
         {/* <TableRowColumn>
           {`${ moment(end).fromNow()}`}
         </TableRowColumn>

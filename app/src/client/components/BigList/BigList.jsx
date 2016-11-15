@@ -34,10 +34,11 @@ class BigList extends React.Component {
 
     let stats = this.props.selectedProjects.map( project => {
       let stat = this.props.stats[project.id] || {}
-
+      console.log(stat);
       return (
         <BigListItem
           userName={project.userName}
+          resourcesUsedPercent={stat.resourcesUsedPercent}
           end={project.end}
           density={stat.density}
           clarity={Math.floor(stat.clarity)}
@@ -60,6 +61,7 @@ class BigList extends React.Component {
              <TableHeaderColumn>Densité</TableHeaderColumn>
              <TableHeaderColumn>Clarté</TableHeaderColumn>
              <TableHeaderColumn>Degré</TableHeaderColumn>
+             <TableHeaderColumn>Resources</TableHeaderColumn>
            </TableRow>
         </TableHeader>
         <TableBody
