@@ -1,85 +1,126 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {GridList, GridTile} from 'material-ui/GridList'
-import Subheader from 'material-ui/Subheader';
+import {Card, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
-import Bookmark from 'material-ui/svg-icons/action/bookmark';
-import VideoLibrary from 'material-ui/svg-icons/av/video-library';
-import Image from 'material-ui/svg-icons/image/image';
-import Share from 'material-ui/svg-icons/social/share';
-
-import Paper from 'material-ui/Paper';
-
-import { ActionTypes } from '../../actions'
-import AsyncAPI from '../../AsyncAPI'
-import store from '../../store'
-
-const styles = {
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-  }
-};
-
+import ResourceIcon from './ResourceIcon.jsx'
 
 class ResourcesGrid extends React.Component {
   constructor(props) {
     super(props)
   }
 
+  getCurrentMedia() {
+    let media = this.state.currentResource
+    // console.log(media);
+    switch(media.type) {
+      case "image":
+        let img = <img style={ {maxWidth : "30%", width:"100px"} } src={media.uri} />
+        return (
+          <span>
+            <a href={media.uri}>{media.uri}</a>
+            {img}
+          </span>
+        )
+      default:
+        return <a href={media.uri}>{media.uri}</a>
+    }
+  }
+
   render() {
 
-    let uris = this.props.actions[this.props.actions.length-1].nodes
+    // ghost link to help parse URIs
+    let link = document.createElement("a");
+
+    let uris = this.props.actions.length ?
+      this.props.actions[this.props.actions.length-1].nodes
         .map(e => e[1].uri)
         .filter(uri => uri != "" && uri)
+      :
+      []
 
+    let parsed = uris.map( uri　=> {
 
-    let tiles = uris.map( (uri, i) => {
-      console.log(uri);
-        if ([ "png", "jpg", "JPG", "gif", "svg"].indexOf(uri.slice(-3)) > -1)
-          return <Image key={i}/>
-        else if ( uri.includes("youtube")
-            || uri.includes("dailymotion")
-            || uri.includes("youtu.be")
-          )
-          return <Bookmark key={i}/>
-        else if (uri.slice(4) == "http")
-          return <Share key={i}/>
-        else
-          return <Bookmark key={i}/>
-      //
+      link.href = uri; // setup ghost link for URL parsing
+
+      // check link type
+      let type = (l => {
+          if ([ "png", "jpg", "JPG", "gif", "svg"].indexOf(l.pathname.slice(-3)) > -1)
+            return "image"
+          else if ( l.hostname.includes("youtube")
+              || l.hostname.includes("dailymotion")
+              || l.hostname.includes("youtu.be")
+            )
+            return "video"
+          else
+            return "link"
+      })(link)
+
+      return {
+        type,
+        uri,
+        domain : link.hostname
+      }
     })
 
-    // let tiles = uris.filter( uri =>
-    //
-    //   ).map( uri =>
-    //     <GridTile
-    //      key={uri}
-    //      title={`${uri}`}
-    //      >
-    //       <img
-    //         src={uri}
-    //         style={ { maxWidth : "100%", maxHeight : "100%" } }
-    //         />
-    //     </GridTile>
-    //   )
-    //
-    // let videos = uris.filter( uri  =>
-    //
-    //   )
-    //   .map( uri => <span></span>)
-    //
-    // let links = uris.filter( uri => )
-    //   .map( uri => <span></span>)
+    let domainStats = parsed.reduce((dict, d ) => {
+      dict[d.domain] = dict[d.domain] === undefined ?
+        [d] :
+        [...dict[d.domain], d]
+      return dict
+      }, {})
 
-
+    let domainsListItems = Object.keys(domainStats).map(domain => {
+      let icons = domainStats[domain].map( res =>
+        <ResourceIcon
+          key={res.uri}
+          resource={res}
+          />
+      )
+      return (
+        <span key={`item--${domain}`}>
+          {domain} ({domainStats[domain].length}) {icons}
+          <br />
+        </span>
+      )
+    }
+    )
 
     return (
-      <div>
-        {tiles}
-      </div>
+
+      <Card
+        className="resources"
+        style={this.props.style}
+        >
+        <CardHeader
+          title="Ressources"
+          subtitle="Liens, vidéos et objets externes utilisés"
+          actAsExpander={true}
+          showExpandableButton={true}
+
+        />
+        <CardText expandable={true}>
+        {
+          domainsListItems.length ?
+            (
+              <div>
+                {domainsListItems}
+              </div>
+            )
+          :
+          null
+        }
+        </CardText>
+        <CardMedia>
+        {
+          this.props.currentResource ?
+            this.getCurrentMedia()
+          :
+            null
+        }
+        </CardMedia>
+      </Card>
+
 
       // <div style={styles.root}>
       //   { tiles.length ?

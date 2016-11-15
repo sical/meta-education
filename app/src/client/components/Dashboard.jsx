@@ -1,14 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 import Network from './Network/Network.jsx'
 import TimeSlider from './TimeSlider/TimeSlider.jsx'
-
 import ResourcesGrid from './ResourcesGrid/ResourcesGrid.jsx'
-
 import BigList from './BigList/BigList.jsx'
 
 import {List, ListItem} from 'material-ui/List';
@@ -28,19 +25,20 @@ let style =  {
     "alignItems":"stretch"
   },
   bigList : {
-    // width: '50%',
-    flexBasis:"50%",
+    maxWidth: "60%",
+    flexBasis:"60%",
     order:1
   },
   graphs : {
-    flexBasis:"50%",
+    flexBasis:"40%",
+    maxWidth: "40%",
     order:2,
     height:'100vh'
   },
   resources : {
     // backgroundColor : "red",
-    height : "20%"
-
+    // height : "20%",
+    maxWidth : "100%"
   },
   network : {
     // backgroundColor : "steelblue",
@@ -78,24 +76,10 @@ class Dashboard extends React.Component {
           className="graphs"
           style={style.graphs}
           >
-          <Card className="resources" style={style.resources}>
-            <CardHeader
-              title="Ressources"
-              subtitle="Subtitle"
-              // actAsExpander={true}
-              // showExpandableButton={true}
+          <ResourcesGrid
+            style={style.resources}
+            actions={this.props.actions}
             />
-            <CardText> 
-               {
-                 this.props.actions.length ?
-                  <ResourcesGrid
-                    actions={this.props.actions}
-                    />
-                  :
-                  "resources"
-                }
-            </CardText>
-          </Card>
           <Card className="network" style={style.network}>
             <CardHeader
               title="Network"
