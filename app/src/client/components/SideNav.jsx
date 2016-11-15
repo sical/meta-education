@@ -6,6 +6,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
+import StudentsList from '../components/Students/StudentsList.jsx'
+
 export default class SideNav extends React.Component {
 
   constructor(props) {
@@ -43,6 +45,8 @@ export default class SideNav extends React.Component {
           <Subheader>Classes</Subheader>
           {menuItems}
           <Divider />
+          <Subheader>Elèves</Subheader>
+          <StudentsList />
         </Drawer>
       </div>
     );

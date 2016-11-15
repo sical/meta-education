@@ -90,9 +90,15 @@ router.get('/users', (req, res) => {
 router.get('/projects/:classe_id', (req, res) => {
 
   let students = []
+  let names = {}
   users.users.forEach(d => {
-    if(d.classeId == req.params.classe_id) students.push(d)
+    if(d.classeId == req.params.classe_id) {
+      names[d.id] = d.name
+      students.push(d)
+    }
+
   })
+
 
   // console.log(students);
   // db.actions.distinct("project_id", { "statement.actor.name" : { $in : students } }, (err, docs) => {
@@ -141,6 +147,7 @@ router.get('/projects/:classe_id', (req, res) => {
           start : d.start,
           end : d.end,
           userId : user,
+          userName: names[user],
           name : d.names[d.names.length-1] // get last name
         })
       })

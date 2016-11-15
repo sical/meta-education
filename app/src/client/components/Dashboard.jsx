@@ -4,14 +4,12 @@ import { connect } from 'react-redux'
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
-import StudentsList from '../components/Students/StudentsList.jsx'
-
 import Network from './Network/Network.jsx'
 import TimeSlider from './TimeSlider/TimeSlider.jsx'
 
 import ResourcesGrid from './ResourcesGrid/ResourcesGrid.jsx'
 
-import StatsList from './Stats/StatsList.jsx'
+import BigList from './BigList/BigList.jsx'
 
 import {List, ListItem} from 'material-ui/List';
 import ContentSend from 'material-ui/svg-icons/content/send';
@@ -39,16 +37,11 @@ class Dashboard extends React.Component {
     return (
       <Grid>
         <Row>
-          <Col>
-            <StudentsList
-              handleClickStudentYo={this.handleClickStudentYo.bind(this)}
-            />
-          </Col>
           {
             this.props.selectedProjects.length ?
             <Col>
-              <StatsList
-                handleClickStudentYo={this.handleClickStudentYo.bind(this)}
+              <BigList
+                // handleClickStudentYo={this.handleClickStudentYo.bind(this)}
               />
             </Col>
             : null

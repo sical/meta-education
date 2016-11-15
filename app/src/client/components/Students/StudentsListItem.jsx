@@ -63,20 +63,19 @@ export default class StudentsList extends React.Component {
     return (
       <ListItem
           primaryText={this.props.student.name}
-          secondaryText={this.props.student.name}
           open={this.state.toggled}
-          leftAvatar={
-            <Avatar
-            icon={<ActionFace />}
-             />
-          }
+          // leftAvatar={
+          //   <Avatar
+          //   icon={<ActionFace />}
+          //    />
+          // }
           nestedItems={this.props.nested}
-          rightIconButton={rightIconMenu}
+          // rightIconButton={rightIconMenu}
           onClick={
-            this.state.toggled ?
+            // this.state.toggled ?
               this.toggleProjects.bind(this, this.props.student.id)
-              :
-              this.handleClickStudent.bind(this,this.props.student.id)
+              // :
+              // this.handleClickStudent.bind(this,this.props.student.id)
           }
         />
       )
