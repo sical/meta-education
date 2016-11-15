@@ -19,70 +19,70 @@ import store from '../store'
 import  { ActionTypes } from '../actions'
 import AsyncAPI from '../AsyncAPI'
 
+let style =  {
+  main : {
+    "display":"flex",
+    "flexDirection":"row",
+    "flexWrap":"wrap",
+    "justifyContent":"flex-start",
+    "alignItems":"stretch"
+  },
+  bigList : {
+    // width: '50%',
+    flexBasis:"50%",
+    order:1
+  },
+  graphs : {
+    flexBasis:"50%",
+    order:2
+  }
+}
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
   }
 
-  handleClickStudentYo(projectId) {
-
-    if (! this.props.currentProject || this.props.currentProject != projectId ) {
-      store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
-      store.dispatch(AsyncAPI.getProject(projectId))
-    }
-    // else store.dispatch({ type : ActionTypes.HIDE_PROJECT})
-  }
-
   render() {
+    let graphs = this.props.actions.length ?
+        (
+          <div>
+            <ResourcesGrid
+                actions={this.props.actions}
+              />
+            <Network
+              actions={this.props.actions}
+              />
+            <TimeSlider
+              timestamps={this.props.timestamps}
+            />
+          </div>
+        )
+      :
+      null
+
     return (
-      <Grid>
-        <Row>
+      <div
+        className="main"
+        style={style.main}
+        >
+        <div
+          className="bigList"
+          style={style.bigList}
+          >
           {
             this.props.selectedProjects.length ?
-            <Col>
-              <BigList
-                // handleClickStudentYo={this.handleClickStudentYo.bind(this)}
-              />
-            </Col>
+            <BigList />
             : null
           }
-            {
-              this.props.currentProject && this.props.actions.length ?
-                <Col>
-                  <Card>
-                    <CardHeader
-                      title="Ressources"
-                      subtitle="Liens, vidéos et éléments multimédia de la carte"
-                      actAsExpander={true}
-                      showExpandableButton={true}
-                    />
-                    <CardText expandable={true}>
-                      <ResourcesGrid
-                        actions={this.props.actions}
-                      />
-                    </CardText>
-                  </Card>
-                  <Card>
-                    <CardHeader
-                      title="Carte conceptuelle"
-                      subtitle="Consulter et rejouer la création de la carte"
-                      actAsExpander={true}
-                      showExpandableButton={true}
-                    />
-                    <CardText expandable={true}>
-                      <Network
-                        actions={this.props.actions}
-                        />
-                      <TimeSlider
-                        timestamps={this.props.timestamps}
-                      />
-                    </CardText>
-                  </Card>
-                </Col>
-              : null
-            }
-        </Row>
-      </Grid>
+        </div>
+        <div
+          className="graphs"
+          style={style.graphs}
+          >
+          {graphs}
+        </div>
+      </div>
     )
   }
 }
@@ -90,10 +90,8 @@ class Dashboard extends React.Component {
 const mapStateToProps = (state) => {
     let loaded = state.api.actions.length ? true : false
     return {
-      projectIsLoaded : loaded,
       timestamps : state.api.timestamps,
       actions : state.api.actions,
-      currentProject : state.viz.currentProject,
       selectedProjects : state.api.selectedProjects
     }
 }

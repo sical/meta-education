@@ -7,9 +7,27 @@ import BigListItem from './BigListItem.jsx'
 
 import * as d3 from 'd3';
 
+import store from '../../store'
+import  { ActionTypes } from '../../actions'
+import AsyncAPI from '../../AsyncAPI'
+
 class BigList extends React.Component {
   constructor(props) {
     super(props)
+  }
+
+  selectRow(selectedRows) {
+
+    let projectId = selectedRows.length ? this.props.selectedProjects[selectedRows[0]].id : null
+    console.log("select", projectId);
+
+    if (projectId
+      &&　! this.props.currentProject
+      || this.props.currentProject != projectId
+    ){
+      store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
+      store.dispatch(AsyncAPI.getProject(projectId))
+    }
   }
 
   render() {
@@ -26,7 +44,6 @@ class BigList extends React.Component {
           degree={Math.round(stat.mediumDegree*100)}
           key={project.id}
           id={project.id}
-          // handleClickStudentYo={this.props.handleClickStudentYo.bind(this)}
           />
       )
     })
@@ -34,12 +51,12 @@ class BigList extends React.Component {
     return (
       <Table
         selectable={true}
-        multiSelectable={true}
+        // multiSelectable={true}
+        onRowSelection={this.selectRow.bind(this)}
         >
         <TableHeader>
           <TableRow>
              <TableHeaderColumn>Nom</TableHeaderColumn>
-             <TableHeaderColumn>Dernier changement</TableHeaderColumn>
              <TableHeaderColumn>Densité</TableHeaderColumn>
              <TableHeaderColumn>Clarté</TableHeaderColumn>
              <TableHeaderColumn>Degré</TableHeaderColumn>

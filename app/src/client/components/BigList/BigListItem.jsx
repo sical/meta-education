@@ -30,10 +30,19 @@ export default class BigListItem extends React.Component {
   }
 
   render() {
-    const { id,userName,end,density,clarity,degree, ...other } = this.props
+
+    const { // unpack props
+      id,
+      userName,
+      end,
+      density,
+      clarity,
+      degree,
+      ...other
+    } = this.props
 
     return (
-       <TableRow {...other}>
+       <TableRow {...other} >
         {other.children[0] /* checkbox passed down from Table-Body*/}
          <TableRowColumn>
            {userName}
@@ -59,17 +68,17 @@ export default class BigListItem extends React.Component {
             null
           }
         </TableRowColumn>
-        <TableRowColumn>
+        {/* <TableRowColumn>
           {`${ moment(end).fromNow()}`}
         </TableRowColumn>
         <TableRowColumn>
           {`${ moment(end).fromNow()}`}
-        </TableRowColumn>
+        </TableRowColumn> */}
       </TableRow>
     )
   }
 }
+
 //{`Ressources : ${Math.floor(stat.resourcesUsedPercent)}% / Densité : ${stat.density} / degré : ${Math.round(stat.mediumDegree*100)} `}
 // secondaryText={hover} //{`${Math.floor(stat.clarity)} actions. Edité ${ moment(stat.end).fromNow()}`}
-// onClick={this.props.handleClickStudentYo.bind(this,this.props.projectId)}
 // // className={ isSelected > -1 ? "selected" : null}

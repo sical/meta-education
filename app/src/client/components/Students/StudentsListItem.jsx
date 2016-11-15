@@ -46,7 +46,7 @@ export default class StudentsList extends React.Component {
   handleClickStudent(userId) {
     let projectIndex = this.props.selectedProjects.map(d => d.userId).indexOf(userId)
     let projectId = this.props.selectedProjects[projectIndex].id
-    this.props.handleClickStudentYo(projectId)
+    this.props.handleSelectProject(projectId)
   }
 
   render() {
