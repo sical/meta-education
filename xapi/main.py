@@ -29,38 +29,33 @@ logger = logging.getLogger()
 # start = datetime(2016, 10, 18, 11, 50, 0)
 # end = datetime(2016, 10, 18, 22, 5, 0)
 
-def crawl_and_save_records(start, end):
+def crawl_and_save_records(start, end, offset=0):
+    print "Getting more results from the API starting at %s..."%start
+
     # init for crawler
     has_more_records = True
-    offset = 0
 
-    # reset local data
-    # reset_statements_db()
-    # reset_actions_db()
-
-    # get latest record
-    db_timerange = get_db_time_range()
-    oldest = db_timerange[0]
-    newest = db_timerange[1]
-    print "Last record in the DB from '%s' to  '%s'"%(oldest, newest)
-    print "Getting more results from the API..."
-
-    # if oldest and newest and oldest < start and end > newest :
-    #     print "Statements in the DB are already newer."
-    # else :
-        # get all statements from xAPI into mongo
+    limit=100 # number of records for each fetch
     while has_more_records:
-        resp = get_records_from_xapi(start, end, offset=offset)
+        logger.debug("Getting %s records"%limit)
+        try :
+            resp = get_records_from_xapi(start, end, offset=offset,limit=limit)
+        except ValueError, e:
+            if "API Error 500 : Allowed memory size" in str(e): # returned API files are too big
+                limit= 50 # try only 50 records
+                # resp = get_records_from_xapi(start, end, offset=offset, limit=limit)
+
+
         saved_results = save_statements_to_mongos(resp["statements"])
         logger.debug("New records saved : %s"%saved_results)
-        offset = offset + 100
+        offset = offset + limit
         if resp["more"] == "" :
             print "no more records."
             has_more_records = False
 
     #find latest action
-    actions = extract_networks_from_statements()
-    if actions : save_actions_to_mongos(actions)
+    # actions = extract_networks_from_statements()
+    # if actions : save_actions_to_mongos(actions)
 
 
 def parse_args():
@@ -69,6 +64,8 @@ def parse_args():
     p.add_argument('--start', '-s', default=None, help='Crawling start time - format ')
     p.add_argument('--duration', '-d', default=None, help='Duration until crawl final timestamp (number of days)')
     p.add_argument('--verbose', '-v', default=None, help='Set logger to show everything')
+    p.add_argument('--recrawl', '-r', default=None, help='Recrawl all data for the time period')
+    p.add_argument('--offset', '-o', default=None, help='Start crawling from this offset')
 
     return p
 
@@ -94,11 +91,22 @@ def main():
         # logging.basicConfig(filename='example.log',level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
 
+    db_timerange = get_db_time_range()
+    oldest = db_timerange[0]
+    newest = db_timerange[1]
+    print "Record in the DB from '%s' to  '%s'"%(oldest, newest)
 
+    # get from latest record
+    if not args.recrawl:
+        start = newest
 
     print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
+
     # start crawling
-    crawl_and_save_records(start, end)
+    if args.offset and int(args.offset):
+        crawl_and_save_records(start, end, offset=int(args.offset))
+    else:
+        crawl_and_save_records(start, end)
 
 if __name__ == '__main__':
     main()
