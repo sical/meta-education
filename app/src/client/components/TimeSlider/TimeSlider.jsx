@@ -101,8 +101,10 @@ export default class TimeSlider extends React.Component {
         onClick={this.play.bind(this)}
         />
 
-    let currentTime = this.props.timestamps[this.state.value] || Date.now(), //,
-      timeFormatted = d3.timeFormat("%a %d %B, %H:%M")(currentTime)
+    const timeFormat = d3.time.format("%a %d %B, %H:%M")
+
+    let currentTime = new Date(this.props.timestamps[this.state.value]) || new Date,
+      timeFormatted = timeFormat(currentTime)
 
     return(
       <div>

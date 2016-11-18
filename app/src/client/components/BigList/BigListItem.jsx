@@ -7,9 +7,7 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
 import Pie from '../Stats/Pie.jsx'
-// import Clarity from '../Stats/Clarity.jsx'
-// import Density from '../Stats/Density.jsx'
-// import Degree from '../Stats/Degree.jsx'
+import TimeSeries from '../Stats/TimeSeries.jsx'
 
 import moment from 'moment'
 moment.locale('fr')
@@ -41,20 +39,46 @@ export default class BigListItem extends React.Component {
       degree,
       resourcesUsedPercent,
       volumen,
+      series,
+      maxSeries,
       ...other
     } = this.props
 
-    let graphs = [
-      density,
-      clarity,
-      degree,
-      resourcesUsedPercent
-    ].map( (d,i)=> d ?
-        <TableRowColumn key={i}>
-          <Pie value={d} />
-        </TableRowColumn>
+    // make timeChart
+    let w = 100,
+        h = 60
+
+    let xScale =
+      series.length && maxSeries ?
+      d3.time.scale()
+        .domain([
+          d3.min(series.map(d=>new Date(d.ts))),
+          d3.max(series.map(d=>new Date(d.ts)))
+        ])
+        .range([0,w])
       : null
-    )
+
+    let yScale =
+      series.length && maxSeries ?
+      d3.scale.linear()
+        .domain([0, d3.max(series.map(d=>d.count))])
+        .range([0,h])
+      : null
+
+    let timeSeriesData = xScale && yScale && series.length ?
+      series.map(d => ( { x: new Date(d.ts), y : d.count } ))
+      :
+      null
+
+    let timeSeries = timeSeriesData ?
+      <TimeSeries
+        data={timeSeriesData}
+        width={w}
+        height={h}
+        xScale={xScale}
+        yScale={yScale}
+        />
+      : null
 
     return (
        <TableRow {...other}>
@@ -63,7 +87,26 @@ export default class BigListItem extends React.Component {
            {userName}
          </TableRowColumn>
 
-         { graphs }
+         {/* { density ?
+           <TableRowColumn>
+             <Pie value={density} />
+           </TableRowColumn>
+           :
+           null
+         } */}
+
+         <TableRowColumn>
+          { timeSeries }
+         </TableRowColumn>
+
+        { density ?
+           <TableRowColumn>
+             <Pie value={resourcesUsedPercent} />
+           </TableRowColumn>
+           :
+           null
+         }
+
 
         {/* <TableRowColumn>
           {`${ moment(end).fromNow()}`}

@@ -19,7 +19,7 @@ class BigList extends React.Component {
   selectRow(selectedRows) {
 
     let projectId = selectedRows.length ? this.props.selectedProjects[selectedRows[0]].id : null
-    console.log("select", projectId);
+    // console.log("select", projectId);
 
     if (projectId
       &&　! this.props.currentProject
@@ -32,9 +32,31 @@ class BigList extends React.Component {
 
   render() {
 
+    let maxEls = this.props.selectedProjects.map( d => {
+      let stat = this.props.stats[d.id]
+      return stat ? d3.max(stat.series.map(d => d.count)) : 0
+    })
+
+    let maxTs = this.props.selectedProjects.map( d => {
+      let stat = this.props.stats[d.id]
+      return stat ? d3.max(stat.series.map(d => new Date(d.ts))) : 0
+    })
+
+    let minTs = this.props.selectedProjects.map( d => {
+      let stat = this.props.stats[d.id]
+      return stat ? d3.min(stat.series.map(d => new Date(d.ts))) : 0
+    })
+
+    let maxSeries = {
+      count : d3.max(maxEls),
+      maxTs : d3.max(maxTs),
+      minTs : d3.max(minTs)
+    }
+    console.log(maxSeries);
+
     let stats = this.props.selectedProjects.map( project => {
       let stat = this.props.stats[project.id] || {}
-      console.log(stat);
+      // console.log(stat);
       return (
         <BigListItem
           userName={project.userName}
@@ -43,6 +65,8 @@ class BigList extends React.Component {
           density={stat.density}
           clarity={Math.floor(stat.clarity)}
           degree={Math.round(stat.mediumDegree*100)}
+          series={stat.series || []}
+          maxSeries={maxSeries}
           key={project.id}
           id={project.id}
           />
@@ -58,10 +82,10 @@ class BigList extends React.Component {
         <TableHeader>
           <TableRow>
              <TableHeaderColumn>Nom</TableHeaderColumn>
-             <TableHeaderColumn>Densité</TableHeaderColumn>
-             <TableHeaderColumn>Clarté</TableHeaderColumn>
-             <TableHeaderColumn>Degré</TableHeaderColumn>
-             <TableHeaderColumn>Resources</TableHeaderColumn>
+             <TableHeaderColumn>Nombre de Noeuds/Liens</TableHeaderColumn>
+             <TableHeaderColumn>Noeuds avec ressources</TableHeaderColumn>
+             {/* <TableHeaderColumn>Densité</TableHeaderColumn>
+             <TableHeaderColumn>Degré</TableHeaderColumn> */}
            </TableRow>
         </TableHeader>
         <TableBody
