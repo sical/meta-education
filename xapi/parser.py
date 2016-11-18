@@ -76,9 +76,12 @@ def create_elements(G, element_type, data):
 def delete_elements(G, element_type, data):
     """Remove an element from the graph G"""
     if element_type == "Node" :
-        G.remove_node(data["_id"])
+        if G.has_node(data["_id"]):
+            G.remove_node(data["_id"])
     elif element_type == "Edge" :
-        G.remove_edge(data["from"], data["to"])
+        # prevent error raising from edges removed during nodes deletion
+        if G.has_edge(data["from"], data["to"]) :
+            G.remove_edge(data["from"], data["to"])
     else :
         raise ValueError("Wrong element type %s"%element_type)
     return G
@@ -137,7 +140,7 @@ def extract_networks_from_statements():
         action["ts"] = statement["stored"]
         action["id"] = statement["id"]
 
-        action_log = "%i/%s :%s  - %s"%(i,c,action["type"], action["ts"])
+        action_log = "%i/%s :%s  - %s -- %s"%(i,c,action["type"], action["ts"], action["id"])
 
         if action["type"] in ["access","loggedin","viewed","close", "attempted", "experienced"] :
             logger.debug(action_log)
@@ -171,22 +174,25 @@ def extract_networks_from_statements():
                 action["project_name"] = data["project"]["title"]
 
                 if project_id in networks.keys(): # ignore graphs that were not created properly with Renkan/Create
+
                     if action["type"] == "create":
                         create_elements(networks[project_id], element_type, data )
-                        # print statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
                     elif action["type"] == "update" or action["type"] == "move" :
 
                         data_changed = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#DataChanged"]
 
                         if element_type == "Node":
                             _id = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
-                            update_node(networks[project_id], _id, data_changed)
+
+                            if networks[project_id].has_node( _id):
+                                update_node(networks[project_id], _id, data_changed)
 
                         if element_type == "Edge":
                             _from = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["from"]
                             _to = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["to"]
-
-                            update_edge(networks[project_id], _from, _to, data_changed)
+                            if networks[project_id].has_edge( _from, _to):
+                                # print project_id, action["id"]
+                                update_edge(networks[project_id], _from, _to, data_changed)
 
                     elif action["type"] == "delete":
                         delete_elements(networks[project_id], element_type, data )

@@ -17,7 +17,8 @@ import logging
 
 # logs
 logname="meta-education.log"
-logging.basicConfig(filename=logname,
+logging.basicConfig(
+                            filename=logname,
                             filemode='a',
                             format='%(asctime)s,%(msecs)d %(levelname)s %(message)s',
                             datefmt='%H:%M:%S',
@@ -54,8 +55,8 @@ def crawl_and_save_records(start, end, offset=0):
             has_more_records = False
 
     #find latest action
-    # actions = extract_networks_from_statements()
-    # if actions : save_actions_to_mongos(actions)
+    actions = extract_networks_from_statements()
+    if actions : save_actions_to_mongos(actions)
 
 
 def parse_args():
