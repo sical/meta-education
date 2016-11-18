@@ -195,17 +195,7 @@ router.get('/projects/:classe_id', (req, res) => {
   //   })
 });
 
-// GET a　list of all projects
-
-/*
-"2e6b93f5-70c9-4db3-b759-f27e0132720b"
-"568d40b0-b09b-48d5-aff0-330a23a4fc34"
-"5ca6a147-1b4c-4b43-850f-642736286fd6"
-"7e29d925-a9e4-411e-b797-82011aad52a8"
-"f6d5a965-0257-49b4-95cc-840e1c11c43f"
-"599c93c6-c14a-4560-a85a-d980756193c6"
-*/
-
+// GET stats from a　list of all projects
 router.get('/stats', (req, res) => {
 
   let projects = req.query.projects instanceof Array ? req.query.projects : [req.query.projects]
@@ -214,17 +204,12 @@ router.get('/stats', (req, res) => {
     message : "No projects defined."
   })
 
-  db.actions.aggregate(
+  db.actions.aggregate([
     {
       $match :
       {
         "project_id" : { $in : projects}
        }
-    },
-    {
-      $sort : {
-        "ts" : 1
-      }
     },
     {
       $group :
@@ -260,12 +245,14 @@ router.get('/stats', (req, res) => {
         start : "$start"
       }
     }
+    ]
+    ,
+	   { allowDiskUse: true }
     ,(err, docs) => {
       if(err) throw err
       if (docs == null) res.send({})
 
       // calculate some stats
-
       let stats = {}
       docs.forEach( project => {
 
@@ -275,7 +262,12 @@ router.get('/stats', (req, res) => {
           volumen[action.type] = sum + 1;
         })
 
-        console.log(volumen);
+        let series = project.series.map( d => (
+          {
+            ts :  d.ts,// new Date(d.ts).getTime(),
+            count: d.edgesCount + d.nodesCount
+          }
+        ))
 
         let clarity = (volumen.delete*100)/volumen.create || 0
 
@@ -309,13 +301,13 @@ router.get('/stats', (req, res) => {
           clarity,
           density,
           network,
+          series,
           mediumDegree,
           resources,
           resourcesUsedPercent
         }
         stats[project._id] = projectStats
       })
-
       res.send(stats)
     })
 
