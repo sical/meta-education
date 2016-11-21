@@ -1,15 +1,15 @@
 # Meta Education
 
 
-## Config
-
-Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
-
 ## Requirements
 
 * Python 2.7
 * [Nodejs](https://nodejs.org/en/) > 6
 * Mongo > 3
+
+## Config
+
+Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
 
 ## Run XAPI crawler and parser
 
