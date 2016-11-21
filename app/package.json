@@ -1,6 +1,6 @@
 {
-  "name": "node-demo",
-  "version": "0.0.4",
+  "name": "meta-education",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev-server": "node_modules/nodemon/bin/nodemon.js --watch src/ --ignore src/client -- node_modules/babel/bin/babel-node.js src/app.js",
     "prod": "NODE_ENV=production webpack -p && NODE_ENV=production node src/app.js",
     "start": "npm run prod",
-    "publish": "release-it minor"
+    "publish": "release-it -c release-it.json"
   },
   "author": "",
   "license": "ISC",
