@@ -6,7 +6,10 @@ import * as d3 from 'd3'
 var Chart = React.createClass({
    render: function() {
      return (
-       <svg width={this.props.width} height={this.props.height}>
+       <svg
+         style={{ borderLeft : '1px solid #CCC', borderBottom : '1px solid #CCC' }}　
+         width={this.props.width}
+         height={this.props.height}>
         <g  transform={`translate(0,${this.props.xTranslate})`}>
           {this.props.children}
         </g>

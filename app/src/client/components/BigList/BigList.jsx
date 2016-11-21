@@ -6,6 +6,7 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'materi
 import BigListItem from './BigListItem.jsx'
 
 import * as d3 from 'd3';
+import { mean, standardDeviation, zScore } from 'simple-statistics'
 
 import store from '../../store'
 import  { ActionTypes } from '../../actions'
@@ -30,8 +31,40 @@ class BigList extends React.Component {
     }
   }
 
+  getZScores(values) {
+    console.log(values);
+    let valMean = mean(values),
+      standardDev = standardDeviation(values),
+      zScores = values.map(d => zScore(d, valMean, standardDev))
+    return zScores
+  }
+
   render() {
 
+    // number of nodes+ length
+    let elementsCount = this.props.selectedProjects.map( d => {
+      return this.props.stats[d.id] ? this.props.stats[d.id].network.nodes.length
+      + this.props.stats[d.id].network.edges.length : 0
+    })
+
+    let elementsCountZScores = this.getZScores(elementsCount)
+
+    let elementsCountGroups = elementsCountZScores.map( z => {
+      if (-1 <= z && z <= 1) return 1
+      else if ((-2 <= z && z < -1) || (1< z && z <= 2)) return 2
+      else if (z < -2 || z > 2) return 3
+    })
+
+    // resources
+    let resourcesCount = this.props.selectedProjects.map( d => {
+      return this.props.stats[d.id] ? this.props.stats[d.id].resources.length : 0
+    })
+
+    let resourcesCountScale = d3.scale.linear()
+        .domain([ 0,d3.max(resourcesCount)])
+        .range([0,30])
+
+    // max / min elements
     let maxEls = this.props.selectedProjects.map( d => {
       let stat = this.props.stats[d.id]
       return stat ? d3.max(stat.series.map(d => d.count)) : 0
@@ -63,8 +96,9 @@ class BigList extends React.Component {
         ])
         .range([0,h])
 
-    let stats = this.props.selectedProjects.map( project => {
+    let stats = this.props.selectedProjects.map( (project,i) => {
       let stat = this.props.stats[project.id] || {}
+
 
       // sort ASCENDING
       let series = (stat.series  || []).sort( (a,b) => {
@@ -77,13 +111,23 @@ class BigList extends React.Component {
         heightScale(d3.max(series.map(d=>d.count)))
         : 0
 
+      let resSize = stat.resources ?
+        resourcesCountScale(stat.resources.length)
+        : 0
+
       return (
         <BigListItem
           userName={project.userName}
-          resourcesUsedPercent={stat.resourcesUsedPercent}
+
+          resources={resSize}
+
           end={project.end}
-          density={stat.density}
+
+          density={elementsCountGroups[i]}
+          elementsCount= {elementsCount[i]}
+
           clarity={Math.floor(stat.clarity)}
+
           degree={Math.round(stat.mediumDegree*100)}
 
           series={series}
@@ -105,10 +149,12 @@ class BigList extends React.Component {
         <TableHeader>
           <TableRow>
              <TableHeaderColumn>Nom</TableHeaderColumn>
-             <TableHeaderColumn>Nombre de Noeuds/Liens</TableHeaderColumn>
+             <TableHeaderColumn>Nombre de Noeuds+Liens</TableHeaderColumn>
+             <TableHeaderColumn>Evolution du nombre d'éléments'</TableHeaderColumn>
              <TableHeaderColumn>Noeuds avec ressources</TableHeaderColumn>
              {/* <TableHeaderColumn>Densité</TableHeaderColumn>
-             <TableHeaderColumn>Degré</TableHeaderColumn> */}
+               <TableHeaderColumn>Dernier changement</TableHeaderColumn>
+             */}
            </TableRow>
         </TableHeader>
         <TableBody

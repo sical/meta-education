@@ -13,7 +13,8 @@ export default class Pie extends React.Component {
     let color = this.props.value > 8 ? red500 : greenA200
 
     let sort = null; // d3.ascending, d3.descending,
-
+    let size = this.props.size || 50
+    
     return (
         <PieChart
           data={
@@ -24,8 +25,8 @@ export default class Pie extends React.Component {
               ]
             }
           }
-          width={50}
-          height={50}
+          width={size}
+          height={size}
           margin={{top: 0, bottom: 0, left: 0, right: 0}}
           sort={sort}
           hideLabels={true}

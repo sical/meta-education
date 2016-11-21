@@ -7,7 +7,10 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
 import Pie from '../Stats/Pie.jsx'
+import Density from '../Stats/Density.jsx'
+import Resources from '../Stats/Resources.jsx'
 import TimeSeries from '../Stats/TimeSeries.jsx'
+
 
 import moment from 'moment'
 moment.locale('fr')
@@ -41,7 +44,9 @@ export default class BigListItem extends React.Component {
       volumen,
       series,
       heightSeries,
+      elementsCount,
       maxHeight,
+      resources,
       ...other
     } = this.props
 
@@ -82,6 +87,7 @@ export default class BigListItem extends React.Component {
         />
       : null
 
+
     return (
        <TableRow {...other}>
         {other.children[0] /* checkbox passed down from Table-Body*/}
@@ -89,33 +95,39 @@ export default class BigListItem extends React.Component {
            {userName}
          </TableRowColumn>
 
-         {/* { density ?
-           <TableRowColumn>
-             <Pie value={density} />
-           </TableRowColumn>
-           :
-           null
-         } */}
+         { density ?
+            <TableRowColumn>
+              <Density
+               count={elementsCount}
+               density={density}
+               />
+            </TableRowColumn>
+            :
+            null
+          }
 
          <TableRowColumn>
           { timeSeries }
          </TableRowColumn>
 
-        { density ?
-           <TableRowColumn>
-             <Pie value={resourcesUsedPercent} />
-           </TableRowColumn>
-           :
-           null
-         }
+         <TableRowColumn>
+           { resources ?
+             <Resources resources={resources} />
+             :
+             null
+           }
+         </TableRowColumn>
 
 
-        {/* <TableRowColumn>
-          {`${ moment(end).fromNow()}`}
-        </TableRowColumn>
-        <TableRowColumn>
-          {`${ moment(end).fromNow()}`}
-        </TableRowColumn> */}
+
+
+        {/*
+          <TableRowColumn>
+            {`${ moment(end).fromNow()}`}
+          </TableRowColumn>
+        */}
+
+
       </TableRow>
     )
   }
