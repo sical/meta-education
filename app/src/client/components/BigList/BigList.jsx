@@ -36,24 +36,24 @@ class BigList extends React.Component {
     let valMean = mean(values),
       standardDev = standardDeviation(values),
       zScores = values.map(d => zScore(d, valMean, standardDev))
-    return zScores
+
+    return zScores.map( z => {
+        if (-1 <= z && z <= 1) return 1
+        else if ((-2 <= z && z < -1) || (1< z && z <= 2)) return 2
+        else if (z < -2 || z > 2) return 3
+      })
   }
 
   render() {
+
+    let h = 40 // timeSeries max height
 
     // number of nodes+ length
     let elementsCount = this.props.selectedProjects.map( d => {
       return this.props.stats[d.id] ? this.props.stats[d.id].network.nodes.length
       + this.props.stats[d.id].network.edges.length : 0
     })
-
-    let elementsCountZScores = this.getZScores(elementsCount)
-
-    let elementsCountGroups = elementsCountZScores.map( z => {
-      if (-1 <= z && z <= 1) return 1
-      else if ((-2 <= z && z < -1) || (1< z && z <= 2)) return 2
-      else if (z < -2 || z > 2) return 3
-    })
+    let elementsCountGroups = this.getZScores(elementsCount)
 
     // resources
     let resourcesCount = this.props.selectedProjects.map( d => {
@@ -64,38 +64,19 @@ class BigList extends React.Component {
         .domain([ 0,d3.max(resourcesCount)])
         .range([0,30])
 
-    // max / min elements
+    // number of elements
     let maxEls = this.props.selectedProjects.map( d => {
       let stat = this.props.stats[d.id]
       return stat ? d3.max(stat.series.map(d => d.count)) : 0
     })
 
-    let maxTs = this.props.selectedProjects.map( d => {
-      let stat = this.props.stats[d.id]
-      return stat ? d3.max(stat.series.map(d => new Date(d.ts))) : 0
-    })
-
-    let minTs = this.props.selectedProjects.map( d => {
-      let stat = this.props.stats[d.id]
-      return stat ? d3.min(stat.series.map(d => new Date(d.ts))) : 0
-    })
-
-    let maxSeries = {
-      count : d3.max(maxEls),
-      maxTs : d3.max(maxTs),
-      minTs : d3.max(minTs)
-    }
-
-    console.log(maxSeries);
-
-    let h = 40 // timeSeries max height
     let heightScale = d3.time.scale()
-        .domain([ 0,maxSeries.count])
+        .domain([ 0, d3.max(maxEls)])
         .range([0,h])
+
 
     let stats = this.props.selectedProjects.map( (project,i) => {
       let stat = this.props.stats[project.id] || {}
-
 
       // sort ASCENDING
       let series = (stat.series  || []).sort( (a,b) => {
@@ -113,11 +94,11 @@ class BigList extends React.Component {
         : 0
 
       return (
+
+
         <BigListItem
           userName={project.userName}
-
           resources={resSize}
-
           end={project.end}
 
           density={elementsCountGroups[i]}
@@ -148,7 +129,7 @@ class BigList extends React.Component {
              <TableHeaderColumn>Nom</TableHeaderColumn>
              <TableHeaderColumn>Nombre de Noeuds+Liens</TableHeaderColumn>
              <TableHeaderColumn>Evolution du nombre d'éléments'</TableHeaderColumn>
-             <TableHeaderColumn>Noeuds avec ressources</TableHeaderColumn>
+             <TableHeaderColumn>Ressources</TableHeaderColumn>
 
              {/*
                <TableHeaderColumn>Densité</TableHeaderColumn>
