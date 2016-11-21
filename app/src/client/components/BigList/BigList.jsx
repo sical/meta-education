@@ -28,6 +28,8 @@ class BigList extends React.Component {
     ){
       store.dispatch({ type : ActionTypes.SHOW_PROJECT, projectId : projectId})
       store.dispatch(AsyncAPI.getProject(projectId))
+    } else if (this.props.currentProject == projectId) {
+      store.dispatch({ type : ActionTypes.HIDE_PROJECT})
     }
   }
 

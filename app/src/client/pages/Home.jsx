@@ -7,7 +7,7 @@ import { push } from 'react-router-redux'
 import SideNav from '../components/SideNav.jsx'
 import TopBar from '../components/TopBar/TopBar.jsx'
 
-import Dashboard from '../components/Dashboard.jsx'
+import Dashboard from '../components/Dashboard/Dashboard.jsx'
 
 import { ActionTypes } from '../actions'
 import store from '../store'
