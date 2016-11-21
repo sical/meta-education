@@ -22,6 +22,33 @@ Copy `config/config.sample.js` to `config/config.js` and edit passord/username c
   
 ```
 
+Read the crawler help with 
+
+
+```bash
+
+  xapi-client --help
+  
+  usage: xapi-client [-h] [--start START] [--duration DURATION]
+                   [--verbose VERBOSE] [--recrawl RECRAWL] [--offset OFFSET]
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --start START, -s START
+                          Crawling start time - format
+    --duration DURATION, -d DURATION
+                          Duration until crawl final timestamp (number of days)
+    --verbose VERBOSE, -v VERBOSE
+                          Set logger to show everything
+    --recrawl RECRAWL, -r RECRAWL
+                          Recrawl all data for the time period
+    --offset OFFSET, -o OFFSET
+                          Start crawling from this offset
+
+  
+  
+```
+
 ## Collect valid IDs from the database
 
 ```bash
