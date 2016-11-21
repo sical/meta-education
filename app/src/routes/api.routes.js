@@ -96,7 +96,6 @@ router.get('/projects/:classe_id', (req, res) => {
       names[d.id] = d.name
       students.push(d)
     }
-
   })
 
 
@@ -133,7 +132,6 @@ router.get('/projects/:classe_id', (req, res) => {
     ,(err, docs) => {
       if(err) throw err
       if (docs == null) res.send({})
-
       // parse projects
       let projectsByUser = {}
       docs.forEach( d => {
@@ -151,14 +149,14 @@ router.get('/projects/:classe_id', (req, res) => {
           name : d.names[d.names.length-1] // get last name
         })
       })
-
+      
       res.send(students.map(d => (
         {
           id : d.id,
           name : d.name,
-          projects : projectsByUser[d.id].sort( (a,b) => new Date(b.end) - new Date(a.end)) // sort latest
+          projects : projectsByUser[d.id] //.sort( (a,b) => new Date(b.end) - new Date(a.end)) // sort latest
         }
-      )))
+      )).filter( d => d.projects))
     }
   )
 
