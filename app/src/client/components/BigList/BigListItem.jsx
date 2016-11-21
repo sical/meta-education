@@ -2,14 +2,12 @@ import React from 'react'
 import * as d3 from 'd3';
 
 import FlatButton from 'material-ui/FlatButton';
-// import {ListItem} from 'material-ui/List';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
-import Pie from '../Stats/Pie.jsx'
+import ElementSerie from '../Stats/ElementSerie.jsx'
 import Density from '../Stats/Density.jsx'
 import Resources from '../Stats/Resources.jsx'
-import TimeSeries from '../Stats/TimeSeries.jsx'
 
 
 import moment from 'moment'
@@ -51,39 +49,12 @@ export default class BigListItem extends React.Component {
     } = this.props
 
     // make timeChart
-    let w = 100,
-        h = this.props.heightSeries || 0
-
-    let xScale =
-      series.length ?
-      d3.time.scale()
-        .domain([
-          d3.min(series.map(d=>new Date(d.ts))),
-          d3.max(series.map(d=>new Date(d.ts)))
-        ])
-        .range([w,0])
-      : null
-
-    let yScale =
-      series.length ?
-      d3.scale.linear()
-        .domain([0, d3.max(series.map(d=>d.count))])
-        .range([0,h])
-      : null
-
-    let timeSeriesData = xScale && yScale && series.length ?
-      series.map(d => ( { x: new Date(d.ts), y : d.count } ))
-      :
-      null
-
-    let timeSeries = timeSeriesData ?
-      <TimeSeries
-        data={timeSeriesData}
-        width={w}
-        height={h}
+    let timeSeries = series.length ?
+      <ElementSerie
+        series={series}
+        width={100}
+        height={heightSeries}
         maxHeight={maxHeight}
-        xScale={xScale}
-        yScale={yScale}
         />
       : null
 
@@ -112,14 +83,13 @@ export default class BigListItem extends React.Component {
 
          <TableRowColumn>
            { resources ?
-             <Resources resources={resources} />
+             <Resources
+              resources={resources}
+              />
              :
              null
            }
          </TableRowColumn>
-
-
-
 
         {/*
           <TableRowColumn>

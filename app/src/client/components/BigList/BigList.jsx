@@ -90,10 +90,7 @@ class BigList extends React.Component {
 
     let h = 40 // timeSeries max height
     let heightScale = d3.time.scale()
-        .domain([
-          0,
-          maxSeries.count
-        ])
+        .domain([ 0,maxSeries.count])
         .range([0,h])
 
     let stats = this.props.selectedProjects.map( (project,i) => {
@@ -152,7 +149,9 @@ class BigList extends React.Component {
              <TableHeaderColumn>Nombre de Noeuds+Liens</TableHeaderColumn>
              <TableHeaderColumn>Evolution du nombre d'éléments'</TableHeaderColumn>
              <TableHeaderColumn>Noeuds avec ressources</TableHeaderColumn>
-             {/* <TableHeaderColumn>Densité</TableHeaderColumn>
+
+             {/*
+               <TableHeaderColumn>Densité</TableHeaderColumn>
                <TableHeaderColumn>Dernier changement</TableHeaderColumn>
              */}
            </TableRow>

@@ -12,6 +12,7 @@ export default class Resources extends React.Component {
     console.log(this.props.resources);
     let colors = [null, green100, green500, red300]
     let color = colors[this.props.density]
+    
     return (
       <Avatar
         backgroundColor={color}
