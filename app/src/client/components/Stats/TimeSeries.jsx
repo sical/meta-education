@@ -6,7 +6,11 @@ import * as d3 from 'd3'
 var Chart = React.createClass({
    render: function() {
      return (
-       <svg width={this.props.width} height={this.props.height}>{this.props.children}</svg>
+       <svg width={this.props.width} height={this.props.height}>
+        <g  transform={`translate(0,${this.props.xTranslate})`}>
+          {this.props.children}
+        </g>
+       </svg>
      );
    }
  });
@@ -49,7 +53,7 @@ var Chart = React.createClass({
      var path = d3.svg.line()
          .x(function(d) { return xScale(d.x); })
          .y(function(d) { return yScale(d.y); })
-         .interpolate(this.props.interpolate);
+        //  .interpolate(this.props.interpolate);
 
      return (
        <Line path={path(this.props.data)} color={this.props.color} />
@@ -66,8 +70,14 @@ export default class TimeSeries extends React.Component {
 
     let size = { width: this.props.width, height: this.props.height }
 
+    let xTranslate = this.props.maxHeight - this.props.height
+
     return (
-      <Chart width={this.props.width} height={this.props.height}>
+      <Chart
+        width={this.props.width}
+        height={this.props.maxHeight}
+        xTranslate={xTranslate}
+        >
         <DataSeries
           data={this.props.data}
           size={size}

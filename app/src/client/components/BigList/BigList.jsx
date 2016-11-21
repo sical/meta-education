@@ -52,11 +52,31 @@ class BigList extends React.Component {
       maxTs : d3.max(maxTs),
       minTs : d3.max(minTs)
     }
+
     console.log(maxSeries);
+
+    let h = 40 // timeSeries max height
+    let heightScale = d3.time.scale()
+        .domain([
+          0,
+          maxSeries.count
+        ])
+        .range([0,h])
 
     let stats = this.props.selectedProjects.map( project => {
       let stat = this.props.stats[project.id] || {}
-      // console.log(stat);
+
+      // sort ASCENDING
+      let series = (stat.series  || []).sort( (a,b) => {
+        let vB = new Date(b.ts),
+          vA = new Date(a.ts)
+        return vA < vB ?  -1 : vA > vB ?  1 : 0
+      })
+
+      let height = series.length ?
+        heightScale(d3.max(series.map(d=>d.count)))
+        : 0
+
       return (
         <BigListItem
           userName={project.userName}
@@ -65,8 +85,11 @@ class BigList extends React.Component {
           density={stat.density}
           clarity={Math.floor(stat.clarity)}
           degree={Math.round(stat.mediumDegree*100)}
-          series={stat.series || []}
-          maxSeries={maxSeries}
+
+          series={series}
+          maxHeight={h}
+          heightSeries={height}
+
           key={project.id}
           id={project.id}
           />

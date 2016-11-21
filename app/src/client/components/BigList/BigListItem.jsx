@@ -40,26 +40,27 @@ export default class BigListItem extends React.Component {
       resourcesUsedPercent,
       volumen,
       series,
-      maxSeries,
+      heightSeries,
+      maxHeight,
       ...other
     } = this.props
 
     // make timeChart
     let w = 100,
-        h = 60
+        h = this.props.heightSeries || 0
 
     let xScale =
-      series.length && maxSeries ?
+      series.length ?
       d3.time.scale()
         .domain([
           d3.min(series.map(d=>new Date(d.ts))),
           d3.max(series.map(d=>new Date(d.ts)))
         ])
-        .range([0,w])
+        .range([w,0])
       : null
 
     let yScale =
-      series.length && maxSeries ?
+      series.length ?
       d3.scale.linear()
         .domain([0, d3.max(series.map(d=>d.count))])
         .range([0,h])
@@ -75,6 +76,7 @@ export default class BigListItem extends React.Component {
         data={timeSeriesData}
         width={w}
         height={h}
+        maxHeight={maxHeight}
         xScale={xScale}
         yScale={yScale}
         />
