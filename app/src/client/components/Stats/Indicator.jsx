@@ -15,6 +15,7 @@ export default class Indicator extends React.Component {
       <Avatar
         backgroundColor={color}
         size={30}
+        style={{ fontSize:'.9em'}}
         >
         {this.props.count}
       </Avatar>
