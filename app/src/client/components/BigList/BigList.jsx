@@ -48,11 +48,15 @@ class BigList extends React.Component {
       })
   }
 
+  handleClickTableHeader(value) {
+      console.log(this,value);
+  }
+
   render() {
 
     const style = {
       indicator : {
-        width : '50px'
+        width : '40px'
       },
       name : {
         width : '150px'
@@ -160,25 +164,45 @@ class BigList extends React.Component {
         >
         <TableHeader>
           <TableRow>
-            <TableHeaderColumn style={style.name}>
+            <TableHeaderColumn
+              style={style.name}
+              tooltip="Nom de l'étudiant"
+              >
               Nom
             　</TableHeaderColumn>
-            <TableHeaderColumn style={style.indicator}>
+            <TableHeaderColumn
+              style={style.indicator}
+              tooltip="Nombre d'ajouts/suppressions"
+              >
               Actions
             　</TableHeaderColumn>
-            <TableHeaderColumn style={style.indicator}>
-              Noeuds/Liens
+            <TableHeaderColumn
+              style={style.indicator}
+              tooltip="Nombre total de noeuds et de liens dans le graphe final"
+              >
+              Eléments
               </TableHeaderColumn>
-            <TableHeaderColumn style={style.indicator}>
+            <TableHeaderColumn
+              style={style.indicator}
+              tooltip="Ratio entre ajout et suppression de nodes"
+              >
               Clarté
               </TableHeaderColumn>
-            <TableHeaderColumn style={style.indicator}>
+            <TableHeaderColumn
+              style={style.indicator}
+              tooltip="Rapport entre nombre de liens et nombre de nodes"
+              >
               Degré
               </TableHeaderColumn>
-            <TableHeaderColumn style={style.indicator}>
-              Ressources
+            <TableHeaderColumn
+              style={style.indicator}
+              tooltip="Nombre de médias et ressources externes utilisées dans le graphe."
+              >
+              Médias
               </TableHeaderColumn>
-            <TableHeaderColumn>
+            <TableHeaderColumn
+              tooltip="Nombre d'éléments dans le graphe depuis sa création"
+              >
                 Evolution du nombre d'éléments
               </TableHeaderColumn>
 

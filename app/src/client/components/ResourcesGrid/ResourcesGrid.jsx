@@ -51,9 +51,7 @@ class ResourcesGrid extends React.Component {
       :
       []
 
-    let media = this.state.currentResource ? this.getCurrentMedia() : null
-
-    console.log(media);
+    let media = this.state.currentResource ? this.getCurrentMedia() : null    
 
     let parsed = uris.map( uri　=> {
 
