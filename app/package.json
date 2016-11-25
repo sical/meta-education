@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev-client": "NODE_ENV=development webpack --watch",
-    "dev-server": "node_modules/nodemon/bin/nodemon.js --watch src/ --ignore src/client -- node_modules/babel/bin/babel-node.js src/app.js",
+    "dev-server": "node_modules/nodemon/bin/nodemon.js --watch src/ --ignore src/client --ignore src/public/dist -- node_modules/babel/bin/babel-node.js src/app.js",
     "prod": "NODE_ENV=production webpack -p && NODE_ENV=production node src/app.js",
     "start": "npm run prod",
     "publish": "release-it -c release-it.json"
