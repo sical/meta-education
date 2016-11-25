@@ -168,26 +168,26 @@ class BigList extends React.Component {
         >
         <TableHeader>
           <TableRow>
-             <TableHeaderColumn style={style.name}>
+            <TableHeaderColumn style={style.name}>
               Nom
-             </TableHeaderColumn>
-             <TableHeaderColumn style={style.indicator}>
-              Nombre d'actions'
-            </TableHeaderColumn>
-             <TableHeaderColumn style={style.indicator}>
-              Nombre de Noeuds+Liens
+            　</TableHeaderColumn>
+            <TableHeaderColumn style={style.indicator}>
+              Actions
+            　</TableHeaderColumn>
+            <TableHeaderColumn style={style.indicator}>
+              Noeuds/Liens
               </TableHeaderColumn>
-             <TableHeaderColumn style={style.indicator}>
+            <TableHeaderColumn style={style.indicator}>
               Clarté
               </TableHeaderColumn>
-             <TableHeaderColumn style={style.indicator}>
-              Ressources
-              </TableHeaderColumn>
-             <TableHeaderColumn style={style.indicator}>
+            <TableHeaderColumn style={style.indicator}>
               Degré
               </TableHeaderColumn>
-             <TableHeaderColumn>
-              Evolution du nombre d'éléments'
+            <TableHeaderColumn style={style.indicator}>
+              Ressources
+              </TableHeaderColumn>
+            <TableHeaderColumn>
+                Evolution du nombre d'éléments
               </TableHeaderColumn>
 
              {/*

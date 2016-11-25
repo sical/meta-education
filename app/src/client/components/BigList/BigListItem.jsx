@@ -74,6 +74,17 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
+         { actionsCount ?
+           <Indicator
+           count={actionsCount}
+           density={zActionsCount}
+           />
+           :
+           null
+         }
+         </TableRowColumn>
+
+         <TableRowColumn style={style.indicator}>
            { density ?
                 <Indicator
                  count={elementsCount}
@@ -95,22 +106,11 @@ export default class BigListItem extends React.Component {
             }
           </TableRowColumn>
 
-          <TableRowColumn style={style.indicator}>
-           { actionsCount ?
-                <Indicator
-                 count={actionsCount}
-                 density={zActionsCount}
-                 />
-              :
-              null
-            }
-          </TableRowColumn>
-
          <TableRowColumn style={style.indicator}>
-           { resources ?
+           { degree ?
              <Indicator
-              count={resourcesCount}
-              density={zResourcesCount}
+              count={degree}
+              density={zDegree}
               />
              :
              null
@@ -118,10 +118,10 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { degree ?
+           { resources ?
              <Indicator
-              count={degree}
-              density={zDegree}
+              count={resourcesCount}
+              density={zResourcesCount}
               />
              :
              null
