@@ -3,6 +3,11 @@ import { connect } from 'react-redux'
 
 import {Card, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
+import Clear from 'material-ui/svg-icons/content/clear';
+
+import store from '../../store'
+import  { ActionTypes } from '../../actions'
+
 import ResourceIcon from './ResourceIcon.jsx'
 
 class ResourcesGrid extends React.Component {
@@ -22,6 +27,10 @@ class ResourcesGrid extends React.Component {
       default:
         return <a href={media.uri}>{media.uri}</a>
     }
+  }
+
+  handleExpandChange() {
+    store.dispatch({ type : ActionTypes.HIDE_PROJECT})
   }
 
   handleIconClick() {
@@ -51,7 +60,7 @@ class ResourcesGrid extends React.Component {
       :
       []
 
-    let media = this.state.currentResource ? this.getCurrentMedia() : null    
+    let media = this.state.currentResource ? this.getCurrentMedia() : null
 
     let parsed = uris.map( uri　=> {
 
@@ -108,16 +117,16 @@ class ResourcesGrid extends React.Component {
       <Card
         className="resources"
         style={this.props.style}
-        expanded={true}
+        onExpandChange={this.handleExpandChange.bind(this)}
         >
         <CardHeader
           title="Ressources"
           subtitle="Liens, vidéos et objets externes utilisés"
-          actAsExpander={true}
           showExpandableButton={true}
-
+          openIcon={<Clear />}
+          closeIcon={<Clear />}
         />
-        <CardText expandable={true}>
+        <CardText>
         {
           domainsListItems.length ?
             (
