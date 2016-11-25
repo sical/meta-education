@@ -8,6 +8,9 @@ import ResourceIcon from './ResourceIcon.jsx'
 class ResourcesGrid extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      currentResource : null
+    }
   }
 
   getCurrentMedia() {
@@ -15,21 +18,25 @@ class ResourcesGrid extends React.Component {
     // console.log(media);
     switch(media.type) {
       case "image":
-        let img = <img style={ {maxWidth : "30%", width:"100px"} } src={media.uri} />
-        return (
-          <span>
-            <a href={media.uri}>{media.uri}</a>
-            {img}
-          </span>
-        )
+        return <img style={ {maxWidth : "30%", width:"100px"} } src={media.uri} />
       default:
         return <a href={media.uri}>{media.uri}</a>
     }
   }
 
   handleIconClick() {
-    console.log(this.props.resource.uri);
     window.open(this.props.resource.uri, '_blank');
+  }
+
+  handleIconOver(res) {
+    // console.log( res.uri);
+    if(! this.state.currentResource){
+       this.setState({ currentResource : res})
+     }
+  }
+
+  handleIconOut() {
+    this.setState({ currentResource : null})
   }
 
   render() {
@@ -43,6 +50,10 @@ class ResourcesGrid extends React.Component {
         .filter(uri => uri != "" && uri)
       :
       []
+
+    let media = this.state.currentResource ? this.getCurrentMedia() : null
+
+    console.log(media);
 
     let parsed = uris.map( uri　=> {
 
@@ -79,6 +90,8 @@ class ResourcesGrid extends React.Component {
       let icons = domainStats[domain].map( res =>
         <ResourceIcon
           handleIconClick={this.handleIconClick}
+          handleIconOver={this.handleIconOver.bind(this)}
+          handleIconOut={this.handleIconOut.bind(this)}
           key={res.uri}
           resource={res}
           />
@@ -119,12 +132,7 @@ class ResourcesGrid extends React.Component {
         }
         </CardText>
         <CardMedia>
-        {
-          this.props.currentResource ?
-            this.getCurrentMedia()
-          :
-            null
-        }
+          {media}
         </CardMedia>
       </Card>
 

@@ -15,15 +15,6 @@ export default class Resource extends React.Component {
     this.state = { currentResource : null}
   }
 
-  handleIconOver(uri) {
-    this.setState({ currentResource : uri})
-  }
-
-  handleIconOut() {
-    this.setState({ currentResource : null})
-  }
-
-
 
   render () {
     let res = this.props.resource
@@ -39,10 +30,9 @@ export default class Resource extends React.Component {
     return (
       <IconButton
        iconStyle={{margin : 0, padding : 0}}
-       tooltip={res.type+ ' : '+ res.domain}
-       onMouseOver={this.handleIconOver.bind(this,{...res})}
-       onMouseOut={this.handleIconOut.bind(this)}
-       onMouseOut={this.handleIconOut.bind(this)}
+       tooltip={res.type}
+       onMouseOver={this.props.handleIconOver.bind(this,{...res})}
+       onMouseOut={this.props.handleIconOut}
        onClick={this.props.handleIconClick.bind(this)}
        key={res.uri}
        >
