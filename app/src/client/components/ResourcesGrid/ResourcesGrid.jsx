@@ -27,6 +27,11 @@ class ResourcesGrid extends React.Component {
     }
   }
 
+  handleIconClick() {
+    console.log(this.props.resource.uri);
+    window.open(this.props.resource.uri, '_blank');
+  }
+
   render() {
 
     // ghost link to help parse URIs
@@ -73,6 +78,7 @@ class ResourcesGrid extends React.Component {
     let domainsListItems = Object.keys(domainStats).map(domain => {
       let icons = domainStats[domain].map( res =>
         <ResourceIcon
+          handleIconClick={this.handleIconClick}
           key={res.uri}
           resource={res}
           />

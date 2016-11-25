@@ -23,6 +23,8 @@ export default class Resource extends React.Component {
     this.setState({ currentResource : null})
   }
 
+
+
   render () {
     let res = this.props.resource
 
@@ -40,6 +42,8 @@ export default class Resource extends React.Component {
        tooltip={res.type+ ' : '+ res.domain}
        onMouseOver={this.handleIconOver.bind(this,{...res})}
        onMouseOut={this.handleIconOut.bind(this)}
+       onMouseOut={this.handleIconOut.bind(this)}
+       onClick={this.props.handleIconClick.bind(this)}
        key={res.uri}
        >
          {icon}

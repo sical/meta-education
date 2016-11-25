@@ -118,7 +118,7 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { resources ?
+           { resourcesCount ?
              <Indicator
               count={resourcesCount}
               z={zResourcesCount}
