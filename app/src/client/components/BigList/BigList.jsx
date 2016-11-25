@@ -162,8 +162,7 @@ class BigList extends React.Component {
     return (
       <Table
         selectable={true}
-        // multiSelectable={true}
-
+        multiSelectable={true}
         >
         <TableHeader adjustForCheckbox={true}>
           <BigListHeader
