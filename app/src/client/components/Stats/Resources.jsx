@@ -1,7 +1,7 @@
 import React from 'react'
 import Avatar from 'material-ui/Avatar';
 
-import {red300, green100, green500} from 'material-ui/styles/colors';
+import {blue100, blue300, blue700}  from 'material-ui/styles/colors';
 
 export default class Resources extends React.Component {
   constructor(props) {
@@ -9,14 +9,13 @@ export default class Resources extends React.Component {
   }
 
   render () {
-    console.log(this.props.resources);
-    let colors = [null, green100, green500, red300]
+    let colors = [null, blue100, blue300, blue700]
     let color = colors[this.props.density]
-    
+
     return (
       <Avatar
         backgroundColor={color}
-        size={Math.floor(this.props.resources)}
+        size={30}
         >
         {this.props.count}
       </Avatar>

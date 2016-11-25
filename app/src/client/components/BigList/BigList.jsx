@@ -48,6 +48,15 @@ class BigList extends React.Component {
 
   render() {
 
+    const style = {
+      indicator : {
+        width : '50px'
+      },
+      name : {
+        width : '150px'
+      },
+    }
+
     let h = 40 // timeSeries max height
 
     // number of nodes+ length
@@ -66,6 +75,8 @@ class BigList extends React.Component {
         .domain([ 0,d3.max(resourcesCount)])
         .range([0,30])
 
+    let zResourcesCount = this.getZScores(resourcesCount)
+
     // number of elements
     let maxEls = this.props.selectedProjects.map( d => {
       let stat = this.props.stats[d.id]
@@ -76,6 +87,25 @@ class BigList extends React.Component {
         .domain([ 0, d3.max(maxEls)])
         .range([0,h])
 
+    // degree
+    let degrees = this.props.selectedProjects.map( d => {
+      let stat = this.props.stats[d.id]
+      return stat ? stat.mediumDegree.toFixed(1) : 0
+    })
+
+    let zDegrees = this.getZScores(degrees)
+
+    // clarity
+    let clarities = this.props.selectedProjects.map( d => {
+      let stat = this.props.stats[d.id]
+      return stat ? stat.clarity.toFixed(1) : 0
+    })
+
+    let zClarities = this.getZScores(clarities)
+
+    // actions
+    let actionsCounts = this.props.selectedProjects.map( d => d.actionsCount)
+    let zActions = this.getZScores(actionsCounts)
 
     let stats = this.props.selectedProjects.map( (project,i) => {
       let stat = this.props.stats[project.id] || {}
@@ -100,15 +130,25 @@ class BigList extends React.Component {
 
         <BigListItem
           userName={project.userName}
+
           resources={resSize}
+          zResourcesCount={zResourcesCount[i]}
+          resourcesCount={resourcesCount[i]}
+
           end={project.end}
 
           density={elementsCountGroups[i]}
           elementsCount= {elementsCount[i]}
 
-          clarity={Math.floor(stat.clarity)}
+          style={style}
+          zActionsCount={zActions[i]}
+          actionsCount={actionsCounts[i]}
 
-          degree={Math.round(stat.mediumDegree*100)}
+          degree={degrees[i]}
+          zDegree={zDegrees[i]}
+
+          clarity={clarities[i]}
+          zClarity={zClarities[i]}
 
           series={series}
           maxHeight={h}
@@ -128,10 +168,27 @@ class BigList extends React.Component {
         >
         <TableHeader>
           <TableRow>
-             <TableHeaderColumn>Nom</TableHeaderColumn>
-             <TableHeaderColumn>Nombre de Noeuds+Liens</TableHeaderColumn>
-             <TableHeaderColumn>Evolution du nombre d'éléments'</TableHeaderColumn>
-             <TableHeaderColumn>Ressources</TableHeaderColumn>
+             <TableHeaderColumn style={style.name}>
+              Nom
+             </TableHeaderColumn>
+             <TableHeaderColumn style={style.indicator}>
+              Nombre d'actions'
+            </TableHeaderColumn>
+             <TableHeaderColumn style={style.indicator}>
+              Nombre de Noeuds+Liens
+              </TableHeaderColumn>
+             <TableHeaderColumn style={style.indicator}>
+              Clarté
+              </TableHeaderColumn>
+             <TableHeaderColumn style={style.indicator}>
+              Ressources
+              </TableHeaderColumn>
+             <TableHeaderColumn style={style.indicator}>
+              Degré
+              </TableHeaderColumn>
+             <TableHeaderColumn>
+              Evolution du nombre d'éléments'
+              </TableHeaderColumn>
 
              {/*
                <TableHeaderColumn>Densité</TableHeaderColumn>

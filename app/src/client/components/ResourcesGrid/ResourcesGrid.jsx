@@ -91,6 +91,7 @@ class ResourcesGrid extends React.Component {
       <Card
         className="resources"
         style={this.props.style}
+        expanded={true}
         >
         <CardHeader
           title="Ressources"

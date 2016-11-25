@@ -6,7 +6,7 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
 import ElementSerie from '../Stats/ElementSerie.jsx'
-import Density from '../Stats/Density.jsx'
+import Indicator from '../Stats/Indicator.jsx'
 import Resources from '../Stats/Resources.jsx'
 
 
@@ -36,8 +36,6 @@ export default class BigListItem extends React.Component {
       userName,
       end,
       density,
-      clarity,
-      degree,
       resourcesUsedPercent,
       volumen,
       series,
@@ -45,6 +43,15 @@ export default class BigListItem extends React.Component {
       elementsCount,
       maxHeight,
       resources,
+      actionsCount,
+      zActionsCount,
+      resourcesCount,
+      zResourcesCount,
+      degree,
+      zDegree,
+      clarity,
+      zClarity,
+      style,
       ...other
     } = this.props
 
@@ -62,36 +69,68 @@ export default class BigListItem extends React.Component {
     return (
        <TableRow {...other}>
         {other.children[0] /* checkbox passed down from Table-Body*/}
-         <TableRowColumn>
+         <TableRowColumn style={style.name}>
            {userName}
          </TableRowColumn>
 
-         { density ?
-            <TableRowColumn>
-              <Density
-               count={elementsCount}
-               density={density}
+         <TableRowColumn style={style.indicator}>
+           { density ?
+                <Indicator
+                 count={elementsCount}
+                 density={density}
+                 />
+              :
+              null
+            }
+          </TableRowColumn>
+
+          <TableRowColumn style={style.indicator}>
+            { clarity ?
+              <Indicator
+               count={clarity}
+               density={zClarity}
                />
-            </TableRowColumn>
-            :
-            null
-          }
+              :
+              null
+            }
+          </TableRowColumn>
 
-         <TableRowColumn>
-          { timeSeries }
-         </TableRowColumn>
+          <TableRowColumn style={style.indicator}>
+           { actionsCount ?
+                <Indicator
+                 count={actionsCount}
+                 density={zActionsCount}
+                 />
+              :
+              null
+            }
+          </TableRowColumn>
 
-         <TableRowColumn>
+         <TableRowColumn style={style.indicator}>
            { resources ?
-             <Resources
-              resources={resources}
+             <Indicator
+              count={resourcesCount}
+              density={zResourcesCount}
               />
              :
              null
            }
          </TableRowColumn>
 
+         <TableRowColumn style={style.indicator}>
+           { degree ?
+             <Indicator
+              count={degree}
+              density={zDegree}
+              />
+             :
+             null
+           }
+         </TableRowColumn>
 
+         <TableRowColumn>
+          { timeSeries }
+         </TableRowColumn>
 
 
         {/*

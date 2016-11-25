@@ -1,15 +1,15 @@
 import React from 'react'
 import Avatar from 'material-ui/Avatar';
 
-import {red300, green100, green500} from 'material-ui/styles/colors';
+import {blue100, blue300, blue700} from 'material-ui/styles/colors';
 
-export default class Density extends React.Component {
+export default class Indicator extends React.Component {
   constructor(props) {
     super(props)
   }
 
   render () {
-    let colors = [null, green100, green500, red300]
+    let colors = [null, blue100, blue300, blue700]
     let color = colors[this.props.density]
     return (
       <Avatar
