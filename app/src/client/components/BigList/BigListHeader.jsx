@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import Checkbox from 'material-ui/Checkbox'
+
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
 import SortIcon from 'material-ui/svg-icons/action/swap-vert';
 
@@ -15,6 +17,8 @@ export default class BigListHeader extends React.Component {
 
     const {
       style,
+      handleSelectRow,
+      allSelected,
       ...other
     } = this.props
 
@@ -79,7 +83,12 @@ export default class BigListHeader extends React.Component {
 
     return (
       <TableRow>
-        {other.children[0] /* checkbox passed down from Table-Body*/}
+        <TableHeaderColumn>
+          <Checkbox
+            onCheck={handleSelectRow.bind(this, "all")}
+            checked={allSelected}
+          />
+        </TableHeaderColumn>
         {headerItems}
        </TableRow>
     )

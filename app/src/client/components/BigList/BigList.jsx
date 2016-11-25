@@ -17,6 +17,25 @@ import AsyncAPI from '../../AsyncAPI'
 class BigList extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      selected　: []
+    }
+  }
+
+  handleSelectRow(selectedRows) {
+    if(selectedRows == "all") {
+      this.setState({selected : this.props.selectedProjects.map(d => d.id)})
+      // e.stopPropagation() // rpevent default select all
+    } else {
+      let selectedProjectIds = selectedRows.map(d => this.props.selectedProjects[d].id)
+      this.setState({selected : selectedProjectIds})
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    if(nextProps.selectedProjects)
+      this.setState({selected : nextProps.selectedProjects.map(d => d.id)})
   }
 
   selectProject(projectId) {
@@ -126,47 +145,55 @@ class BigList extends React.Component {
 
     })
 
-    let statsItems = statsFinal.map( (stat,i) => {
+    let statsItems = statsFinal
+      .filter(stat => this.state.selected.indexOf(stat.id) > -1)
+      .map( (stat,i) => {
 
-      if(Object.keys(stat).length === 5) return null
+        if(Object.keys(stat).length === 5) return null
 
-      // sort ASCENDING
-      let series = (stat.series  || []).sort( (a,b) => {
-        let vB = new Date(b.ts),
-          vA = new Date(a.ts)
-        return vA < vB ?  -1 : vA > vB ?  1 : 0
+        // sort ASCENDING
+        let series = (stat.series  || []).sort( (a,b) => {
+          let vB = new Date(b.ts),
+            vA = new Date(a.ts)
+          return vA < vB ?  -1 : vA > vB ?  1 : 0
+        })
+
+        let height = series.length ?
+          heightScale(d3.max(series.map(d=>d.count)))
+          : 0
+
+        return (
+
+          <BigListItem
+            style={style}
+            stat={stat}
+
+            series={series}
+            maxHeight={h}
+            heightSeries={height}
+            selectProject={this.selectProject.bind(this)}
+            selected={true}
+            key={stat.id}
+            />
+        )
       })
 
-      let height = series.length ?
-        heightScale(d3.max(series.map(d=>d.count)))
-        : 0
-
-      return (
-
-        <BigListItem
-          style={style}
-          stat={stat}
-
-          series={series}
-          maxHeight={h}
-          heightSeries={height}
-
-          selectProject={this.selectProject.bind(this)}
-
-          key={stat.id}
-          />
-      )
-    })
-
+    // console.log(this.props.selectedProjects);
+    let allSelected = this.props.selectedProjects.length === this.state.selected.length
 
     return (
       <Table
         selectable={true}
         multiSelectable={true}
+        onRowSelection={ this.handleSelectRow.bind(this)}
         >
-        <TableHeader adjustForCheckbox={true}>
+        <TableHeader
+          adjustForCheckbox={true}
+          >
           <BigListHeader
             style={style}
+            allSelected={allSelected}
+            handleSelectRow={this.handleSelectRow.bind(this)}
           />
         </TableHeader>
         <TableBody

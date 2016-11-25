@@ -56,10 +56,12 @@ export default class BigListItem extends React.Component {
 
 
     return (
-       <TableRow {...other}>
+       <TableRow
+        {...other}
+       >
         {other.children[0] /* checkbox passed down from Table-Body*/}
          <TableRowColumn
-          style={style.name}
+          style={style.name}          
           >
            {stat.name}
          </TableRowColumn>
