@@ -1,7 +1,7 @@
 import React from 'react'
 import Avatar from 'material-ui/Avatar';
 
-import {blue100, blue300, blue700} from 'material-ui/styles/colors';
+import {blue100, blue400, blue800} from 'material-ui/styles/colors';
 
 export default class Indicator extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class Indicator extends React.Component {
   }
 
   render () {
-    let colors = [null, blue100, blue300, blue700]
+    let colors = [null, blue100, blue400, blue800]
     let color = colors[this.props.z]
     return (
       <Avatar

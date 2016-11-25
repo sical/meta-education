@@ -2,8 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
+import SortIcon from 'material-ui/svg-icons/action/swap-vert';
 
 import BigListItem from './BigListItem.jsx'
+import BigListHeader from './BigListHeader.jsx'
 
 import * as d3 from 'd3';
 import { mean, standardDeviation, zScore } from 'simple-statistics'
@@ -17,10 +19,8 @@ class BigList extends React.Component {
     super(props)
   }
 
-  selectRow(selectedRows) {
-
-    let projectId = selectedRows.length ? this.props.selectedProjects[selectedRows[0]].id : null
-    // console.log("select", projectId);
+  selectProject(projectId) {
+    console.log("select", projectId);
 
     if (projectId
       &&　! this.props.currentProject
@@ -59,7 +59,7 @@ class BigList extends React.Component {
         width : '40px'
       },
       name : {
-        width : '150px'
+        width : '100px'
       },
     }
 
@@ -101,16 +101,34 @@ class BigList extends React.Component {
         .range([0,h])
 
     // get zScores
-    let zDensity = this.getZScores(stats.map(d => d.density))
-    let zResourcesCount = this.getZScores(stats.map(d => d.resourcesCount))
-    let zDegree = this.getZScores(stats.map(d => d.degree))
-    let zClarity = this.getZScores(stats.map(d => d.clarity))
-    let zActions = this.getZScores(stats.map(d => d.actionsCount))
+    let zDensities = this.getZScores(stats.map(d => d.density))
+    let zResourcesCounts = this.getZScores(stats.map(d => d.resourcesCount))
+    let zDegrees = this.getZScores(stats.map(d => d.degree))
+    let zClarities = this.getZScores(stats.map(d => d.clarity))
+    let zActionsCounts = this.getZScores(stats.map(d => d.actionsCount))
 
+    let statsFinal = stats.map( (stat,i) => {
 
-    let statsItems = stats.map( (stat,i) => {
+      let zDensity = zDensities[i],
+        zResourcesCount = zResourcesCounts[i],
+        zDegree = zDegrees[i],
+        zClarity = zClarities[i],
+        zActionsCount = zActionsCounts[i]
 
-      if(Object.keys(stat).length === 0) return null
+      return {
+        ...stat,
+        zDensity,
+        zResourcesCount,
+        zDegree,
+        zClarity,
+        zActionsCount
+      }
+
+    })
+
+    let statsItems = statsFinal.map( (stat,i) => {
+
+      if(Object.keys(stat).length === 5) return null
 
       // sort ASCENDING
       let series = (stat.series  || []).sort( (a,b) => {
@@ -125,92 +143,32 @@ class BigList extends React.Component {
 
       return (
 
-
         <BigListItem
           style={style}
-          userName={stat.name}
-
-          resourcesCount={stat.resourcesCount}
-          zResourcesCount={zResourcesCount[i]}
-
-          density={stat.density}
-          zDensity= {zDensity[i]}
-
-          actionsCount={stat.actionsCount}
-          zActionsCount={zActions[i]}
-
-          degree={stat.degree}
-          zDegree={zDegree[i]}
-
-          clarity={stat.clarity}
-          zClarity={zClarity[i]}
+          stat={stat}
 
           series={series}
           maxHeight={h}
           heightSeries={height}
-          end={stat.end}
+
+          selectProject={this.selectProject.bind(this)}
 
           key={stat.id}
-          id={stat.id}
           />
       )
     })
+
 
     return (
       <Table
         selectable={true}
         // multiSelectable={true}
-        onRowSelection={this.selectRow.bind(this)}
-        >
-        <TableHeader>
-          <TableRow>
-            <TableHeaderColumn
-              style={style.name}
-              tooltip="Nom de l'étudiant"
-              >
-              Nom
-            　</TableHeaderColumn>
-            <TableHeaderColumn
-              style={style.indicator}
-              tooltip="Nombre d'ajouts/suppressions"
-              >
-              Actions
-            　</TableHeaderColumn>
-            <TableHeaderColumn
-              style={style.indicator}
-              tooltip="Nombre total de noeuds et de liens dans le graphe final"
-              >
-              Eléments
-              </TableHeaderColumn>
-            <TableHeaderColumn
-              style={style.indicator}
-              tooltip="Ratio entre ajout et suppression de nodes"
-              >
-              Clarté
-              </TableHeaderColumn>
-            <TableHeaderColumn
-              style={style.indicator}
-              tooltip="Rapport entre nombre de liens et nombre de nodes"
-              >
-              Degré
-              </TableHeaderColumn>
-            <TableHeaderColumn
-              style={style.indicator}
-              tooltip="Nombre de médias et ressources externes utilisées dans le graphe."
-              >
-              Médias
-              </TableHeaderColumn>
-            <TableHeaderColumn
-              tooltip="Nombre d'éléments dans le graphe depuis sa création"
-              >
-                Evolution du nombre d'éléments
-              </TableHeaderColumn>
 
-             {/*
-               <TableHeaderColumn>Densité</TableHeaderColumn>
-               <TableHeaderColumn>Dernier changement</TableHeaderColumn>
-             */}
-           </TableRow>
+        >
+        <TableHeader adjustForCheckbox={true}>
+          <BigListHeader
+            style={style}
+          />
         </TableHeader>
         <TableBody
           deselectOnClickaway={false}

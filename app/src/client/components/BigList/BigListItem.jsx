@@ -2,13 +2,14 @@ import React from 'react'
 import * as d3 from 'd3';
 
 import FlatButton from 'material-ui/FlatButton';
-import ContentSend from 'material-ui/svg-icons/content/send';
+import IconButton from 'material-ui/IconButton';
+
+import Visibility from 'material-ui/svg-icons/action/visibility';
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 
 import ElementSerie from '../Stats/ElementSerie.jsx'
 import Indicator from '../Stats/Indicator.jsx'
 import Resources from '../Stats/Resources.jsx'
-
 
 import moment from 'moment'
 moment.locale('fr')
@@ -32,26 +33,14 @@ export default class BigListItem extends React.Component {
   render() {
 
     const { // unpack props
-      id,
-      userName,
-      end,
       series,
       style,
       heightSeries,
       elementsCount,
       maxHeight,
-      resources,
+      selectProject,
       //
-      density,
-      zDensity,
-      actionsCount,
-      zActionsCount,
-      resourcesCount,
-      zResourcesCount,
-      degree,
-      zDegree,
-      clarity,
-      zClarity,
+      stat,
       ...other
     } = this.props
 
@@ -69,15 +58,17 @@ export default class BigListItem extends React.Component {
     return (
        <TableRow {...other}>
         {other.children[0] /* checkbox passed down from Table-Body*/}
-         <TableRowColumn style={style.name}>
-           {userName}
+         <TableRowColumn
+          style={style.name}
+          >
+           {stat.name}
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { actionsCount ?
+           { stat.actionsCount ?
              <Indicator
-             count={actionsCount}
-             z={zActionsCount}
+             count={stat.actionsCount}
+             z={stat.zActionsCount}
              />
              :
              null
@@ -85,10 +76,10 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { density ?
+           { stat.density ?
                 <Indicator
-                 count={density}
-                 z={zDensity}
+                 count={stat.density}
+                 z={stat.zDensity}
                  />
               :
               null
@@ -96,10 +87,10 @@ export default class BigListItem extends React.Component {
           </TableRowColumn>
 
           <TableRowColumn style={style.indicator}>
-            { clarity ?
+            { stat.clarity ?
               <Indicator
-               count={clarity}
-               z={zClarity}
+               count={stat.clarity}
+               z={stat.zClarity}
                />
               :
               null
@@ -107,10 +98,10 @@ export default class BigListItem extends React.Component {
           </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { degree ?
+           { stat.degree ?
              <Indicator
-              count={degree}
-              z={zDegree}
+              count={stat.degree}
+              z={stat.zDegree}
               />
              :
              null
@@ -118,10 +109,10 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { resourcesCount ?
+           { stat.resourcesCount ?
              <Indicator
-              count={resourcesCount}
-              z={zResourcesCount}
+              count={stat.resourcesCount}
+              z={stat.zResourcesCount}
               />
              :
              null
@@ -132,12 +123,23 @@ export default class BigListItem extends React.Component {
           { timeSeries }
          </TableRowColumn>
 
+         <TableRowColumn
+          style={style.indicator}
+         >
+           <IconButton
+             onClick={e => {
+               selectProject(stat.id)
+               e.stopPropagation()
+             }}
+           >
+             <Visibility />
+           </IconButton>
+         </TableRowColumn>
 
-        {/*
-          <TableRowColumn>
-            {`${ moment(end).fromNow()}`}
-          </TableRowColumn>
-        */}
+
+          {/* <TableRowColumn>
+            {`${ moment(stat.end).fromNow()}`}
+          </TableRowColumn> */}
 
 
       </TableRow>
