@@ -34,9 +34,11 @@ class BigList extends React.Component {
   }
 
   getZScores(values) {
-    console.log(values);
-    let valMean = mean(values),
-      standardDev = standardDeviation(values),
+
+    let valMean = mean(values)
+    if(isNaN(valMean)) return values.map(d => 0)
+
+    let standardDev = standardDeviation(values),
       zScores = values.map(d => zScore(d, valMean, standardDev))
 
     return zScores.map( z => {
@@ -59,56 +61,52 @@ class BigList extends React.Component {
 
     let h = 40 // timeSeries max height
 
-    // number of nodes+ length
-    let elementsCount = this.props.selectedProjects.map( d => {
-      return this.props.stats[d.id] ? this.props.stats[d.id].network.nodes.length
-      + this.props.stats[d.id].network.edges.length : 0
-    })
-    let elementsCountGroups = this.getZScores(elementsCount)
+    let stats = this.props.selectedProjects.map( d => {
 
-    // resources
-    let resourcesCount = this.props.selectedProjects.map( d => {
-      return this.props.stats[d.id] ? this.props.stats[d.id].resources.length : 0
-    })
-
-    let resourcesCountScale = d3.scale.linear()
-        .domain([ 0,d3.max(resourcesCount)])
-        .range([0,30])
-
-    let zResourcesCount = this.getZScores(resourcesCount)
-
-    // number of elements
-    let maxEls = this.props.selectedProjects.map( d => {
       let stat = this.props.stats[d.id]
-      return stat ? d3.max(stat.series.map(d => d.count)) : 0
+      if (!stat) return {}
+
+      let density = stat.network.nodes.length + stat.network.edges.length,
+        id = d.id,
+        end = d.end,
+        name = d.userName,
+        resourcesCount = stat.resources.length,
+        degree = Number(stat.mediumDegree.toFixed(1)),
+        clarity = Number(stat.clarity.toFixed(1)),
+        maxEls = d3.max(stat.series.map(d => d.count)),
+        actionsCount = d.actionsCount
+
+      return {
+        ...stat,
+        id,
+        end,
+        name,
+        actionsCount,
+        density,
+        resourcesCount,
+        degree,
+        maxEls,
+        clarity
+      }
+
     })
 
+    // heightScale for timeseries
     let heightScale = d3.time.scale()
-        .domain([ 0, d3.max(maxEls)])
+        .domain([ 0, d3.max(stats.map(d=>d.maxEls))])
         .range([0,h])
 
-    // degree
-    let degrees = this.props.selectedProjects.map( d => {
-      let stat = this.props.stats[d.id]
-      return stat ? stat.mediumDegree.toFixed(1) : 0
-    })
+    // get zScores
+    let zDensity = this.getZScores(stats.map(d => d.density))
+    let zResourcesCount = this.getZScores(stats.map(d => d.resourcesCount))
+    let zDegree = this.getZScores(stats.map(d => d.degree))
+    let zClarity = this.getZScores(stats.map(d => d.clarity))
+    let zActions = this.getZScores(stats.map(d => d.actionsCount))
 
-    let zDegrees = this.getZScores(degrees)
 
-    // clarity
-    let clarities = this.props.selectedProjects.map( d => {
-      let stat = this.props.stats[d.id]
-      return stat ? stat.clarity.toFixed(1) : 0
-    })
+    let statsItems = stats.map( (stat,i) => {
 
-    let zClarities = this.getZScores(clarities)
-
-    // actions
-    let actionsCounts = this.props.selectedProjects.map( d => d.actionsCount)
-    let zActions = this.getZScores(actionsCounts)
-
-    let stats = this.props.selectedProjects.map( (project,i) => {
-      let stat = this.props.stats[project.id] || {}
+      if(Object.keys(stat).length === 0) return null
 
       // sort ASCENDING
       let series = (stat.series  || []).sort( (a,b) => {
@@ -121,41 +119,35 @@ class BigList extends React.Component {
         heightScale(d3.max(series.map(d=>d.count)))
         : 0
 
-      let resSize = stat.resources ?
-        resourcesCountScale(stat.resources.length)
-        : 0
-
       return (
 
 
         <BigListItem
-          userName={project.userName}
-
-          resources={resSize}
-          zResourcesCount={zResourcesCount[i]}
-          resourcesCount={resourcesCount[i]}
-
-          end={project.end}
-
-          density={elementsCountGroups[i]}
-          elementsCount= {elementsCount[i]}
-
           style={style}
+          userName={stat.name}
+
+          resourcesCount={stat.resourcesCount}
+          zResourcesCount={zResourcesCount[i]}
+
+          density={stat.density}
+          zDensity= {zDensity[i]}
+
+          actionsCount={stat.actionsCount}
           zActionsCount={zActions[i]}
-          actionsCount={actionsCounts[i]}
 
-          degree={degrees[i]}
-          zDegree={zDegrees[i]}
+          degree={stat.degree}
+          zDegree={zDegree[i]}
 
-          clarity={clarities[i]}
-          zClarity={zClarities[i]}
+          clarity={stat.clarity}
+          zClarity={zClarity[i]}
 
           series={series}
           maxHeight={h}
           heightSeries={height}
+          end={stat.end}
 
-          key={project.id}
-          id={project.id}
+          key={stat.id}
+          id={stat.id}
           />
       )
     })
@@ -199,7 +191,7 @@ class BigList extends React.Component {
         <TableBody
           deselectOnClickaway={false}
           >
-          {stats}
+          {statsItems}
         </TableBody>
       </Table>
     )

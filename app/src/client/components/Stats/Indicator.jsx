@@ -10,7 +10,7 @@ export default class Indicator extends React.Component {
 
   render () {
     let colors = [null, blue100, blue300, blue700]
-    let color = colors[this.props.density]
+    let color = colors[this.props.z]
     return (
       <Avatar
         backgroundColor={color}

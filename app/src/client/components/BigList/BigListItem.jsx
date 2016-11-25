@@ -35,14 +35,15 @@ export default class BigListItem extends React.Component {
       id,
       userName,
       end,
-      density,
-      resourcesUsedPercent,
-      volumen,
       series,
+      style,
       heightSeries,
       elementsCount,
       maxHeight,
       resources,
+      //
+      density,
+      zDensity,
       actionsCount,
       zActionsCount,
       resourcesCount,
@@ -51,7 +52,6 @@ export default class BigListItem extends React.Component {
       zDegree,
       clarity,
       zClarity,
-      style,
       ...other
     } = this.props
 
@@ -74,21 +74,21 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-         { actionsCount ?
-           <Indicator
-           count={actionsCount}
-           density={zActionsCount}
-           />
-           :
-           null
-         }
+           { actionsCount ?
+             <Indicator
+             count={actionsCount}
+             z={zActionsCount}
+             />
+             :
+             null
+           }
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
            { density ?
                 <Indicator
-                 count={elementsCount}
-                 density={density}
+                 count={density}
+                 z={zDensity}
                  />
               :
               null
@@ -99,7 +99,7 @@ export default class BigListItem extends React.Component {
             { clarity ?
               <Indicator
                count={clarity}
-               density={zClarity}
+               z={zClarity}
                />
               :
               null
@@ -110,7 +110,7 @@ export default class BigListItem extends React.Component {
            { degree ?
              <Indicator
               count={degree}
-              density={zDegree}
+              z={zDegree}
               />
              :
              null
@@ -121,7 +121,7 @@ export default class BigListItem extends React.Component {
            { resources ?
              <Indicator
               count={resourcesCount}
-              density={zResourcesCount}
+              z={zResourcesCount}
               />
              :
              null
