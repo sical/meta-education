@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "cytoscape": "^2.7.10",
-    "d3": "3.5.17",
     "d3-array": "^1.0.2",
     "d3-scale": "^1.0.4",
     "d3-shape": "^1.0.4",
