@@ -62,6 +62,19 @@ export default class BigListItem extends React.Component {
            {stat.name}
          </TableRowColumn>
 
+         <TableRowColumn
+          style={style.indicator}
+         >
+           <IconButton
+             onClick={e => {
+               selectProject(stat.id)
+               e.stopPropagation()
+             }}
+           >
+             <Visibility />
+           </IconButton>
+         </TableRowColumn>
+
          <TableRowColumn style={style.indicator}>
            { stat.actionsCount ?
              <Indicator
@@ -119,19 +132,6 @@ export default class BigListItem extends React.Component {
 
          <TableRowColumn>
           { timeSeries }
-         </TableRowColumn>
-
-         <TableRowColumn
-          style={style.indicator}
-         >
-           <IconButton
-             onClick={e => {
-               selectProject(stat.id)
-               e.stopPropagation()
-             }}
-           >
-             <Visibility />
-           </IconButton>
          </TableRowColumn>
 
       </TableRow>

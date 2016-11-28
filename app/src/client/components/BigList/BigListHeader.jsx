@@ -30,6 +30,11 @@ export default class BigListHeader extends React.Component {
         sortable : "name"
       },
       {
+        name : "Réseau",
+        tootltip : "Voir le réseau",
+        sortable : "reseau"
+      },
+      {
         name : "Actions",
         tootltip : "Nombre d'ajouts/suppressions",
         sortable : "actionsCount"
@@ -58,11 +63,6 @@ export default class BigListHeader extends React.Component {
         name : "Evolution",
         tootltip : "Nombre d'éléments dans le graphe depuis sa création",
         sortable : null
-      },
-      {
-        name : "Réseau",
-        tootltip : "Voir le réseau",
-        sortable : "reseau"
       }
     ]
 
@@ -83,11 +83,12 @@ export default class BigListHeader extends React.Component {
 
     return (
       <TableRow>
-        <TableHeaderColumn>
+        <TableHeaderColumn style={{ width : '20px'}}>
           <Checkbox
             onCheck={handleSelectRow.bind(this, "all")}
             checked={allSelected}
             disabled={true}
+
           />
         </TableHeaderColumn>
         {headerItems}
