@@ -18,11 +18,86 @@ import store from '../../store'
 import  { ActionTypes } from '../../actions'
 import AsyncAPI from '../../AsyncAPI'
 
+const headers = [
+    {
+      name : "Nom",
+      tootltip : "Nom de l'étudiant",
+      class : "name",
+      sortable : "name"
+    },
+    {
+      name : "Réseau",
+      tootltip : "Voir le réseau",
+      class: 'indicator',
+      sortable : null
+    },
+    {
+      name : "Actions",
+      tootltip : "Nombre d'ajouts/suppressions",
+      class: 'indicator',
+      sortable : "actionsCount"
+    },
+    {
+      name : "Eléments",
+      tootltip : "Nombre total de noeuds et de liens dans le graphe final",
+      class: 'indicator',
+      sortable : "density"
+    },
+    {
+      name : "Clarté",
+      tootltip : "Ratio entre ajout et suppression de nodes",
+      class: 'indicator',
+      sortable : "clarity"
+    },
+    {
+      name : "Degré",
+      tootltip : "Rapport entre nombre de liens et nombre de noeuds",
+      class: 'indicator',
+      sortable : "degree"
+    },
+    {
+      name : "Médias",
+      tootltip : "Nombre de médias et ressources externes utilisées dans le graphe.",
+      class: 'indicator',
+      sortable : "resourcesCount"
+    },
+    {
+      name : "Evolution",
+      tootltip : "Nombre d'éléments dans le graphe depuis sa création",
+      sortable : null
+    }
+  ]
+
+function sortFunc(a, b, key) {
+  if (typeof(a[key]) === 'number') {
+    return a[key] - b[key];
+  }
+
+  const ax = [];
+  const bx = [];
+
+  a[key].replace(/(\d+)|(\D+)/g, (_, $1, $2) => { ax.push([$1 || Infinity, $2 || '']); });
+  b[key].replace(/(\d+)|(\D+)/g, (_, $1, $2) => { bx.push([$1 || Infinity, $2 || '']); });
+
+  while (ax.length && bx.length) {
+    const an = ax.shift();
+    const bn = bx.shift();
+    const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+    if (nn) return nn;
+  }
+
+  return ax.length - bx.length;
+}
+
+
 class BigList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selected　: []
+      data : [],
+      selected　: [],
+      sortAsc : true,
+      sortCol : null
     }
   }
 
@@ -36,7 +111,82 @@ class BigList extends React.Component {
     }
   }
 
+  sortByColumn(sortCol) {
+    const sortAsc = this.state.sortCol === sortCol ? !this.state.sortAsc : true;
+    console.log(sortCol, "sortCol")
+
+    const sortedData = this.state.data.sort((a, b) => sortFunc(a, b, sortCol));
+    if (!this.state.sortAsc) { sortedData.reverse(); }
+
+    this.setState({
+      data : sortedData,
+      sortCol,
+      sortAsc
+    });
+  }
+
   componentWillReceiveProps(nextProps) {
+
+    let stats = nextProps.selectedProjects
+      .map( d => {
+
+        let stat = nextProps.stats[d.id]
+        if (!stat) return {}
+
+        let density = stat.network.nodes.length + stat.network.edges.length,
+          id = d.id,
+          end = d.end,
+          name = d.userName,
+          resourcesCount = stat.resources.length,
+          degree = Number(stat.mediumDegree.toFixed(1)),
+          clarity = Number(stat.clarity.toFixed(1)),
+          maxEls = max(stat.series.map(d => d.count)),
+          actionsCount = d.actionsCount
+
+        return {
+          ...stat,
+          id,
+          end,
+          name,
+          actionsCount,
+          density,
+          resourcesCount,
+          degree,
+          maxEls,
+          clarity
+        }
+
+      })
+
+    // get zScores
+    let zDensities = this.getZScores(stats.map(d => d.density))
+    let zResourcesCounts = this.getZScores(stats.map(d => d.resourcesCount))
+    let zDegrees = this.getZScores(stats.map(d => d.degree))
+    let zClarities = this.getZScores(stats.map(d => d.clarity))
+    let zActionsCounts = this.getZScores(stats.map(d => d.actionsCount))
+
+    let statsFinal = stats.map( (stat,i) => {
+
+      let zDensity = zDensities[i],
+        zResourcesCount = zResourcesCounts[i],
+        zDegree = zDegrees[i],
+        zClarity = zClarities[i],
+        zActionsCount = zActionsCounts[i]
+
+      return {
+        ...stat,
+        zDensity,
+        zResourcesCount,
+        zDegree,
+        zClarity,
+        zActionsCount
+      }
+
+    })
+
+
+    this.setState({ data : statsFinal })
+
     console.log(nextProps);
     if(nextProps.selectedProjects)
       this.setState({selected : nextProps.selectedProjects.map(d => d.id)})
@@ -88,68 +238,13 @@ class BigList extends React.Component {
 
     let h = 40 // timeSeries max height
 
-    let stats = this.props.selectedProjects.map( d => {
-
-      let stat = this.props.stats[d.id]
-      if (!stat) return {}
-
-      let density = stat.network.nodes.length + stat.network.edges.length,
-        id = d.id,
-        end = d.end,
-        name = d.userName,
-        resourcesCount = stat.resources.length,
-        degree = Number(stat.mediumDegree.toFixed(1)),
-        clarity = Number(stat.clarity.toFixed(1)),
-        maxEls = max(stat.series.map(d => d.count)),
-        actionsCount = d.actionsCount
-
-      return {
-        ...stat,
-        id,
-        end,
-        name,
-        actionsCount,
-        density,
-        resourcesCount,
-        degree,
-        maxEls,
-        clarity
-      }
-
-    })
-
     // heightScale for timeseries
     let heightScale = scaleTime()
-        .domain([ 0, max(stats.map(d=>d.maxEls))])
+        .domain([ 0, max(this.state.data.map(d=>d.maxEls))])
         .range([0,h])
 
-    // get zScores
-    let zDensities = this.getZScores(stats.map(d => d.density))
-    let zResourcesCounts = this.getZScores(stats.map(d => d.resourcesCount))
-    let zDegrees = this.getZScores(stats.map(d => d.degree))
-    let zClarities = this.getZScores(stats.map(d => d.clarity))
-    let zActionsCounts = this.getZScores(stats.map(d => d.actionsCount))
 
-    let statsFinal = stats.map( (stat,i) => {
-
-      let zDensity = zDensities[i],
-        zResourcesCount = zResourcesCounts[i],
-        zDegree = zDegrees[i],
-        zClarity = zClarities[i],
-        zActionsCount = zActionsCounts[i]
-
-      return {
-        ...stat,
-        zDensity,
-        zResourcesCount,
-        zDegree,
-        zClarity,
-        zActionsCount
-      }
-
-    })
-
-    let statsItems = statsFinal
+    let statsItems = this.state.data
       .filter(stat => this.state.selected.indexOf(stat.id) > -1)
       .map( (stat,i) => {
 
@@ -197,6 +292,8 @@ class BigList extends React.Component {
           <BigListHeader
             style={style}
             allSelected={false}//{allSelected}
+            headers={headers}
+            sortByColumn={this.sortByColumn.bind(this)}
             handleSelectRow={this.handleSelectRow.bind(this)}
           />
         </TableHeader>

@@ -1,12 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 import Checkbox from 'material-ui/Checkbox'
-
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
 import SortIcon from 'material-ui/svg-icons/action/swap-vert';
-
-
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
 
 export default class BigListHeader extends React.Component {
   constructor(props) {
@@ -18,66 +17,31 @@ export default class BigListHeader extends React.Component {
     const {
       style,
       handleSelectRow,
+      sortByColumn,
       allSelected,
       ...other
     } = this.props
 
+    let rowAlignStyle = {}
 
-    const headers = [
-      {
-        name : "Nom",
-        tootltip : "Nom de l'étudiant",
-        sortable : "name"
-      },
-      {
-        name : "Réseau",
-        tootltip : "Voir le réseau",
-        sortable : "reseau"
-      },
-      {
-        name : "Actions",
-        tootltip : "Nombre d'ajouts/suppressions",
-        sortable : "actionsCount"
-      },
-      {
-        name : "Eléments",
-        tootltip : "Nombre total de noeuds et de liens dans le graphe final",
-        sortable : "elementsCount"
-      },
-      {
-        name : "Clarté",
-        tootltip : "Ratio entre ajout et suppression de nodes",
-        sortable : "clarity"
-      },
-      {
-        name : "Degré",
-        tootltip : "Rapport entre nombre de liens et nombre de noeuds",
-        sortable : "degree"
-      },
-      {
-        name : "Médias",
-        tootltip : "Nombre de médias et ressources externes utilisées dans le graphe.",
-        sortable : "resourcesCount"
-      },
-      {
-        name : "Evolution",
-        tootltip : "Nombre d'éléments dans le graphe depuis sa création",
-        sortable : null
-      }
-    ]
-
-    let headerItems = headers.map(d => (
-
+    let headerItems = this.props.headers.map(d => (
       <TableHeaderColumn
-          style={
-            d.sortable === "name" ?
-              style.name :
-              d.sortable === null ? null : style.indicator
-          }
-          tooltip={d.tooltip}
+          style={ d.class ? {...style[d.class], ...rowAlignStyle} : {rowAlignStyle} }
+          tooltip={`${d.tootltip}`}
           key={d.name}
           >
-          {d.name}
+          {　
+            d.sortable  ?
+            <IconButton
+              onMouseUp={sortByColumn.bind(this,d.sortable)}
+             >
+              <SortIcon
+                color={'rgb(158, 158, 158)'}
+              />
+             </IconButton>
+             : null
+           }
+           {d.name}
         　</TableHeaderColumn>
     ))
 
@@ -88,7 +52,6 @@ export default class BigListHeader extends React.Component {
             onCheck={handleSelectRow.bind(this, "all")}
             checked={allSelected}
             disabled={true}
-
           />
         </TableHeaderColumn>
         {headerItems}
