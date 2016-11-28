@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
-import d3TimeFormat from 'd3-time-format';
+import {timeFormat} from 'd3-time-format';
 
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
@@ -102,10 +102,10 @@ export default class TimeSlider extends React.Component {
         onClick={this.play.bind(this)}
         />
 
-    const timeFormat = d3TimeFormat("%a %d %B, %H:%M")
+    const format = timeFormat("%a %d %B, %H:%M")
 
     let currentTime = new Date(this.props.timestamps[this.state.value]) || new Date,
-      timeFormatted = timeFormat(currentTime)
+      timeFormatted = format(currentTime)
 
     return(
       <div>

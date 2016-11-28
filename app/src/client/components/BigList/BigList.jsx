@@ -119,7 +119,7 @@ class BigList extends React.Component {
     })
 
     // heightScale for timeseries
-    let heightScale = d3ScaleTime()
+    let heightScale = scaleTime()
         .domain([ 0, max(stats.map(d=>d.maxEls))])
         .range([0,h])
 
