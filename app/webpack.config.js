@@ -27,7 +27,8 @@ if(process.env.NODE_ENV === 'production'){
   var devtool='cheap-module-source-map'
 
 } else {
-  var plugins = ['react-hot-loader/babel',envPlugin],
+  var plugins = null,
+    pluginsReact = ['react-hot-loader/babel'],
     devtool = 'eval'
 }
 
@@ -55,6 +56,7 @@ module.exports = {
         query: {
           presets: ['es2015', 'react', 'stage-0']
         },
+        plugins: pluginsReact,
         exclude: [node_modules_dir]
       },{
         test: /\.css$/,
