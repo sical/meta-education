@@ -1,11 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
 import Checkbox from 'material-ui/Checkbox'
-import SortIcon from 'material-ui/svg-icons/action/swap-vert';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
 export default class BigListHeader extends React.Component {
   constructor(props) {
@@ -17,12 +14,15 @@ export default class BigListHeader extends React.Component {
     const {
       style,
       handleSelectRow,
-      sortByColumn,
       allSelected,
       ...other
     } = this.props
 
-    let rowAlignStyle = {}
+    let rowAlignStyle = {
+      whiteSpace: 'normal',
+      lineHeight: '1em',
+      textAlign : 'center'
+    }
 
     let headerItems = this.props.headers.map(d => (
       <TableHeaderColumn
@@ -30,20 +30,10 @@ export default class BigListHeader extends React.Component {
           tooltip={`${d.tootltip}`}
           key={d.name}
           >
-          {　
-            d.sortable  ?
-            <IconButton
-              onMouseUp={sortByColumn.bind(this,d.sortable)}
-             >
-              <SortIcon
-                color={'rgb(158, 158, 158)'}
-              />
-             </IconButton>
-             : null
-           }
-           {d.name}
+          {d.name}
         　</TableHeaderColumn>
     ))
+
 
     return (
       <TableRow>
@@ -55,7 +45,7 @@ export default class BigListHeader extends React.Component {
           />
         </TableHeaderColumn>
         {headerItems}
-       </TableRow>
+      </TableRow>
     )
   }
 

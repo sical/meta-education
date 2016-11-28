@@ -1,7 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
+
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import IconButton from 'material-ui/IconButton';
 import SortIcon from 'material-ui/svg-icons/action/swap-vert';
 
 import BigListItem from './BigListItem.jsx'
@@ -32,31 +34,31 @@ const headers = [
       sortable : null
     },
     {
-      name : "Actions",
+      name : "Nombre d’actions",
       tootltip : "Nombre d'ajouts/suppressions",
       class: 'indicator',
       sortable : "actionsCount"
     },
     {
-      name : "Eléments",
-      tootltip : "Nombre total de noeuds et de liens dans le graphe final",
+      name : "Nombre de noeuds",
+      tootltip : "Nombre total de noeuds dans le graphe final",
       class: 'indicator',
       sortable : "density"
     },
     {
-      name : "Clarté",
+      name : "Clarté de la démarche",
       tootltip : "Ratio entre ajout et suppression de nodes",
       class: 'indicator',
       sortable : "clarity"
     },
     {
-      name : "Degré",
+      name : "Liens par noeud",
       tootltip : "Rapport entre nombre de liens et nombre de noeuds",
       class: 'indicator',
       sortable : "degree"
     },
     {
-      name : "Médias",
+      name : "Médias associés",
       tootltip : "Nombre de médias et ressources externes utilisées dans le graphe.",
       class: 'indicator',
       sortable : "resourcesCount"
@@ -133,7 +135,7 @@ class BigList extends React.Component {
         let stat = nextProps.stats[d.id]
         if (!stat) return {}
 
-        let density = stat.network.nodes.length + stat.network.edges.length,
+        let density = stat.network.nodes.length,
           id = d.id,
           end = d.end,
           name = d.userName,
@@ -280,6 +282,26 @@ class BigList extends React.Component {
     // console.log(this.props.selectedProjects);
     let allSelected = this.props.selectedProjects.length === this.state.selected.length
 
+    let sorting = headers.map(d => (
+      <TableRowColumn
+        style={ d.class ? {...style[d.class] } : null }
+        key={d.name}
+        >
+        {　
+          d.sortable  ?
+          <IconButton
+            onMouseUp={this.sortByColumn.bind(this,d.sortable)}
+           >
+            <SortIcon
+              style={{ width: 16, height: 16 }}
+              color={ this.state.sortCol === d.sortable ? 'black' : 'rgb(158, 158, 158)' }
+            />
+          </IconButton>
+           : null
+         }
+     </TableRowColumn>
+   ))
+
     return (
       <Table
         selectable={false}
@@ -293,13 +315,15 @@ class BigList extends React.Component {
             style={style}
             allSelected={false}//{allSelected}
             headers={headers}
-            sortByColumn={this.sortByColumn.bind(this)}
             handleSelectRow={this.handleSelectRow.bind(this)}
           />
         </TableHeader>
         <TableBody
           deselectOnClickaway={false}
           >
+          <TableRow style={{height:'20px'}}>
+            {sorting}
+          </TableRow>
           {statsItems}
         </TableBody>
       </Table>
