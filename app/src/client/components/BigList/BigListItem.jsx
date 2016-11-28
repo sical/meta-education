@@ -1,5 +1,4 @@
 import React from 'react'
-import * as d3 from 'd3';
 
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
@@ -10,9 +9,6 @@ import {TableRow, TableRowColumn} from 'material-ui/Table';
 import ElementSerie from '../Stats/ElementSerie.jsx'
 import Indicator from '../Stats/Indicator.jsx'
 import Resources from '../Stats/Resources.jsx'
-
-import moment from 'moment'
-moment.locale('fr')
 
 export default class BigListItem extends React.Component {
   constructor(props) {
@@ -61,7 +57,7 @@ export default class BigListItem extends React.Component {
        >
         {other.children[0] /* checkbox passed down from Table-Body*/}
          <TableRowColumn
-          style={style.name}          
+          style={style.name}
           >
            {stat.name}
          </TableRowColumn>
@@ -138,17 +134,7 @@ export default class BigListItem extends React.Component {
            </IconButton>
          </TableRowColumn>
 
-
-          {/* <TableRowColumn>
-            {`${ moment(stat.end).fromNow()}`}
-          </TableRowColumn> */}
-
-
       </TableRow>
     )
   }
 }
-
-//{`Ressources : ${Math.floor(stat.resourcesUsedPercent)}% / Densité : ${stat.density} / degré : ${Math.round(stat.mediumDegree*100)} `}
-// secondaryText={hover} //{`${Math.floor(stat.clarity)} actions. Edité ${ moment(stat.end).fromNow()}`}
-// // className={ isSelected > -1 ? "selected" : null}

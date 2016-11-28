@@ -7,8 +7,12 @@ import SortIcon from 'material-ui/svg-icons/action/swap-vert';
 import BigListItem from './BigListItem.jsx'
 import BigListHeader from './BigListHeader.jsx'
 
-import * as d3 from 'd3';
-import { mean, standardDeviation, zScore } from 'simple-statistics'
+import { max } from 'd3-array'
+import { scaleTime } from 'd3-scale';
+
+import mean from 'simple-statistics/src/mean'
+import standardDeviation from 'simple-statistics/src/standard_deviation'
+import zScore from 'simple-statistics/src/z_score'
 
 import store from '../../store'
 import  { ActionTypes } from '../../actions'
@@ -96,7 +100,7 @@ class BigList extends React.Component {
         resourcesCount = stat.resources.length,
         degree = Number(stat.mediumDegree.toFixed(1)),
         clarity = Number(stat.clarity.toFixed(1)),
-        maxEls = d3.max(stat.series.map(d => d.count)),
+        maxEls = max(stat.series.map(d => d.count)),
         actionsCount = d.actionsCount
 
       return {
@@ -115,8 +119,8 @@ class BigList extends React.Component {
     })
 
     // heightScale for timeseries
-    let heightScale = d3.time.scale()
-        .domain([ 0, d3.max(stats.map(d=>d.maxEls))])
+    let heightScale = d3ScaleTime()
+        .domain([ 0, max(stats.map(d=>d.maxEls))])
         .range([0,h])
 
     // get zScores
@@ -159,7 +163,7 @@ class BigList extends React.Component {
         })
 
         let height = series.length ?
-          heightScale(d3.max(series.map(d=>d.count)))
+          heightScale(max(series.map(d=>d.count)))
           : 0
 
         return (

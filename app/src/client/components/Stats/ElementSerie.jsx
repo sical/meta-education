@@ -3,7 +3,11 @@ import Avatar from 'material-ui/Avatar';
 
 import {red300, green100, green500} from 'material-ui/styles/colors';
 
+import { min, max } from 'd3-array'
+import { scaleTime, scaleLinear } from 'd3-scale';
+
 import TimeSeries from '../Chart/TimeSeries.jsx'
+
 
 export default class ElementsSeries extends React.Component {
   constructor(props) {
@@ -20,16 +24,16 @@ export default class ElementsSeries extends React.Component {
     } = this.props
 
     let xScale =
-      d3.time.scale()
+      scaleTime()
         .domain([
-          d3.min(series.map(d=>new Date(d.ts))),
-          d3.max(series.map(d=>new Date(d.ts)))
+          min(series.map(d=>new Date(d.ts))),
+          max(series.map(d=>new Date(d.ts)))
         ])
         .range([width,0])
 
     let yScale =
-      d3.scale.linear()
-        .domain([0, d3.max(series.map(d=>d.count))])
+      scaleLinear()
+        .domain([0, max(series.map(d=>d.count))])
         .range([0,height])
 
     let timeSeriesData = series.map(d => ( { x: new Date(d.ts), y : d.count } ))

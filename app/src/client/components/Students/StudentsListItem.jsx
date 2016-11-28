@@ -6,16 +6,11 @@ import Avatar from 'material-ui/Avatar';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
-import moment from 'moment'
-
 import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
-
-// set to French
-moment.locale('fr')
 
 // tooltip
 const iconButtonElement = (

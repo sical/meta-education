@@ -1,7 +1,7 @@
 import React from 'react'
 import Subject from 'material-ui/svg-icons/action/subject';
 
-import * as d3 from 'd3'
+import {line} from 'd3-shape'
 
 var Chart = React.createClass({
    render: function() {
@@ -53,7 +53,7 @@ var Chart = React.createClass({
          yScale = props.yScale,
          xScale = props.xScale;
 
-     var path = d3.svg.line()
+     var path = line()
          .x(function(d) { return xScale(d.x); })
          .y(function(d) { return yScale(d.y); })
         //  .interpolate(this.props.interpolate);

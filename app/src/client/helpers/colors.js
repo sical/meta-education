@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { category20 } from 'd3-scale';
 
 // get colors
-export const colors = d3.schemeCategory20
+export const colors = category20

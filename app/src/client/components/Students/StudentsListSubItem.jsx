@@ -7,11 +7,6 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 import store from '../../store'
 import  { ActionTypes } from '../../actions'
 
-import moment from 'moment'
-
-// set to French
-moment.locale('fr')
-
 export default class StudentsListSubItem extends React.Component {
   constructor(props) {
     super(props)
@@ -25,10 +20,39 @@ export default class StudentsListSubItem extends React.Component {
   }
 
   render() {
+
+    function timeSince(date) {
+
+        var seconds = Math.floor((new Date() - date) / 1000);
+
+        var interval = Math.floor(seconds / 31536000);
+
+        if (interval > 1) {
+            return interval + " years";
+        }
+        interval = Math.floor(seconds / 2592000);
+        if (interval > 1) {
+            return interval + " months";
+        }
+        interval = Math.floor(seconds / 86400);
+        if (interval > 1) {
+            return interval + " days";
+        }
+        interval = Math.floor(seconds / 3600);
+        if (interval > 1) {
+            return interval + " hours";
+        }
+        interval = Math.floor(seconds / 60);
+        if (interval > 1) {
+            return interval + " minutes";
+        }
+        return Math.floor(seconds) + " seconds";
+    }
+
     return (
       <ListItem
         primaryText={`${this.props.project.name}`}
-        secondaryText={`${this.props.project.actionsCount} actions. Edité ${ moment(this.props.project.end).fromNow()}`}
+        secondaryText={`${this.props.project.actionsCount} actions. Edité ${ timeSince(this.props.project.end)}`}
         onClick={
           this.handleClickProject.bind(this, this.props.project.id, this.props.userId)
         }
