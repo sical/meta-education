@@ -87,6 +87,7 @@ export default class BigListHeader extends React.Component {
           <Checkbox
             onCheck={handleSelectRow.bind(this, "all")}
             checked={allSelected}
+            disabled={true}
           />
         </TableHeaderColumn>
         {headerItems}

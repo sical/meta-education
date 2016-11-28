@@ -187,7 +187,7 @@ class BigList extends React.Component {
 
     return (
       <Table
-        selectable={true}
+        selectable={false}
         multiSelectable={true}
         onRowSelection={ this.handleSelectRow.bind(this)}
         >
@@ -196,7 +196,7 @@ class BigList extends React.Component {
           >
           <BigListHeader
             style={style}
-            allSelected={allSelected}
+            allSelected={false}//{allSelected}
             handleSelectRow={this.handleSelectRow.bind(this)}
           />
         </TableHeader>
