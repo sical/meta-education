@@ -1,6 +1,6 @@
 {
   "name": "meta-education",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Méta Education Dashboard",
   "main": "index.js",
   "scripts": {
