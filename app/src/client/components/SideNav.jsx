@@ -8,6 +8,15 @@ import Subheader from 'material-ui/Subheader';
 
 import StudentsList from '../components/Students/StudentsList.jsx'
 
+import { version } from '../../../package.json'
+
+const sticky = {
+  position: 'fixed',
+  color: '#ccc',
+  bottom: '0',
+  width: '25%'
+}
+
 export default class SideNav extends React.Component {
 
   constructor(props) {
@@ -47,6 +56,8 @@ export default class SideNav extends React.Component {
           <Divider />
           <Subheader>Elèves</Subheader>
           <StudentsList />
+          <MenuItem style={sticky}>v{version}</MenuItem>
+
         </Drawer>
       </div>
     );

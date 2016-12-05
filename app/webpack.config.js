@@ -49,7 +49,9 @@ module.exports = {
         test: /\.js$/,
         loaders: ['babel'],
         exclude: [node_modules_dir]
-      },{
+      },
+      { test: /\.json$/, loader: 'json' },
+      {
         test: /\.jsx?$/,
         include: path.join(__dirname, 'src'),
         loader: 'babel-loader',
