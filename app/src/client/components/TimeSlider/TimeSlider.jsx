@@ -109,6 +109,16 @@ export default class TimeSlider extends React.Component {
 
     return(
       <div>
+        <Slider
+          ref='slider'
+          // {...this.state}
+          min={this.state.min}
+          max={this.state.max}
+          value={this.state.value}
+          defaultValue={this.state.defaultValue}
+          step={1}
+          onChange={ this.handleSliderChange.bind(this) }
+        />
         <div>
           <FlatButton
             label="Prev"
@@ -121,16 +131,6 @@ export default class TimeSlider extends React.Component {
             />
           <span>{timeFormatted}</span>
         </div>
-        <Slider
-          ref='slider'
-          // {...this.state}
-          min={this.state.min}
-          max={this.state.max}
-          value={this.state.value}
-          defaultValue={this.state.defaultValue}
-          step={1}
-          onChange={ this.handleSliderChange.bind(this) }
-        />
       </div>
     )
   }

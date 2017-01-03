@@ -5,10 +5,14 @@ import Network from '../Network/Network.jsx'
 import TimeSlider from '../TimeSlider/TimeSlider.jsx'
 import ResourcesGrid from '../ResourcesGrid/ResourcesGrid.jsx'
 
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Divider from 'material-ui/Divider';
-import Face from 'material-ui/svg-icons/action/face';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
+import Face from 'material-ui/svg-icons/action/face';
+import Clear from 'material-ui/svg-icons/content/clear';
+
+import store from '../../store'
+import  { ActionTypes } from '../../actions'
 
 let style = {
   resources : { maxWidth : "100%" },
@@ -21,16 +25,26 @@ export default class SingleView extends React.Component {
     super(props)
   }
 
+  handleExpandChange() {
+    store.dispatch({ type : ActionTypes.HIDE_PROJECT})
+  }
+
   render() {
 
     let project = this.props.selectedProjects.filter(p => p.id == this.props.currentProject)[0] || {}
 
     return (
       <div className="graphs" >
-        <Card className="network">
+        <Card
+          className="network"
+          onExpandChange={this.handleExpandChange.bind(this)}
+          >
           <CardHeader
             title={`${project.userName}`}
             avatar={<Face />}
+            showExpandableButton={true}
+            openIcon={<Clear />}
+            closeIcon={<Clear />}
           />
         </Card>
         <Divider />
@@ -38,14 +52,18 @@ export default class SingleView extends React.Component {
           style={style.resources}
           actions={this.props.actions}
           />
-        <Card className="network" style={style.network}>
+        <Card
+          className="network"
+          style={style.network}
+          initiallyExpanded={true}
+          >
           <CardHeader
-            title={`Network`}
-            subtitle={`${project.actionsCount} actions -- ${project.userName}`}
-            // actAsExpander={true}
-            // showExpandableButton={true}
+            title={`Réseau (navigation temporelle)`}
+            subtitle={`${project.actionsCount} actions`}
+            actAsExpander={true}
+            showExpandableButton={true}
           />
-          <CardText>
+          <CardText expandable={true}>
          {
            this.props.actions.length ?
             <Network
@@ -54,20 +72,17 @@ export default class SingleView extends React.Component {
             :
             "network"
           }
+          {
+            this.props.actions.length ?
+            <TimeSlider
+              timestamps={this.props.timestamps}
+            />
+             :
+             "time slider"
+           }
           </CardText>
         </Card>
-        <Card className="timeSlider" style={style.timeSlider}>
-          <CardText>
-         {
-           this.props.actions.length ?
-           <TimeSlider
-             timestamps={this.props.timestamps}
-           />
-            :
-            "time slider"
-          }
-          </CardText>
-        </Card>
+
       </div>
     )
   }
