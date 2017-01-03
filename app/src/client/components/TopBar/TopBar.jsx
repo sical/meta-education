@@ -7,6 +7,7 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 // import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
 
 import UserMenu from './UserMenu.jsx'
+import Version from '../Version/Version.jsx'
 
 
 const styles = {
@@ -35,6 +36,7 @@ export default class TopBar extends React.Component {
       <AppBar
         title="MetaEducation"
         iconElementLeft={iconToggleSideNav}
+        iconElementRight={<Version />}
         />
     )
   }
