@@ -1,10 +1,14 @@
 import React from 'react'
 
+
 import Network from '../Network/Network.jsx'
 import TimeSlider from '../TimeSlider/TimeSlider.jsx'
 import ResourcesGrid from '../ResourcesGrid/ResourcesGrid.jsx'
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Divider from 'material-ui/Divider';
+import Face from 'material-ui/svg-icons/action/face';
+
 
 let style = {
   resources : { maxWidth : "100%" },
@@ -19,16 +23,25 @@ export default class SingleView extends React.Component {
 
   render() {
 
+    let project = this.props.selectedProjects.filter(p => p.id == this.props.currentProject)[0] || {}
+
     return (
       <div className="graphs" >
+        <Card className="network">
+          <CardHeader
+            title={`${project.userName}`}
+            avatar={<Face />}
+          />
+        </Card>
+        <Divider />
         <ResourcesGrid
           style={style.resources}
           actions={this.props.actions}
           />
         <Card className="network" style={style.network}>
           <CardHeader
-            title="Network"
-            subtitle="Subtitle"
+            title={`Network`}
+            subtitle={`${project.actionsCount} actions -- ${project.userName}`}
             // actAsExpander={true}
             // showExpandableButton={true}
           />
