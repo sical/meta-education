@@ -5,19 +5,22 @@ const NetworkDefaultStyle = () =>
   stylesheet()
     .selector('node')
       .style({
-        'font-size': 6,//graphState.fontSize,
+        'font-size': 16,
         'text-valign': 'center',
         'text-halign': 'right',
         'color': 'gray',
-        'text-max-width': 60,
+        'text-max-width': 120,
         'text-wrap': 'wrap',
         'min-zoomed-font-size': 0.4,
         'border-color': '#D84315',
         'background-color' : 'steelblue',
-        // 'text-opacity' : 0, // hide label by default
         'label'(e) {
-          // console.log(e.data('title'));
-          return e.data('title') ? e.data('title').trunc(20) : ''
+          let html = e.data('title')
+          // strip HTML entities from text
+          let tmp = document.createElement("div");
+          tmp.innerHTML = html;
+
+          return tmp.textContent || tmp.innerText || "";
         }
       })
     // node with degree zero
@@ -26,20 +29,12 @@ const NetworkDefaultStyle = () =>
           'background-color': '#656565'
           // 'display' :"none"
       })
-    .selector('node[group="ghosts"]')
-    .style({
-      'background-opacity': .5,
-      'border-width': '3',
-      'border-color': 'gray',
-      'border-opacity': .6
-        // 'display' :"none"
-    })
     .selector('edge')
       .style({
         'background-color' : '#000',
         'target-arrow-shape': 'none', // default is undirected graph
         'width'(e) {
-          return e.data('weight') ? e.data('weight') : .5
+          return 5
         },
         'line-color' : '#AAAAAA',
         'opacity': .7,

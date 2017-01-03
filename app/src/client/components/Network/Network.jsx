@@ -1,6 +1,10 @@
 import React from 'react'
 import cytoscape from 'cytoscape'
 
+import IconButton from 'material-ui/IconButton';
+import ContentRemove from 'material-ui/svg-icons/content/remove';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+
 import {connect} from 'react-redux'
 import NetworkDefaultStyle from './NetworkDefaultStyle'
 
@@ -9,7 +13,7 @@ const CYTOSCAPE_DIV_ID = 'network'
 const style = {
   divNetwork : {
     height: '400px',
-    width: '400px',
+    width: '100%',
     // position: 'absolute',
     // backgroundColor: 'rgba(0,0,0,.5)',
     // top: '0px',
@@ -113,6 +117,16 @@ class Network extends React.Component {
    this.state.cy.destroy();
   }
 
+  zoomIn() {
+    let zoom = this.state.cy.zoom()
+    this.state.cy.zoom(zoom+.3)
+  }
+
+  zoomOut() {
+    let zoom = this.state.cy.zoom()
+    this.state.cy.zoom(zoom-.3)
+  }
+
   // TODO : compare nodes and edges to check if update is required
   // shouldComponentUpdate(nextProps, nextState) {
     // if (nextProps.networkData.equals(this.props.networkData)) {
@@ -127,14 +141,28 @@ class Network extends React.Component {
     this.updateNetwork() // show network
     return (
       <div>
-        <p className="count">
-          <span>{this.state.nodes.length} noeuds </span> /
-          <span>{this.state.edges.length} liens</span>
-        </p>
         <div
         id={CYTOSCAPE_DIV_ID}
         style={style.divNetwork}
         >
+          <p className="count" style={{ textAlign : "right" }}>
+            <span>
+              {this.state.nodes.length} noeuds /
+              {this.state.edges.length} liens
+            </span>
+            <IconButton
+              tooltip="Zoom +"
+              onClick={this.zoomIn.bind(this)}
+              >
+              <ContentAdd />
+            </IconButton>
+            <IconButton
+              tooltip="Zoom -"
+              onClick={this.zoomOut.bind(this)}
+              >
+              <ContentRemove />
+            </IconButton>
+          </p>
         </div>
       </div>
     )
