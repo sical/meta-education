@@ -47,7 +47,7 @@ const headers = [
     },
     {
       name : "Clarté de la démarche",
-      tootltip : "Ratio entre ajout et suppression d'éléments dans le graphe (en %)'",
+      tootltip : "Ratio entre ajout et suppression d'éléments dans le graphe (en %)",
       class: 'indicator',
       sortable : "clarity"
     },

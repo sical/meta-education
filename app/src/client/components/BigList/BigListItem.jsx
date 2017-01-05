@@ -100,7 +100,7 @@ export default class BigListItem extends React.Component {
           <TableRowColumn style={style.indicator}>
             { stat.clarity ?
               <Indicator
-               count={stat.clarity}
+               count={`${Math.round(stat.clarity)}%`}
                z={stat.zClarity}
                />
               :
