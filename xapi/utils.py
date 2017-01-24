@@ -1,5 +1,7 @@
 import json
 
+# TODO : delete this file 
+
 def save_to_json_file(data, filename)
     # create dir to store files
     data_dir = os.path.join(os.getcwd(), "data")
