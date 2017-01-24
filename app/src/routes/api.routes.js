@@ -86,7 +86,7 @@ router.get('/users', (req, res) => {
     })
 });
 
-// GET a list of all users (directly from statements)
+// GET a list of all projects for each student in a specific class (directly from statements)
 router.get('/projects/:classe_id', (req, res) => {
 
   let students = []
@@ -194,6 +194,7 @@ router.get('/projects/:classe_id', (req, res) => {
 });
 
 // GET stats from a　list of all projects
+// usage : http://localhost:3000/api/stats?projects=2e6b93f5-70c9-4db3-b759-f27e0132720b
 router.get('/stats', (req, res) => {
 
   let projects = req.query.projects instanceof Array ? req.query.projects : [req.query.projects]
