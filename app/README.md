@@ -3,7 +3,7 @@
 
 This app contains : 
 
--  backend : a REST API server using express.js and ES6
+-  backend : a JSON API server using express.js and ES6
 -  frontend : a single page app with React/Redux 
 -  scripts : build for production
 
