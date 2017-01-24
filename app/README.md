@@ -1,9 +1,11 @@
 # Meta Education Web App 
 
 
->  a REST API server using express.js and ES6
->  Single page app with React/Redux for frontend
->  build for production
+This app contains : 
+
+-  backend : a REST API server using express.js and ES6
+-  frontend : a single page app with React/Redux 
+-  scripts : build for production
 
 ### Server app
 
