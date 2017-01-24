@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# # Reconstruct from traces
+# # Reconstruct successive states of the mind map from traces (statements)
 #
-# Purpose of this notebook :
-#
-# * Convert Tincan records to usable network images
-# * Extract some first metrics
-# * Create preliminary viz of the activity
+# * Convert Tincan records to usable network states (nodes and edges in the mind maps)
+# * Extract some first metrics (number of nodes, number of edges)
 # * Check test data
 #
 # Tincan/XAPI records have already been stored in MongoDB using a [custom xApi crawler script](https://github.com/sical/meta-education/blob/master/xapi/xapi-crawler.py)
@@ -119,16 +116,21 @@ def extract_networks_from_statements():
     print "-"*10
 
     print "Extracting statements from Mongo..."
-    # store different informations about the network
+    
+    # store a different network for each renkan
+    # renkan_id = "xxx32D"
+    # networks["xxx32D"] = { nodes : [...] , edges : [...] } (networkx object)
     networks = {}
 
-    # container for all network states
+    # container for all actions (mind maps states)
+    # renkan_id = "xxx32D"
+    # actions["xxx32D"] = [action, action, ...]
     actions = {}
 
-    # store info about other actions
+    # store info about other actions that have been ignored
     ignored = []
 
-    # extract infos
+    # extract infos from the statements database (from oldest to newest)
     for i,statement in enumerate(db.statements.find(q).sort([ ( 'stored', 1 ) ])):
 
         # default state
@@ -137,7 +139,7 @@ def extract_networks_from_statements():
         # store action infos
         action = {}
         action["type"] = get_action(statement["verb"]["id"])
-        action["ts"] = statement["stored"]
+        action["ts"] = statement["stored"] # timestamp
         action["id"] = statement["id"]
 
         action_log = "%i/%s :%s  - %s -- %s"%(i,c,action["type"], action["ts"], action["id"])
@@ -147,19 +149,19 @@ def extract_networks_from_statements():
             ignored.append(action["type"])
             pass # ignore those actions
         else :
+            # element_type can be Renkan, View, Node or Edge 
             element_type = statement["object"]["definition"]["type"].split("#")[1]
 
             logger.debug("%s -- %s"%(action_log, element_type))
 
             if element_type == "Renkan":
 
-                if action["type"] == "create": # create new project
+                if action["type"] == "create": # create new Renkan project
                     data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
                     new_id = data["id"]
-                    networks[new_id] = nx.DiGraph()
+                    networks[new_id] = nx.DiGraph() # create empty directed graph
                     actions[new_id] = []
 
-                    # "Create new Renkan !"
                 elif action["type"] == "update":
                     ignored.append("Renkan " + action["type"])
                     pass
@@ -170,6 +172,7 @@ def extract_networks_from_statements():
             elif element_type == "Node" or element_type == "Edge":
 
                 data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
+                # TODO : rename project_id to renkan_id (each project is a different renkan) 
                 project_id = data["project"]["id"]
                 action["project_name"] = data["project"]["title"]
 
@@ -191,7 +194,6 @@ def extract_networks_from_statements():
                             _from = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["from"]
                             _to = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["to"]
                             if networks[project_id].has_edge( _from, _to):
-                                # print project_id, action["id"]
                                 update_edge(networks[project_id], _from, _to, data_changed)
 
                     elif action["type"] == "delete":
@@ -203,7 +205,7 @@ def extract_networks_from_statements():
                     action["statement"] = statement
                     action["project_id"] = project_id
 
-                    # actions are stored only for networks
+                    # actions are stored here temporarily 
                     actions[project_id].append(action)
                 else :
                     logger.debug("Action ignored : not in known networks")
@@ -214,6 +216,7 @@ def extract_networks_from_statements():
 
 def save_actions_to_mongos(actions):
     # print some info about the graphs
+    # TODO : rename network_id to renkan_id 
     for i,network_id in enumerate(actions):
         logger.debug("## project %s"%network_id)
 
