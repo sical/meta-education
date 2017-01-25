@@ -1,7 +1,8 @@
 import React from 'react'
 import cytoscape from 'cytoscape'
 
-import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
@@ -26,6 +27,7 @@ class Network extends React.Component {
 
   constructor(props) {
     super(props)
+    console.log(props);
 
     this.state = {
       nodes : this.props.elements.nodes,
@@ -38,7 +40,6 @@ class Network extends React.Component {
     // this.updateNetwork = this.updateNetwork.bind(this)
 
   }
-
 
   setStateNetworkData(props) {
     console.log("update network data...")
@@ -139,31 +140,12 @@ class Network extends React.Component {
 
   render() {
     this.updateNetwork() // show network
+
     return (
-      <div>
-        <div
+      <div
         id={CYTOSCAPE_DIV_ID}
         style={style.divNetwork}
         >
-          <p className="count" style={{ textAlign : "right" }}>
-            <span>
-              {this.state.nodes.length} noeuds /
-              {this.state.edges.length} liens
-            </span>
-            <IconButton
-              tooltip="Zoom +"
-              onClick={this.zoomIn.bind(this)}
-              >
-              <ContentAdd />
-            </IconButton>
-            <IconButton
-              tooltip="Zoom -"
-              onClick={this.zoomOut.bind(this)}
-              >
-              <ContentRemove />
-            </IconButton>
-          </p>
-        </div>
       </div>
     )
   }
@@ -183,7 +165,6 @@ Network.defaultProps = {
 }
 
 const mapStateToProps = (state) => {
-    // console.log(state)
     return {
       currentTimeIndex : state.api.currentTimeIndex,
       actions : state.api.actions

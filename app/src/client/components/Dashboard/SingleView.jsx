@@ -1,8 +1,6 @@
 import React from 'react'
 
-
-import Network from '../Network/Network.jsx'
-import TimeSlider from '../TimeSlider/TimeSlider.jsx'
+import NetworkContainer from '../Network/NetworkContainer.jsx'
 import ResourcesGrid from '../ResourcesGrid/ResourcesGrid.jsx'
 
 import Divider from 'material-ui/Divider';
@@ -17,7 +15,7 @@ import  { ActionTypes } from '../../actions'
 let style = {
   resources : { maxWidth : "100%" },
   network : {　height : "60%"　},
-  timeSlider : {　height : "20%"}
+  timeSlider : {　height : "10%"}
 }
 
 export default class SingleView extends React.Component {
@@ -64,22 +62,15 @@ export default class SingleView extends React.Component {
             showExpandableButton={true}
           />
           <CardText expandable={true}>
-         {
+          {
            this.props.actions.length ?
-            <Network
+            <NetworkContainer
               actions={this.props.actions}
+              timestamps={this.props.timestamps}
               />
             :
             "network"
           }
-          {
-            this.props.actions.length ?
-            <TimeSlider
-              timestamps={this.props.timestamps}
-            />
-             :
-             "time slider"
-           }
           </CardText>
         </Card>
 
