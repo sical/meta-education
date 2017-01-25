@@ -16,18 +16,44 @@ db.on('connect', function () {
     console.log('Mongo connected to db : '+dbName)
 })
 
-router.get("/", (req,res) => res.send({"message" : "hello API!"}))
+router.get("/", (req,res) => res.send({
+  "message" : "hello API!"
+}))
 
-// GET a single action
-router.get('/actions/:id', (req, res) => {
-  db.actions.findOne({ _id :  mongojs.ObjectId(req.params.id)   }, (err, doc) => {
-    if(err) throw error
-    if (doc === null) res.send({})
-    else res.send(doc);
-  })
-});
-
-// GET a list of all students for classes
+/**
+ * @api {get} /classes A List  of Classes
+ * @apiGroup Students
+ *
+ * @apiSuccess {Array} classes A list of all students for the classes
+ * @apiSuccess {String} classes.classeId Unique ID for the class
+ * @apiSuccess {String} classes.name Unique Name for the class
+ * @apiSuccess {String} classes.professeur Unique ID of the professor
+ * @apiSuccess {Array} classes.students List of the students
+ * @apiSuccess {String} classes.students.name Name of the student
+ * @apiSuccess {String} classes.students.id Unique ID of the student
+ *
+ * @apiSuccessExample Success-Response:
+ *  HTTP/1.1 200 OK
+ *  {"message":"hello API!"}
+ * [
+ *   {
+ *     "classeId": "Renoir",
+ *     "name": "Renoir",
+ *     "professeur": "W5P5Y",
+ *     "students": [
+ *       {
+ *         "name": "Élève Renoir07",
+ *         "id": "98702d96-0b90-4643-9f8e-8127f946de8d"
+ *       },
+ *      ...
+ *       {
+ *         "name": "Élève Renoir08",
+ *         "id": "1172c7f8-133f-4914-8a94-57692e42979c"
+ *       }
+ *     ]
+ *   }
+ * ]
+ */
 router.get('/classes', (req, res) => {
   let students = {}
 
@@ -40,53 +66,81 @@ router.get('/classes', (req, res) => {
     classeId : d,
     name : students[d][0].classe,
     professeur : students[d][0].professeur,
-    students  : students[d]
+    students  : students[d].map( student => ({ name : student.name, id : student.id }))
   }))
 
   res.send(classes)
-
 });
 
-// GET all actions in a project
-router.get('/project/:project_id/', (req, res) => {
-  db.actions.find({ project_id :  req.params.project_id  }, (err, docs) => {
-    if(err) throw error
-    if (docs == null) res.send({})
-    else res.send(docs);
-  })
-});
-
-// GET a list of all users in the DB (directly from statements)
-router.get('/users', (req, res) => {
-
-  db.statements.mapReduce(
-    function() {
-       emit({ id : this.actor.account }, 1)
-    },
-    function(key, values) {
-      let sum = 0 ;
-      for(var i in values) sum += values[i];
-      return sum;
-    },
-    {
-      out : { inline : 1}
-    },
-    (err, docs) => {
-      if(err) throw err
-      if (docs == null) res.send({})
-      res.send({
-        users : docs.map( d => {
-          let id = d._id.id ? d._id.id.name : null
-          return {
-            "id" : id,
-            "count" : d.value
-          }
-        }).sort((a,b) => b.count - a.count)
-      })
-    })
-});
-
-// GET a list of all projects for each student in a specific class (directly from statements)
+/**
+ * @api {get} /projects/:classe_id/ All projects for a specific class
+ * @apiGroup Students
+ *
+ * @apiParam {String} class_id The unique ID for a classe
+ *
+ * @apiSuccess {Array} students A list of all students with their projects
+ * @apiSuccess {String} students.id Unique ID for the student
+ * @apiSuccess {String} students.name Name of the Student
+ * @apiSuccess {Array} students.projects List of his projects
+ * @apiSuccess {String} students.projects.id Unique ID of the project
+ * @apiSuccess {Number} students.projects List of his projects
+ * @apiSuccess {Number} students.projects.duration　
+ * @apiSuccess {Number} students.projects.actionsCount
+ * @apiSuccess {String} students.projects.start Timestamp of the first action in the project
+ * @apiSuccess {String} students.projects.end Timestamp of the last action in the project
+ * @apiSuccess {String} students.projects.userId Unique ID of the student
+ * @apiSuccess {String} students.projects.userName Name of the student
+ * @apiSuccess {String} students.projects.name Name of the project
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ * [
+ *   {
+ *     "id": "641f2452-8237-4d48-9b58-e3d1bb648f7b",
+ *     "name": "Élève Renoir11",
+ *     "projects": [
+ *       {
+ *         "id": "826d31ad-8485-48bc-8f9f-c973f1b78a3d",
+ *         "duration": 48620,
+ *         "actionsCount": 14,
+ *         "start": "2016-11-23T10:13:46.086Z",
+ *         "end": "2016-11-23T10:14:34.706Z",
+ *         "userId": "641f2452-8237-4d48-9b58-e3d1bb648f7b",
+ *         "userName": "Élève Renoir11",
+ *         "name": "Untitled Renkan"
+ *       },
+ *       ...
+ *       {
+ *         "id": "b9090aac-40fc-4e16-a862-789db9f9bfe4",
+ *         "duration": 425152766,
+ *         "actionsCount": 331,
+ *         "start": "2016-11-18T12:21:44.277Z",
+ *         "end": "2016-11-23T10:27:37.043Z",
+ *         "userId": "641f2452-8237-4d48-9b58-e3d1bb648f7b",
+ *         "userName": "Élève Renoir11",
+ *         "name": "Untitled Renkan"
+ *       }
+ *     ]
+ *   },
+ *   ...
+ *   {
+ *     "id": "1172c7f8-133f-4914-8a94-57692e42979c",
+ *     "name": "Élève Renoir08",
+ *     "projects": [
+ *       {
+ *         "id": "44b8fcee-6fd5-4ccc-9f37-b9e7cc4ee83c",
+ *         "duration": 762626,
+ *         "actionsCount": 93,
+ *         "start": "2016-11-16T10:12:38.408Z",
+ *         "end": "2016-11-16T10:25:21.034Z",
+ *         "userId": "1172c7f8-133f-4914-8a94-57692e42979c",
+ *         "userName": "Élève Renoir08",
+ *         "name": "Untitled Renkan"
+ *       }
+ *     ]
+ *   }
+ * ]
+ */
 router.get('/projects/:classe_id', (req, res) => {
 
   let students = []
@@ -149,7 +203,7 @@ router.get('/projects/:classe_id', (req, res) => {
           name : d.names[d.names.length-1] // get last name
         })
       })
-      
+
       res.send(students.map(d => (
         {
           id : d.id,
@@ -159,42 +213,143 @@ router.get('/projects/:classe_id', (req, res) => {
       )).filter( d => d.projects))
     }
   )
-
-  // db.actions.mapReduce(
-  //   function() {
-  //      emit({ userId : this.statement.actor.account.name, projectId : this.project_id }, 1)
-  //   },
-  //   function(key, values) {
-  //     let sum = 0 ;
-  //     for(var i in values) sum += values[i];
-  //     return sum;
-  //   },
-  //   {
-  //     out : { inline : 1},
-  //     query: { "statement.actor.account.name" : { $in : students}},
-  //   },
-  //   (err, docs) => {
-  //     if(err) throw err
-  //     if (docs == null) res.send({})
-  //     let projectsByUser = {}
-  //     docs.forEach( d => {
-  //       console.log(d);
-  //       if (!projectsByUser[d._id.userId]) projectsByUser[d._id.userId] = []
-  //       projectsByUser[d._id.userId].push({
-  //         projectId : d._id.projectId,
-  //         actionsCount : d.value
-  //       })
-  //     })
-  //
-  //     res.send({
-  //       classeId : req.params.classeId,
-  //       projects : projectsByUser
-  //     })
-  //   })
 });
 
-// GET stats from a　list of all projects
-// usage : http://localhost:3000/api/stats?projects=2e6b93f5-70c9-4db3-b759-f27e0132720b
+
+
+/**
+ * @api {get} /action/:id A Single Action
+ * @apiName GetAction
+ * @apiGroup Actions
+ * @apiDescription Returns a single action as stored in the DB
+ * @apiParam {_id} _id Unique ID in Mongo DB.
+
+ * @apiSuccess {String} project_name Name of the project this action belongs to.
+ * @apiSuccess {String} ts Timestamp of the action.
+ * @apiSuccess {Array} edges Array of all edges in the network.
+ * @apiSuccess {String} type Type of action.
+ * @apiSuccess {String} element_type Type of the element used in this action.
+ * @apiSuccess {String} id Unique ID in Tincan API.
+ * @apiSuccess {Array} nodes Array of all nodes in the network.
+ * @apiSuccess {Object} statement Original statement from TinCan/²XAPI
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ * {
+ *   "_id": "5821edeec0a24b255d6ff8cd",
+ *   "project_name": "Untitled Renkan",
+ *   "ts": "2016-10-12T14:15:06.615Z",
+ *   "edges": [...],
+ *   "element_type": "Node",
+ *   "statement": {...},
+ *   "nodes": [...],
+ *   "project_id": "2e6b93f5-70c9-4db3-b759-f27e0132720b",
+ *   "type": "create",
+ *   "id": "8cfaa9d8-31a2-4320-ba44-20945bea3d10"
+ * }
+ */
+router.get('/action/:id', (req, res) => {
+  db.actions.findOne({ _id :  mongojs.ObjectId(req.params.id)   }, (err, doc) => {
+    if(err) throw error
+    if (doc === null) res.send({})
+    else res.send(doc);
+  })
+});
+
+/**
+ * @api {get} /actions/:project_id/ All actions in a project
+ * @apiGroup Actions
+ *
+ * @apiParam {String} id Project unique ID.
+ *
+ * @apiSuccess {Array} Actions A list of all actions in a specific project
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    [
+ *      {
+ *        "_id": "5821edeec0a24b255d6ff8cd",
+ *        "project_name": "Untitled Renkan",
+ *        "ts": "2016-10-12T14:15:06.615Z",
+ *        "edges": [...],
+ *        "element_type": "Node",
+ *        "statement": {...},
+ *        "nodes": [...],
+ *        "project_id": "2e6b93f5-70c9-4db3-b759-f27e0132720b",
+ *        "type": "create",
+ *        "id": "8cfaa9d8-31a2-4320-ba44-20945bea3d10"
+ *      },
+ *      ...
+ *      {
+ *        "_id": "5821edeec0a24b255d6ff8ce",
+ *        "project_name": "Untitled Renkan",
+ *        "ts": "2016-10-12T14:15:06.615Z",
+ *        "edges": [...],
+ *        "element_type": "Node",
+ *        "statement": {...},
+ *        "nodes": [...],
+ *        "project_id": "2e6b93f5-70c9-4db3-b759-f27e0132720b",
+ *        "type": "create",
+ *        "id": "daf11f77-2ce0-4414-aa9a-886ad0e14f1f"
+ *      }
+ *    ]
+ */
+router.get('/actions/:project_id/', (req, res) => {
+  db.actions.find({ project_id :  req.params.project_id  }, (err, docs) => {
+    if(err) throw error
+    if (docs == null) res.send({})
+    else res.send(docs);
+  })
+});
+
+/**
+ * @api {get} /stats?projects=:project_id Stats for a project
+ * @apiGroup Stats
+ * @apiDescription Returns a set of stats and indicators for all projects passed as arguments. All these values are calculated on each call.
+ *
+ * @apiParam {String} project_id Project unique ID.
+
+ * @apiSuccess {Object} An object containing all stats for a specific project
+ * @apiSuccess {Object} volumen Number of actions of each type
+ * @apiSuccess {Number} clarity Clarity indicator
+ * @apiSuccess {Number} density Density indicator
+ * @apiSuccess {Object} network Nodes and edges of the final network
+ * @apiSuccess {Array} series Time series containing timestamps and number of actions
+ * @apiSuccess {Number} mediumDegree Average degree in the graph
+ * @apiSuccess {Array} resources list of URLs of external resources used in the map
+ * @apiSuccess {Object} resourcesUsedPercent Percent of nodes and edges containing resources
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ * {
+ *   "2e6b93f5-70c9-4db3-b759-f27e0132720b": {
+ *     "volumen": {
+ *       "create": 1,
+ *       "update": 2
+ *     },
+ *     "clarity": 0,
+ *     "density": 1,
+ *     "network": {
+ *       "edges": [...],
+ *       "nodes": [...]
+ *     },
+ *     "series": [
+ *       {
+ *         "ts": "2016-10-12T14:15:06.615Z",
+ *         "count": 1
+ *       },
+ *       ...
+ *       {
+ *         "ts": "2016-10-12T14:15:15.219Z",
+ *         "count": 1
+ *       }
+ *     ],
+ *     "mediumDegree": 0,
+ *     "resources": [
+ *       "https://www.youtube.com/watch?v=QIkSCA99Uvo"
+ *     ],
+ *     "resourcesUsedPercent": 100
+ *   }
+ * }
+ */
 router.get('/stats', (req, res) => {
 
   let projects = req.query.projects instanceof Array ? req.query.projects : [req.query.projects]
@@ -311,61 +466,5 @@ router.get('/stats', (req, res) => {
     })
 
 })
-//
-//   db.statements.mapReduce(
-//     function() {
-//        emit({ name : this.actor.name, id : this.project_id }, 1)
-//     },
-//     function(key, values) {
-//       let sum = 0 ;
-//       for(var i in values) sum += values[i];
-//       return sum;
-//     },
-//     {
-//       out : { inline : 1}
-//     },
-//     (err, docs) => {
-//       if(err) throw err
-//       if (docs == null) res.send({})
-//       let projects = {}
-//       docs.forEach(d =>
-//         projects[d._id.name] ?
-//           projects[d._id.name].push({ projectId : d._id.id , count : d.value})
-//           :
-//           projects[d._id.name] = [{ projectId : d._id.id , count : d.value}]
-//         )
-//       res.send({
-//         projects : Object.keys(projects).map(p => ({ user : p, projects: projects[p] }))
-//       })
-//     })
-// });
-//
-// // GET a　list of projects for a specific user
-// router.get(['/projects/:user_id/'], (req, res) => {
-//   let userId = req.params.user_id || ""
-//
-//   db.actions.mapReduce(
-//     function() {
-//        emit(this.project_id, 1)
-//     },
-//     function(key, values) {
-//       let sum=0;
-//       for(var i in values) sum += values[i];
-//       return sum;
-//     },
-//     {
-//       out : { inline : 1},
-//       query: { "statement.actor.name" : userId},
-//     },
-//     (err, docs) => {
-//       if(err) throw err
-//       if (docs == null) res.send({})
-//       res.send({
-//         user : userId,
-//         projects : docs
-//       })
-//     })
-// });
 
-// Exporting an object as the default import for this module
 export default router;

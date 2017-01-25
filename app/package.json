@@ -9,7 +9,12 @@
     "prod": "NODE_ENV=production webpack && NODE_ENV=production node src/app.js",
     "start": "npm run prod",
     "staging": "PORT=4000 npm run prod",
-    "publish": "release-it -c release-it.json"
+    "publish": "release-it -c release-it.json",
+    "doc" : "./node_modules/apidoc/bin/apidoc -i src/routes/"
+  },
+  "apidoc" : {
+      "title" : "Documentation for MetaEducation web API",
+      "version": "0.0.7"
   },
   "author": "Clément Renaud <clement.renaud@gmail.com>",
   "license": "ISC",
