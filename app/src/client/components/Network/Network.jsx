@@ -27,7 +27,6 @@ class Network extends React.Component {
 
   constructor(props) {
     super(props)
-    console.log(props);
 
     this.state = {
       nodes : this.props.elements.nodes,
@@ -42,7 +41,7 @@ class Network extends React.Component {
   }
 
   setStateNetworkData(props) {
-    console.log("update network data...")
+    // console.log("update network data...")
     if (props.actions.length) {
       let index = props.currentTimeIndex
       let currentAction = props.actions[index]
@@ -99,11 +98,11 @@ class Network extends React.Component {
 
   updateNetwork() {
     if(this.state.cy) {
-      console.log('* rendering network...')
+      // console.log('* rendering network...')
       this.state.cy.json({ elements : { nodes : [], edges : [] } })
       // console.log({ nodes : this.state.nodes, edges : this.state.edges });
       this.state.cy.json({ elements : { nodes : this.state.nodes, edges : this.state.edges } });
-      console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
+      // console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
       this.state.cy.layout( { name : 'preset' } )
       this.state.cy.fit()
       // this.state.cy.zoom({ level : this.state.cy.zoom()-5 })

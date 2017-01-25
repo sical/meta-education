@@ -37,8 +37,6 @@ class NetworkContainer extends React.Component {
       let min = 0,
         max = nextProps.timestamps.length-1
 
-      console.log(nextProps.currentTimeIndex);
-
       // set default value to final timestamp
       this.setState({
         min : min ,
@@ -52,36 +50,35 @@ class NetworkContainer extends React.Component {
 
   // actions
   handleSliderChange(e, value) {
-    console.log("change");
     this.dispatchIndex(value);
   }
 
   prev() {
     let prevTimeIndex  = this.props.currentTimeIndex >  0 ? this.props.currentTimeIndex -1 : this.props.currentTimeIndex
-    console.log("prev", prevTimeIndex);
+    // console.log("prev", prevTimeIndex);
     this.dispatchIndex(prevTimeIndex)
   }
 
   next() {
     let nextTimeIndex  = this.props.currentTimeIndex < this.props.timestamps.length -1 ? this.props.currentTimeIndex + 1 : this.props.currentTimeIndex
-    console.log("next", nextTimeIndex);
+    // console.log("next", nextTimeIndex);
     this.dispatchIndex(nextTimeIndex)
   }
 
   play() {
-    console.log("play");
+    // console.log("play");
     var self = this;
     if (!this.state.playerId) {
       let playerId = setInterval(function() {
           if(self.props.currentTimeIndex < self.props.timestamps.length -1) self.next()
-          else　self.stop
+          else　self.stop()
         }, 200)
       self.setState({ playerId : playerId })
     }
   }
 
   stop() {
-    console.log("stop");
+    // console.log("stop");
     clearInterval(this.state.playerId)
     this.setState({ playerId : null })
   }
