@@ -112,9 +112,14 @@ class ResourcesGrid extends React.Component {
         >
         <CardHeader
           title="Ressources"
-          subtitle="Liens, vidéos et objets externes utilisés"
-          actAsExpander={true}
-          showExpandableButton={true}
+          subtitle={
+            uris.length ?
+              "Liens, vidéos et objets externes utilisés"
+              :
+              "Aucune ressources externes utilisées"
+          }
+          actAsExpander={uris.length ? true : false}
+          showExpandableButton={uris.length ? true : false}
         />
         <CardText expandable={true}>
         {
