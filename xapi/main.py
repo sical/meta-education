@@ -64,8 +64,18 @@ def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--start', '-s', default=None, help='Crawling start time - format ')
     p.add_argument('--duration', '-d', default=None, help='Duration until crawl final timestamp (number of days)')
-    p.add_argument('--verbose', '-v', default=None, help='Set logger to show everything')
-    p.add_argument('--recrawl', '-r', default=None, help='Recrawl all data for the time period')
+    p.add_argument('--debug',
+        '-v',
+        default=False,
+        action='store_true',
+        help='Activate the Debug mode and show all logs')
+
+    p.add_argument('--recrawl',
+        '-r',
+        default=False,
+        action='store_true',
+        help='Recrawl all data for the time period')
+
     p.add_argument('--offset', '-o', default=None, help='Start crawling from this offset')
 
     return p
@@ -88,7 +98,7 @@ def main():
         end = datetime.datetime.now()
         start = end - duration
 
-    if args.verbose:
+    if args.debug:
         # logging.basicConfig(filename='example.log',level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
 
