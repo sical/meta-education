@@ -2,18 +2,32 @@
 # -*- coding: utf-8 -*-
 
 """
-    This will crawl the last 30 days
-    bin/crawler -d 30 -s '2016-12-10 16:45:00.12'
+    xapi-client
+
+    This program do several things :
+    - extract data (statements) from the remote TinCan/XAPI
+    - store this data into a Mongo collection called "statements"
+    - parse these statements into well-formatted items called "actions"
+    - store those items into a Mongo collection called "actions"
+
 """
 
 import sys
 import argparse
 import datetime
 
-from crawler import get_records_from_xapi, save_statements_to_mongos,reset_statements_db, get_db_time_range
-from parser import reset_actions_db, extract_networks_from_statements, save_actions_to_mongos
+from crawler import connect_to_LRS, \
+                get_records_from_xapi, \
+                save_statements_to_mongos, \
+                reset_statements_db, \
+                get_db_time_range \
+
+from parser import reset_actions_db, \
+        extract_networks_from_statements, \
+        save_actions_to_mongos
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 # logs
 logname="meta-education.log"
@@ -25,6 +39,8 @@ logging.basicConfig(
                             level=logging.DEBUG)
 
 logger = logging.getLogger()
+handler = RotatingFileHandler(logname, mode='a', maxBytes=5*1024*1024, backupCount=2)
+logger.addHandler(handler)
 
 # timeframe to fetch and process data
 # start = datetime(2016, 10, 18, 11, 50, 0)
@@ -36,15 +52,18 @@ def crawl_and_save_records(start, end, offset=0):
     # init for crawler
     has_more_records = True
 
+    # connect to the API
+    lrs = connect_to_LRS()
+
     limit=100 # number of records for each fetch
     while has_more_records:
         logger.debug("Getting %s records"%limit)
         try :
-            resp = get_records_from_xapi(start, end, offset=offset,limit=limit)
+            resp = get_records_from_xapi(lrs, start, end, offset=offset,limit=limit)
         except ValueError, e:
             if "API Error 500 : Allowed memory size" in str(e): # returned API files are too big
                 limit= 50 # try only 50 records
-                # resp = get_records_from_xapi(start, end, offset=offset, limit=limit)
+                resp = get_records_from_xapi(start, end, offset=offset, limit=limit)
 
 
         saved_results = save_statements_to_mongos(resp["statements"])
@@ -58,15 +77,34 @@ def crawl_and_save_records(start, end, offset=0):
     actions = extract_networks_from_statements()
     if actions : save_actions_to_mongos(actions)
 
-
 def parse_args():
     # parse command line arguments
     p = argparse.ArgumentParser()
-    p.add_argument('--start', '-s', default=None, help='Crawling start time - format ')
-    p.add_argument('--duration', '-d', default=None, help='Duration until crawl final timestamp (number of days)')
-    p.add_argument('--verbose', '-v', default=None, help='Set logger to show everything')
-    p.add_argument('--recrawl', '-r', default=None, help='Recrawl all data for the time period')
-    p.add_argument('--offset', '-o', default=None, help='Start crawling from this offset')
+    p.add_argument('--start',
+        '-s',
+        default=None,
+        help='Crawling start time - format : 2016-12-10 16:45:00.12')
+
+    p.add_argument('--duration',
+        '-d',
+        default=None,
+        help='Duration until crawl final timestamp (number of days)')
+    p.add_argument('--debug',
+        '-v',
+        default=False,
+        action='store_true',
+        help='Activate the Debug mode and show all logs')
+
+    p.add_argument('--recrawl',
+        '-r',
+        default=False,
+        action='store_true',
+        help='Recrawl all data for the time period')
+
+    p.add_argument('--offset',
+        '-o',
+        default=None,
+        help='Start crawling from this offset')
 
     return p
 
@@ -88,7 +126,13 @@ def main():
         end = datetime.datetime.now()
         start = end - duration
 
-    if args.verbose:
+    # write new line
+    logger.debug("-"*20)
+    logger.debug("START NEW CRAWLING")
+
+    if args.debug:
+        print "Debug Mode : ON  -- Log in : %s (use tail -f to follow)"%logname
+        print "---"
         # logging.basicConfig(filename='example.log',level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
 
@@ -101,8 +145,15 @@ def main():
     if not args.recrawl:
         start = newest
 
-    print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
+    info = "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
 
+    # append to log
+    logger.debug(info)
+    logger.debug("-"*20)
+
+    # show to user
+    print info
+    print "---"
     # start crawling
     if args.offset and int(args.offset):
         crawl_and_save_records(start, end, offset=int(args.offset))

@@ -1,5 +1,5 @@
 function view() {
-	d3.json("../config/config.json", function(config){
+	d3.json("../../config/config.json", function(config){
 		showRecords(config);
 	})
 }

@@ -55,7 +55,7 @@ def get_action(type):
         except ValueError:
             return code
 
-def get_project_id(data):
+def get_renkan_id(data):
     """Retrieve project id from the data"""
     return data["project"]["id"]
 
@@ -116,7 +116,7 @@ def extract_networks_from_statements():
     print "-"*10
 
     print "Extracting statements from Mongo..."
-    
+
     # store a different network for each renkan
     # renkan_id = "xxx32D"
     # networks["xxx32D"] = { nodes : [...] , edges : [...] } (networkx object)
@@ -134,7 +134,7 @@ def extract_networks_from_statements():
     for i,statement in enumerate(db.statements.find(q).sort([ ( 'stored', 1 ) ])):
 
         # default state
-        project_id=None
+        renkan_id=None
 
         # store action infos
         action = {}
@@ -149,7 +149,7 @@ def extract_networks_from_statements():
             ignored.append(action["type"])
             pass # ignore those actions
         else :
-            # element_type can be Renkan, View, Node or Edge 
+            # element_type can be Renkan, View, Node or Edge
             element_type = statement["object"]["definition"]["type"].split("#")[1]
 
             logger.debug("%s -- %s"%(action_log, element_type))
@@ -172,14 +172,13 @@ def extract_networks_from_statements():
             elif element_type == "Node" or element_type == "Edge":
 
                 data = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]
-                # TODO : rename project_id to renkan_id (each project is a different renkan) 
-                project_id = data["project"]["id"]
+                renkan_id = data["project"]["id"]
                 action["project_name"] = data["project"]["title"]
 
-                if project_id in networks.keys(): # ignore graphs that were not created properly with Renkan/Create
+                if renkan_id in networks.keys(): # ignore graphs that were not created properly with Renkan/Create
 
                     if action["type"] == "create":
-                        create_elements(networks[project_id], element_type, data )
+                        create_elements(networks[renkan_id], element_type, data )
                     elif action["type"] == "update" or action["type"] == "move" :
 
                         data_changed = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#DataChanged"]
@@ -187,26 +186,26 @@ def extract_networks_from_statements():
                         if element_type == "Node":
                             _id = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["_id"]
 
-                            if networks[project_id].has_node( _id):
-                                update_node(networks[project_id], _id, data_changed)
+                            if networks[renkan_id].has_node( _id):
+                                update_node(networks[renkan_id], _id, data_changed)
 
                         if element_type == "Edge":
                             _from = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["from"]
                             _to = statement["object"]["definition"]["extensions"]["http://www-w3-org/ns/activitystreams#Data"]["to"]
-                            if networks[project_id].has_edge( _from, _to):
-                                update_edge(networks[project_id], _from, _to, data_changed)
+                            if networks[renkan_id].has_edge( _from, _to):
+                                update_edge(networks[renkan_id], _from, _to, data_changed)
 
                     elif action["type"] == "delete":
-                        delete_elements(networks[project_id], element_type, data )
+                        delete_elements(networks[renkan_id], element_type, data )
 
                     action["element_type"] = element_type
-                    action["nodes"] = networks[project_id].nodes(data=True)
-                    action["edges"] = networks[project_id].edges(data=True)
+                    action["nodes"] = networks[renkan_id].nodes(data=True)
+                    action["edges"] = networks[renkan_id].edges(data=True)
                     action["statement"] = statement
-                    action["project_id"] = project_id
+                    action["renkan_id"] = renkan_id
 
-                    # actions are stored here temporarily 
-                    actions[project_id].append(action)
+                    # actions are stored here temporarily
+                    actions[renkan_id].append(action)
                 else :
                     logger.debug("Action ignored : not in known networks")
 
@@ -215,34 +214,35 @@ def extract_networks_from_statements():
     return actions
 
 def save_actions_to_mongos(actions):
-    # print some info about the graphs
-    # TODO : rename network_id to renkan_id 
-    for i,network_id in enumerate(actions):
-        logger.debug("## project %s"%network_id)
+    for i,renkan_id in enumerate(actions):
+
+        logger.debug("## project %s"%renkan_id)
 
         # save data points to db
-        if len(actions[ network_id ]):
+        if len(actions[ renkan_id ]):
             try :
-                res = db.actions.insert_many(actions[ network_id ])
+                res = db.actions.insert_many(actions[ renkan_id ])
                 logger.debug("%s new records."%len(res.inserted_ids))
             except pymongo.errors.BulkWriteError as e:
                 logger.debug("%s new records."%e.details['nInserted'])
 
+
+            # beyong that line, only to print some info about the graphs
             # sort by time
-            actions[ network_id ].sort(key=lambda c: c["ts"]) # sort by time
-            ts = [ a["ts"] for a in actions[ network_id ]]
+            actions[ renkan_id ].sort(key=lambda c: c["ts"]) # sort by time
+            ts = [ a["ts"] for a in actions[ renkan_id ]]
             diff = max(ts)-min(ts)
             minutes_seconds = divmod(diff.total_seconds(), 60)
             logger.debug("%d:%d min  - from %s to %s"%( minutes_seconds[0], minutes_seconds[1], min(ts), max(ts) ))
 
             # show actions type count
             counter = ""
-            for c in Counter([a["type"] for a in actions[network_id]]).most_common() :
+            for c in Counter([a["type"] for a in actions[renkan_id]]).most_common() :
                 counter = counter + "%s : %s / "%(c[0], c[1])
             logger.debug(counter)
 
             # log final state
-            logger.debug("Final state: %s nodes and %s edges in %s actions"%(len(actions[network_id][-1]["nodes"]), len(actions[network_id][-1]["edges"]), len(actions[network_id])))
+            logger.debug("Final state: %s nodes and %s edges in %s actions"%(len(actions[renkan_id][-1]["nodes"]), len(actions[renkan_id][-1]["edges"]), len(actions[renkan_id])))
         else :
             logger.debug('No actions detected.')
 

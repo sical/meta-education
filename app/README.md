@@ -1,22 +1,36 @@
-# Meta Education Web App 
+# Meta Education Web App
 
 
-This app contains : 
+This app contains :
 
--  backend : a JSON API server using express.js and ES6
--  frontend : a single page app with React/Redux 
--  scripts : build for production
+-  `[src/routes](src/routes)` : a JSON API server using express.js and ES6
+-  `[src/client](src/client)` : a single page app with React/Redux
+-  `[scripts](package.json)` : build for production
 
-### Server app
+API Docs are available at [sical.github.io/meta-education](https://sical.github.io/meta-education/).
+
+### Install
+
+    npm install
+
+### Start app in development mode
 
     npm run dev-server
     npm run dev-client
-    
-  
-Deploy in production
+
+### Deploy in production
 
     npm run prod
-    
-Lancer en prod sur le port 4000 (staging)
+
+In staging mode (port 4000)
 
     npm run staging
+
+### Build the docs
+
+Use `npm run doc` to to build the API docs. They will be accessible in the `./doc` folder.
+
+You can deploy the doc (on the gh-pages branch) using
+
+    npm run doc-init  # for the first run only
+    npm run doc-deploy

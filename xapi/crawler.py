@@ -23,14 +23,15 @@ db.statements.ensure_index( [ ("stored", pymongo.ASCENDING) ] )
 db.statements.ensure_index( [ ("stored", pymongo.DESCENDING) ] )
 
 # construct an LRS
-print "Connecting to the LRS..."
-lrs = xAPIClient(
-    endpoint="https://xapi.neteduc-cloud.fr/public/data/xAPI/",
-    username=config["xapi"]["username"],
-    password=config["xapi"]["password"],
-)
-print "...done"
-
+def connect_to_LRS():
+    print "Connecting to the LRS..."
+    lrs = xAPIClient(
+        endpoint="https://xapi.neteduc-cloud.fr/public/data/xAPI/",
+        username=config["xapi"]["username"],
+        password=config["xapi"]["password"],
+    )
+    print "...done"
+    return lrs
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
@@ -43,7 +44,7 @@ def get_db_time_range():
     else :
         return [None, None]
 
-def get_records_from_xapi(start, end, offset=0, limit=100):
+def get_records_from_xapi(lrs, start, end, offset=0, limit=100):
     """Query xApi and return statements"""
     assert type(end) is datetime
     assert type(start) is datetime

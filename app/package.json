@@ -9,7 +9,14 @@
     "prod": "NODE_ENV=production webpack && NODE_ENV=production node src/app.js",
     "start": "npm run prod",
     "staging": "PORT=4000 npm run prod",
-    "publish": "release-it -c release-it.json"
+    "publish": "release-it -c release-it.json",
+    "doc" : "./node_modules/apidoc/bin/apidoc -i src/routes/",
+    "doc-init" : "npm run doc && cd doc && git init . && git checkout -b gh-pages && git add . && git commit -m \"Deploy\" && git remote add origin \"https://github.com/sical/meta-education.git\" && git push origin gh-pages",
+    "doc-deploy" : "npm run doc &&  cd doc && git add . && git commit -m \"Deploy\" && git push origin gh-pages"
+  },
+  "apidoc" : {
+      "title" : "Documentation for MetaEducation web API",
+      "version": "0.0.7"
   },
   "author": "Clément Renaud <clement.renaud@gmail.com>",
   "license": "ISC",

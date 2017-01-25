@@ -2,8 +2,11 @@ import React from 'react'
 import cytoscape from 'cytoscape'
 
 import IconButton from 'material-ui/IconButton';
-import ContentRemove from 'material-ui/svg-icons/content/remove';
-import ContentAdd from 'material-ui/svg-icons/content/add';
+import FlatButton from 'material-ui/FlatButton';
+
+import ZoomIn from 'material-ui/svg-icons/action/zoom-in';
+import ZoomOut from 'material-ui/svg-icons/action/zoom-out';
+
 
 import {connect} from 'react-redux'
 import NetworkDefaultStyle from './NetworkDefaultStyle'
@@ -39,9 +42,8 @@ class Network extends React.Component {
 
   }
 
-
   setStateNetworkData(props) {
-    console.log("update network data...")
+    // console.log("update network data...")
     if (props.actions.length) {
       let index = props.currentTimeIndex
       let currentAction = props.actions[index]
@@ -98,11 +100,11 @@ class Network extends React.Component {
 
   updateNetwork() {
     if(this.state.cy) {
-      console.log('* rendering network...')
+      // console.log('* rendering network...')
       this.state.cy.json({ elements : { nodes : [], edges : [] } })
       // console.log({ nodes : this.state.nodes, edges : this.state.edges });
       this.state.cy.json({ elements : { nodes : this.state.nodes, edges : this.state.edges } });
-      console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
+      // console.log(this.state.cy.nodes().length, this.state.cy.edges().length);
       this.state.cy.layout( { name : 'preset' } )
       this.state.cy.fit()
       // this.state.cy.zoom({ level : this.state.cy.zoom()-5 })
@@ -139,32 +141,33 @@ class Network extends React.Component {
 
   render() {
     this.updateNetwork() // show network
+
     return (
-      <div>
+      <span>
         <div
-        id={CYTOSCAPE_DIV_ID}
-        style={style.divNetwork}
-        >
-          <p className="count" style={{ textAlign : "right" }}>
-            <span>
-              {this.state.nodes.length} noeuds /
-              {this.state.edges.length} liens
-            </span>
-            <IconButton
-              tooltip="Zoom +"
-              onClick={this.zoomIn.bind(this)}
-              >
-              <ContentAdd />
-            </IconButton>
-            <IconButton
-              tooltip="Zoom -"
-              onClick={this.zoomOut.bind(this)}
-              >
-              <ContentRemove />
-            </IconButton>
-          </p>
+          id={CYTOSCAPE_DIV_ID}
+          style={style.divNetwork}
+          >
         </div>
-      </div>
+        <p>
+        <IconButton
+          tooltip="Zoom in"
+          onClick={this.zoomIn.bind(this)}
+          >
+          <ZoomIn />
+        </IconButton>
+        <IconButton
+          tooltip="Zoom out"
+          onClick={this.zoomOut.bind(this)}
+          >
+          <ZoomOut />
+        </IconButton>
+          <FlatButton
+          label={`${this.state.nodes.length} noeuds, ${this.state.edges.length} liens`}
+          disabled={true}
+          />
+        </p>
+      </span>
     )
   }
 }
@@ -183,7 +186,6 @@ Network.defaultProps = {
 }
 
 const mapStateToProps = (state) => {
-    // console.log(state)
     return {
       currentTimeIndex : state.api.currentTimeIndex,
       actions : state.api.actions
