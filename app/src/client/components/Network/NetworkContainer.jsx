@@ -1,14 +1,19 @@
 import React from 'react'
 
 import {connect} from 'react-redux'
-import {timeFormat} from 'd3-time-format';
+
+import FlatButton from 'material-ui/FlatButton';
+
+// parse readbale time in French
+import {timeFormatLocale} from 'd3-time-format';
+import fr from 'd3-time-format/locale/fr-FR.json';
+const timeFr = timeFormatLocale(fr);
 
 import store from '../../store'
 import {ActionTypes} from '../../actions'
 
 import Network from './Network.jsx'
 import TimeSlider from './TimeSlider.jsx'
-import FlatButton from 'material-ui/FlatButton';
 
 class NetworkContainer extends React.Component {
 
@@ -97,7 +102,7 @@ class NetworkContainer extends React.Component {
         disabled={this.props.currentTimeIndex == this.props.timestamps.length -1}
         />
 
-    const format = timeFormat("%a %d %B, %H:%M")
+    const format = timeFr.format("%a %d %b, %H:%M")
 
     let currentTime = new Date(this.props.timestamps[this.props.currentTimeIndex]) || new Date,
       timeFormatted = format(currentTime)
@@ -116,7 +121,9 @@ class NetworkContainer extends React.Component {
              onClick={this.next.bind(this)}
              disabled={this.props.currentTimeIndex == this.props.timestamps.length -1}
              />
-           <span>{timeFormatted}</span>
+           <span>
+            {timeFormatted}
+           </span>
          </div>
          <TimeSlider
            min={this.state.min}

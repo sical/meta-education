@@ -1,10 +1,12 @@
 import React from 'react'
 import cytoscape from 'cytoscape'
 
-import RaisedButton from 'material-ui/RaisedButton';
+import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import ContentRemove from 'material-ui/svg-icons/content/remove';
-import ContentAdd from 'material-ui/svg-icons/content/add';
+
+import ZoomIn from 'material-ui/svg-icons/action/zoom-in';
+import ZoomOut from 'material-ui/svg-icons/action/zoom-out';
+
 
 import {connect} from 'react-redux'
 import NetworkDefaultStyle from './NetworkDefaultStyle'
@@ -141,11 +143,31 @@ class Network extends React.Component {
     this.updateNetwork() // show network
 
     return (
-      <div
-        id={CYTOSCAPE_DIV_ID}
-        style={style.divNetwork}
-        >
-      </div>
+      <span>
+        <div
+          id={CYTOSCAPE_DIV_ID}
+          style={style.divNetwork}
+          >
+        </div>
+        <p>
+        <IconButton
+          tooltip="Zoom in"
+          onClick={this.zoomIn.bind(this)}
+          >
+          <ZoomIn />
+        </IconButton>
+        <IconButton
+          tooltip="Zoom out"
+          onClick={this.zoomOut.bind(this)}
+          >
+          <ZoomOut />
+        </IconButton>
+          <FlatButton
+          label={`${this.state.nodes.length} noeuds, ${this.state.edges.length} liens`}
+          disabled={true}
+          />
+        </p>
+      </span>
     )
   }
 }
