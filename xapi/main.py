@@ -63,7 +63,7 @@ def crawl_and_save_records(start, end, offset=0):
         except ValueError, e:
             if "API Error 500 : Allowed memory size" in str(e): # returned API files are too big
                 limit= 50 # try only 50 records
-                # resp = get_records_from_xapi(start, end, offset=offset, limit=limit)
+                resp = get_records_from_xapi(start, end, offset=offset, limit=limit)
 
 
         saved_results = save_statements_to_mongos(resp["statements"])
@@ -126,6 +126,10 @@ def main():
         end = datetime.datetime.now()
         start = end - duration
 
+    # write new line
+    logger.debug("-"*20)
+    logger.debug("START NEW CRAWLING")
+
     if args.debug:
         print "Debug Mode : ON  -- Log in : %s (use tail -f to follow)"%logname
         print "---"
@@ -141,7 +145,14 @@ def main():
     if not args.recrawl:
         start = newest
 
-    print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
+    info = "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
+
+    # append to log
+    logger.debug(info)
+    logger.debug("-"*20)
+
+    # show to user
+    print info
     print "---"
     # start crawling
     if args.offset and int(args.offset):
