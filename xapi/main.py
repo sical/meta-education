@@ -27,6 +27,7 @@ from parser import reset_actions_db, \
         save_actions_to_mongos
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 # logs
 logname="meta-education.log"
@@ -38,6 +39,8 @@ logging.basicConfig(
                             level=logging.DEBUG)
 
 logger = logging.getLogger()
+handler = RotatingFileHandler(logname, mode='a', maxBytes=5*1024*1024, backupCount=2)
+logger.addHandler(handler)
 
 # timeframe to fetch and process data
 # start = datetime(2016, 10, 18, 11, 50, 0)
@@ -49,6 +52,7 @@ def crawl_and_save_records(start, end, offset=0):
     # init for crawler
     has_more_records = True
 
+    # connect to the API
     lrs = connect_to_LRS()
 
     limit=100 # number of records for each fetch
@@ -73,12 +77,18 @@ def crawl_and_save_records(start, end, offset=0):
     actions = extract_networks_from_statements()
     if actions : save_actions_to_mongos(actions)
 
-
 def parse_args():
     # parse command line arguments
     p = argparse.ArgumentParser()
-    p.add_argument('--start', '-s', default=None, help='Crawling start time - format ')
-    p.add_argument('--duration', '-d', default=None, help='Duration until crawl final timestamp (number of days)')
+    p.add_argument('--start',
+        '-s',
+        default=None,
+        help='Crawling start time - format : 2016-12-10 16:45:00.12')
+
+    p.add_argument('--duration',
+        '-d',
+        default=None,
+        help='Duration until crawl final timestamp (number of days)')
     p.add_argument('--debug',
         '-v',
         default=False,
@@ -91,7 +101,10 @@ def parse_args():
         action='store_true',
         help='Recrawl all data for the time period')
 
-    p.add_argument('--offset', '-o', default=None, help='Start crawling from this offset')
+    p.add_argument('--offset',
+        '-o',
+        default=None,
+        help='Start crawling from this offset')
 
     return p
 
@@ -114,6 +127,8 @@ def main():
         start = end - duration
 
     if args.debug:
+        print "Debug Mode : ON  -- Log in : %s (use tail -f to follow)"%logname
+        print "---"
         # logging.basicConfig(filename='example.log',level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
 
@@ -127,7 +142,7 @@ def main():
         start = newest
 
     print "Process data from '%s' to '%s' (%s days)"%(start, end, duration.days)
-
+    print "---"
     # start crawling
     if args.offset and int(args.offset):
         crawl_and_save_records(start, end, offset=int(args.offset))
