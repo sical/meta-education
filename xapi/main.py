@@ -2,16 +2,29 @@
 # -*- coding: utf-8 -*-
 
 """
-    This will crawl the last 30 days
-    bin/crawler -d 30 -s '2016-12-10 16:45:00.12'
+    xapi-client
+
+    This program do several things :
+    - extract data (statements) from the remote TinCan/XAPI
+    - store this data into a Mongo collection called "statements"
+    - parse these statements into well-formatted items called "actions"
+    - store those items into a Mongo collection called "actions"
+
 """
 
 import sys
 import argparse
 import datetime
 
-from crawler import get_records_from_xapi, save_statements_to_mongos,reset_statements_db, get_db_time_range
-from parser import reset_actions_db, extract_networks_from_statements, save_actions_to_mongos
+from crawler import connect_to_LRS, \
+                get_records_from_xapi, \
+                save_statements_to_mongos, \
+                reset_statements_db, \
+                get_db_time_range \
+
+from parser import reset_actions_db, \
+        extract_networks_from_statements, \
+        save_actions_to_mongos
 
 import logging
 
@@ -36,11 +49,13 @@ def crawl_and_save_records(start, end, offset=0):
     # init for crawler
     has_more_records = True
 
+    lrs = connect_to_LRS()
+
     limit=100 # number of records for each fetch
     while has_more_records:
         logger.debug("Getting %s records"%limit)
         try :
-            resp = get_records_from_xapi(start, end, offset=offset,limit=limit)
+            resp = get_records_from_xapi(lrs, start, end, offset=offset,limit=limit)
         except ValueError, e:
             if "API Error 500 : Allowed memory size" in str(e): # returned API files are too big
                 limit= 50 # try only 50 records
