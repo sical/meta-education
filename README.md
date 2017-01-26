@@ -11,7 +11,12 @@
 
 Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
 
-## Run XAPI crawler and parser
+Prepare a virtualenv (from 'home')
+- Install virtualenv with pip `sudo pip install virtualenv`
+- Create your virtual environment  `virtualenv venv` (venv is the name)
+- Activate your virtual environment `source venv/bin/activate`
+
+## Run XAPI crawler and parser (from your local meta-education repository)
 
 ```bash
 
