@@ -83,7 +83,7 @@ npm run publish
 Update and restart the web server
 
 - Check the current UID (process ID) with `forever list`
-- Stop the current web server using `forever stop $UID` (ex. `forever stop JeoO`)
+- Stop the current web server using `killall node`
 - Check if processes are all down using `ps aux | grep node`
 - Launch the script `./update.sh` - it will update the code and start a new server (see below)
 - The launch of the app takes approx 1min (time to rebuild JS assets)
