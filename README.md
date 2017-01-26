@@ -82,7 +82,8 @@ npm run publish
 
 Update and restart the web server
 
-- Stop the current web server using `forever`
+- Check the current UID (process ID) with `forever list`
+- Stop the current web server using `forever stop $UID` (ex. `forever stop JeoO`)
 - Launch the script `./update.sh` - it will update the code and start a new server (see below)
 
 ```
