@@ -51,6 +51,8 @@ python data/find_names.py
 
 ## Run the viz server app
 
+See in [app](/app) folder for more info
+
 ```
 cd app
 npm install
