@@ -1,3 +1,6 @@
 {
-  "pkgFiles": ["package.json"]
+  "pkgFiles": ["package.json"],
+  "npm": {
+    "publish": false
+  }
 }
