@@ -28,6 +28,7 @@ In staging mode (port 4000)
 
 ### Build the docs
 
+API Docs are built using the [apidoc](http://apidocjs.com/) lib.  
 Use `npm run doc` to to build the API docs. They will be accessible in the `./doc` folder.
 
 You can deploy the doc (on the gh-pages branch) using
