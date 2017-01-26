@@ -9,7 +9,7 @@
 
 ## Config
 
-Copy `config/config.sample.js` to `config/config.js` and edit passord/username credentials
+Copy `config/config.sample.js` to `config/config.js` and edit password/username credentials
 
 Prepare a virtualenv (from 'home')
 - Install virtualenv with pip `sudo pip install virtualenv`
