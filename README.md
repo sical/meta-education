@@ -27,25 +27,19 @@ Read the crawler help with
 
 ```bash
 
-  xapi-client --help
+usage: xapi-client [-h] [--start START] [--duration DURATION] [--debug]
+                   [--recrawl] [--offset OFFSET]
 
-  usage: xapi-client [-h] [--start START] [--duration DURATION]
-                   [--verbose VERBOSE] [--recrawl RECRAWL] [--offset OFFSET]
-
-  optional arguments:
-    -h, --help            show this help message and exit
-    --start START, -s START
-                          Crawling start time - format
-    --duration DURATION, -d DURATION
-                          Duration until crawl final timestamp (number of days)
-    --verbose VERBOSE, -v VERBOSE
-                          Set logger to show everything
-    --recrawl RECRAWL, -r RECRAWL
-                          Recrawl all data for the time period
-    --offset OFFSET, -o OFFSET
-                          Start crawling from this offset
-
-
+optional arguments:
+  -h, --help            show this help message and exit
+  --start START, -s START
+                        Crawling start time - format : 2016-12-10 16:45:00.12
+  --duration DURATION, -d DURATION
+                        Duration until crawl final timestamp (number of days)
+  --debug, -v           Activate the Debug mode and show all logs
+  --recrawl, -r         Recrawl all data for the time period
+  --offset OFFSET, -o OFFSET
+                        Start crawling from this offset
 
 ```
 
