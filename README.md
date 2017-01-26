@@ -77,3 +77,20 @@ npm start
 ```
 npm run publish
 ```
+
+## Deploy on the prod server
+
+Update and restart the web server
+
+- Stop the current web server using `forever`
+- Launch the script `./update.sh` - it will update the code and start a new server (see below)
+
+```
+# update.sh
+cd meta-education
+git pull origin master
+cd app
+npm install
+pwd
+forever start -c "npm start" .
+```
