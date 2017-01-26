@@ -80,6 +80,17 @@ npm run publish
 
 ## Deploy on the prod server
 
+### Data Crawler
+
+To get the latest data on the sever
+ 
+- Activate Python virtual environment (using [virtualenv](https://virtualenv.pypa.io/en/stable/)) : `. venv/bin/activate`
+- Go in the code folder `cd meta-education`
+- Install the Python lib `python setup.py install`
+- Launch the crawler `xapi-client -v`
+
+### Web App
+
 Update and restart the web server
 
 - Check the current UID (process ID) with `forever list`
@@ -97,3 +108,4 @@ npm install
 pwd
 forever start -c "npm start" .
 ```
+
