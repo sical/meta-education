@@ -46,12 +46,6 @@ const headers = [
       sortable : "density"
     },
     {
-      name : "Clarté de la démarche",
-      tootltip : "Ratio entre ajout et suppression d'éléments dans le graphe (en %)",
-      class: 'indicator',
-      sortable : "clarity"
-    },
-    {
       name : "Liens par noeud",
       tootltip : "Rapport entre nombre de liens et nombre de noeuds",
       class: 'indicator',
@@ -62,6 +56,12 @@ const headers = [
       tootltip : "Nombre de médias et ressources externes utilisées dans le graphe.",
       class: 'indicator',
       sortable : "resourcesCount"
+    },
+    {
+      name : "Clarté de la démarche",
+      tootltip : "Ratio entre ajout et suppression d'éléments dans le graphe (en %)",
+      class: 'indicator',
+      sortable : "clarity"
     },
     {
       name : "Evolution",

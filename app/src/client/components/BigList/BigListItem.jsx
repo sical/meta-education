@@ -89,13 +89,6 @@ export default class BigListItem extends React.Component {
              />
           </TableRowColumn>
 
-          <TableRowColumn style={style.indicator}>
-            <Indicator
-             count={`${Math.round(stat.clarity)}%`}
-             z={stat.zClarity}
-             />
-          </TableRowColumn>
-
          <TableRowColumn style={style.indicator}>
            <Indicator
             count={stat.degree}
@@ -110,6 +103,13 @@ export default class BigListItem extends React.Component {
             />
          </TableRowColumn>
 
+         <TableRowColumn style={style.indicator}>
+           <Indicator
+            count={`${Math.round(stat.clarity)}%`}
+            z={stat.zClarity}
+            />
+         </TableRowColumn>
+         
          <TableRowColumn>
           { timeSeries }
          </TableRowColumn>
