@@ -433,20 +433,26 @@ router.get('/stats', (req, res) => {
 
         let resourcesUsedPercent = (resources.length*100)/density
 
+        // get all occurences of nodes
+        let nodesOccurences = []
+        project.finalNetwork.edges.forEach(edge =>
+          nodesOccurences.push(edge.source, edge.target)
+        )
+
+        // create empty list to store degree for each node
         let degrees = {}
-        project.finalNetwork.edges
-          .forEach(d => {
-            let source = d[0],
-              target = d[1]
-            degrees[source] = degrees[source] == undefined ? 0 : degrees[source]+1
-            degrees[target] = degrees[target] == undefined ? 0 : degrees[target]+1
-          })
 
+        // count degree for each node
+        nodesOccurences.forEach( node =>
+           degrees[node] = (degrees[node] === undefined) ? degrees[node] = 1 : degrees[node] +1
+        )
+
+        // calculer la somme des degrés
         let sumDegrees = Object.keys(degrees)
-          .map(d => degrees[d])
-          .reduce((a, b)=> a + b,0)
+            .map( d => degrees[d])
+            .reduce( (a,b) => a+b)
 
-        let mediumDegree = sumDegrees / density
+        let mediumDegree = sumDegrees / project.finalNetwork.nodes.length
 
         let network = project.finalNetwork
 
