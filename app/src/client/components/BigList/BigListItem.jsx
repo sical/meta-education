@@ -76,58 +76,38 @@ export default class BigListItem extends React.Component {
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { stat.actionsCount ?
-             <Indicator
-             count={stat.actionsCount}
-             z={stat.zActionsCount}
-             />
-             :
-             null
-           }
+           <Indicator
+           count={stat.actionsCount}
+           z={stat.zActionsCount}
+           />
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { stat.density ?
-                <Indicator
-                 count={stat.density}
-                 z={stat.zDensity}
-                 />
-              :
-              null
-            }
+            <Indicator
+             count={stat.density}
+             z={stat.zDensity}
+             />
           </TableRowColumn>
 
           <TableRowColumn style={style.indicator}>
-            { stat.clarity ?
-              <Indicator
-               count={`${Math.round(stat.clarity)}%`}
-               z={stat.zClarity}
-               />
-              :
-              null
-            }
+            <Indicator
+             count={`${Math.round(stat.clarity)}%`}
+             z={stat.zClarity}
+             />
           </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { stat.degree ?
-             <Indicator
-              count={stat.degree}
-              z={stat.zDegree}
-              />
-             :
-             null
-           }
+           <Indicator
+            count={stat.degree}
+            z={stat.zDegree}
+            />
          </TableRowColumn>
 
          <TableRowColumn style={style.indicator}>
-           { stat.resourcesCount ?
-             <Indicator
-              count={stat.resourcesCount}
-              z={stat.zResourcesCount}
-              />
-             :
-             null
-           }
+           <Indicator
+            count={stat.resourcesCount}
+            z={stat.zResourcesCount}
+            />
          </TableRowColumn>
 
          <TableRowColumn>
