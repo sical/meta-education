@@ -247,7 +247,7 @@ class BigList extends React.Component {
 
 
     let statsItems = this.state.data
-      .filter(stat => this.state.selected.indexOf(stat.id) > -1)
+      // .filter(stat => this.state.selected.indexOf(stat.id) > -1)
       .map( (stat,i) => {
 
         if(Object.keys(stat).length === 5) return null
@@ -263,17 +263,18 @@ class BigList extends React.Component {
           heightScale(max(series.map(d=>d.count)))
           : 0
 
+        let selected = this.props.currentProject === stat.id
+
         return (
 
           <BigListItem
             style={style}
             stat={stat}
-
+            isSelected={selected}
             series={series}
             maxHeight={h}
             heightSeries={height}
             selectProject={this.selectProject.bind(this)}
-            selected={true}
             key={stat.id}
             />
         )
@@ -336,6 +337,7 @@ const mapStateToProps = (state) => {
   return {
       stats : state.api.stats,
       selectedProjects : state.api.selectedProjects,
+      currentProject : state.viz.currentProject
   }
 }
 

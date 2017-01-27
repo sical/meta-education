@@ -35,7 +35,7 @@ export default class BigListItem extends React.Component {
       elementsCount,
       maxHeight,
       selectProject,
-      //
+      isSelected,
       stat,
       ...other
     } = this.props
@@ -50,10 +50,10 @@ export default class BigListItem extends React.Component {
         />
       : null
 
-
     return (
        <TableRow
         {...other}
+        selected={isSelected}
        >
         {other.children[0] /* checkbox passed down from Table-Body*/}
          <TableRowColumn
